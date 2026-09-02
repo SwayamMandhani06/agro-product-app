@@ -1,4 +1,4 @@
-# Stage 1 setup — run from repo root after installing Flutter SDK.
+# Stage 1 setup — run from apps/mobile directory after installing Flutter SDK.
 # https://docs.flutter.dev/get-started/install/windows
 
 $ErrorActionPreference = "Stop"
