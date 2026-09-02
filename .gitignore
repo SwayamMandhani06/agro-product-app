@@ -4,26 +4,48 @@
 .env
 *.env
 !.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # =============================================================================
 # Firebase — regenerate locally via `flutterfire configure`
 # =============================================================================
-lib/firebase_options.dart
+**/firebase_options.dart
 **/google-services.json
 **/GoogleService-Info.plist
 
 # =============================================================================
-# Flutter / Dart / Pub
+# Flutter / Dart / Pub (apps/mobile)
 # =============================================================================
 **/doc/api/
 .dart_tool/
+**/.dart_tool/
 .flutter-plugins
+**/.flutter-plugins
 .flutter-plugins-dependencies
+**/.flutter-plugins-dependencies
 .pub-cache/
+**/.pub-cache/
 .pub/
-/build/
+**/.pub/
+build/
+**/build/
 *.g.dart
 *.freezed.dart
+
+# =============================================================================
+# Node / Next.js / Web (apps/web)
+# =============================================================================
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+out/
+**/out/
+.turbo/
+**/.turbo/
 
 # =============================================================================
 # Build output & debug logs
@@ -31,14 +53,19 @@ lib/firebase_options.dart
 app.*.symbols
 app.*.map.json
 build_error*.txt
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # =============================================================================
 # Android
 # =============================================================================
-/android/app/debug
-/android/app/profile
-/android/app/release
-android/local.properties
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+**/android/local.properties
+**/local.properties
 
 # =============================================================================
 # iOS / macOS (Xcode)
@@ -77,11 +104,13 @@ android/local.properties
 *.ipr
 *.iws
 .idea/
+**/.idea/
 
 # =============================================================================
 # IDE — VS Code
 # =============================================================================
 .vscode/
+**/.vscode/
 
 # =============================================================================
 # System / OS junk
@@ -107,9 +136,11 @@ migrate_working_dir/
 # Test coverage
 # =============================================================================
 coverage/
+**/coverage/
 
 # =============================================================================
 # Project-specific: local-only working documents
 # =============================================================================
 Agro_Product_App_Build_Roadmap.md
 audit_analysis_report.md
+Agro_Product_App_Web_Roadmap.md

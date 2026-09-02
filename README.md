@@ -2,13 +2,17 @@
 
 > Agricultural e-commerce platform connecting Indian farmers directly with verified sellers — eliminating middlemen for fairer pricing and transparent market access.
 
-Originally conceptualized as a Community Engagement Project (CEP) at PCCOE, now being rebuilt from the ground up as a production-grade Flutter application following Clean Architecture principles.
+Originally conceptualized as a Community Engagement Project (CEP) at PCCOE, now being rebuilt from the ground up as a production-grade application following Clean Architecture principles.
+
+> 📦 **Monorepo Structure:**
+> - `apps/mobile/` — Flutter mobile application (Android & iOS)
+> - `apps/web/` — Next.js web application (coming soon)
 
 ---
 
 ## What It Does
 
-The app serves three distinct user roles:
+The platform serves three distinct user roles:
 
 | Role | Responsibilities |
 |------|----------------|
@@ -19,6 +23,8 @@ The app serves three distinct user roles:
 ---
 
 ## Tech Stack
+
+### Mobile (`apps/mobile`)
 
 | Layer | Technology |
 |-------|-----------|
@@ -36,49 +42,62 @@ The app serves three distinct user roles:
 | **HTTP Client** | Dio with connectivity pre-flight checks |
 | **Error Handling** | fpdart `Either<Failure, T>` — no exceptions escape the data layer |
 
+### Web (`apps/web` — Coming Soon)
+- **Framework:** Next.js (React / TypeScript)
+- **Styling:** Tailwind CSS / Modern Agrarian Design System
+- **Backend Integration:** Firebase Web SDK
+
 ---
 
-## Architecture
-
-Feature-first Clean Architecture — every feature lives in its own isolated slice:
+## Monorepo Architecture
 
 ```
-lib/
-├── core/
-│   ├── design_system/   # Modern Agrarian design tokens, typography, shadows, motion, theme
-│   ├── di/              # Riverpod DI providers, Firebase bootstrap, Remote Config
-│   ├── error/           # Sealed Failure hierarchy + exception → failure mapper
-│   ├── localization/    # Supported locales (en / hi / mr)
-│   ├── network/         # Dio client wrapper + .env config reader
-│   ├── routing/         # go_router config, route constants, auth redirect (Stage 4)
-│   └── widgets/         # Reusable design-system components (buttons, cards, inputs, glass, etc.)
-└── features/
-    ├── auth/            # domain / data / presentation
-    ├── onboarding/
-    ├── products/
-    ├── cart_checkout/
-    ├── orders/
-    ├── wishlist/
-    ├── addresses/
-    ├── reviews/
-    ├── search/
-    ├── seller/
-    ├── admin/
-    ├── recommendations/
-    ├── weather/
-    ├── mandi_prices/
-    ├── notifications/
-    └── forum/
+apps/
+├── mobile/                  # Flutter Mobile App
+│   ├── android/
+│   ├── ios/
+│   ├── assets/
+│   ├── scripts/
+│   ├── test/
+│   ├── lib/
+│   │   ├── core/
+│   │   │   ├── design_system/   # Modern Agrarian design tokens, typography, shadows, motion, theme
+│   │   │   ├── di/              # Riverpod DI providers, Firebase bootstrap, Remote Config
+│   │   │   ├── error/           # Sealed Failure hierarchy + exception → failure mapper
+│   │   │   ├── localization/    # Supported locales (en / hi / mr)
+│   │   │   ├── network/         # Dio client wrapper + .env config reader
+│   │   │   ├── routing/         # go_router config, route constants, auth redirect (Stage 4)
+│   │   │   └── widgets/         # Reusable design-system components (buttons, cards, inputs, glass, etc.)
+│   │   └── features/
+│   │       ├── auth/            # domain / data / presentation
+│   │       ├── onboarding/
+│   │       ├── products/
+│   │       ├── cart_checkout/
+│   │       ├── orders/
+│   │       ├── wishlist/
+│   │       ├── addresses/
+│   │       ├── reviews/
+│   │       ├── search/
+│   │       ├── seller/
+│   │       ├── admin/
+│   │       ├── recommendations/
+│   │       ├── weather/
+│   │       ├── mandi_prices/
+│   │       ├── notifications/
+│   │       └── forum/
+│   ├── pubspec.yaml
+│   └── analysis_options.yaml
+└── web/                     # Next.js Web App (Coming soon)
 ```
 
-**Layer rules (strictly enforced):**
+**Layer rules (strictly enforced for mobile):**
 - `domain/` — pure Dart; zero Firebase or HTTP imports; defines entities and repository interfaces
 - `data/` — implements repository interfaces; all Firebase / HTTP / Hive access lives here
 - `presentation/` — screens and Riverpod providers; communicates only through domain interfaces
 
 ---
 
-## Getting Started
+## Getting Started (Mobile App)
 
 ### Prerequisites
 
@@ -89,9 +108,9 @@ lib/
 ### Setup
 
 ```bash
-# 1. Clone and install packages
+# 1. Clone repository and navigate to mobile app
 git clone https://github.com/SwayamMandhani06/agro-product-app.git
-cd agro-product-app
+cd agro-product-app/apps/mobile
 flutter pub get
 
 # 2. Configure environment variables
@@ -105,17 +124,19 @@ flutterfire configure
 flutter run
 ```
 
-> **Note:** `lib/firebase_options.dart` and `.env` are gitignored. Both must be created locally before running the app. The `firebase_options.example.dart` template is included for reference.
+> **Note:** `apps/mobile/lib/firebase_options.dart` and `apps/mobile/.env` are gitignored. Both must be created locally before running the app. The `firebase_options.example.dart` template is included in `apps/mobile/lib/` for reference.
 
 ### Running Tests
 
 ```bash
+cd apps/mobile
 flutter test
 ```
 
 ### Static Analysis
 
 ```bash
+cd apps/mobile
 flutter analyze
 ```
 
@@ -126,7 +147,7 @@ flutter analyze
 > **Development follows a 17-stage build roadmap. Only completed stages are described below.**
 
 ### ✅ Stage 0 — Git & GitHub Setup
-Repository initialized with `main` / `develop` / `stage-N-*` branching strategy.
+Repository initialized with `main` / `develop` / `stage-N-*` branching strategy and restructured into a monorepo (`apps/mobile`, `apps/web`).
 
 ### ✅ Stage 1 — Flutter Project, Clean Architecture Skeleton & Core Infra
 - Scaffolded all 17 feature folders with `domain/`, `data/`, `presentation/` layers
@@ -149,7 +170,7 @@ Repository initialized with `main` / `develop` / `stage-N-*` branching strategy.
 
 | Stage | Feature | Status |
 |-------|---------|--------|
-| 0 | Git & GitHub setup | ✅ Complete |
+| 0 | Git & GitHub setup (Monorepo) | ✅ Complete |
 | 1 | Flutter project, Clean Architecture skeleton & core infra | ✅ Complete |
 | 2 | Design system | ✅ Complete |
 | 3 | Screen designs (Stitch) | ⬜ Next |
@@ -172,9 +193,10 @@ Repository initialized with `main` / `develop` / `stage-N-*` branching strategy.
 ## Branching Strategy
 
 ```
-main          — always stable, deployable
-develop       — integration branch
-stage-N-name  — one branch per roadmap stage
+main                        — always stable, deployable
+develop                     — integration branch
+chore-monorepo-restructure  — monorepo restructuring
+stage-N-name                — one branch per roadmap stage
 ```
 
 Feature branches are PR'd into `develop` after manual testing, then `develop` is merged into `main` at milestone completions. Each completed stage is tagged `vX.Y-stage-name`.
@@ -183,7 +205,7 @@ Feature branches are PR'd into `develop` after manual testing, then `develop` is
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and populate before running:
+Copy `apps/mobile/.env.example` to `apps/mobile/.env` and populate before running:
 
 | Variable | Purpose |
 |----------|---------|
