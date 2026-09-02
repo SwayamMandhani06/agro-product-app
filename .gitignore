@@ -1,35 +1,20 @@
-# Secrets — never commit real API keys
+# =============================================================================
+# Secrets — never commit real keys or credentials
+# =============================================================================
 .env
 *.env
 !.env.example
 
-# Firebase config (contains project keys — regenerate locally via flutterfire configure)
+# =============================================================================
+# Firebase — regenerate locally via `flutterfire configure`
+# =============================================================================
+lib/firebase_options.dart
 **/google-services.json
 **/GoogleService-Info.plist
-lib/firebase_options.dart
 
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# VS Code related
-.vscode/
-
-# Flutter/Dart/Pub related
+# =============================================================================
+# Flutter / Dart / Pub
+# =============================================================================
 **/doc/api/
 .dart_tool/
 .flutter-plugins
@@ -40,18 +25,24 @@ migrate_working_dir/
 *.g.dart
 *.freezed.dart
 
-# Symbolication related
+# =============================================================================
+# Build output & debug logs
+# =============================================================================
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
+build_error*.txt
 
-# Android Studio will place build artifacts here
+# =============================================================================
+# Android
+# =============================================================================
 /android/app/debug
 /android/app/profile
 /android/app/release
+android/local.properties
 
-# Xcode-related
+# =============================================================================
+# iOS / macOS (Xcode)
+# =============================================================================
 **/ios/**/*.pbxuser
 **/ios/**/*.mode1v3
 **/ios/**/*.mode2v3
@@ -79,9 +70,46 @@ app.*.map.json
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 
-# Coverage
+# =============================================================================
+# IDE — IntelliJ / Android Studio
+# =============================================================================
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# =============================================================================
+# IDE — VS Code
+# =============================================================================
+.vscode/
+
+# =============================================================================
+# System / OS junk
+# =============================================================================
+.DS_Store
+Thumbs.db
+*.class
+*.log
+*.pyc
+*.swp
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# =============================================================================
+# Hive local storage (never commit local device data)
+# =============================================================================
+*.hive
+
+# =============================================================================
+# Test coverage
+# =============================================================================
 coverage/
 
-# Hive local storage boxes (never commit local test data)
-*.hive
-*.lock
+# =============================================================================
+# Project-specific: local-only working documents
+# =============================================================================
+Agro_Product_App_Build_Roadmap.md
+audit_analysis_report.md
