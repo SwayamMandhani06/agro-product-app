@@ -15,5 +15,7 @@ class AppRoutes {
   static const weather = '/weather';
   static const mandiPrices = '/mandi-prices';
   static const notifications = '/notifications';
-  static const forum = '/forum';
+  static const forum               = '/forum';
+  // Stage 2 — design system showcase (remove before production)
+  static const designSystemPreview = '/design-system-preview';
 }
