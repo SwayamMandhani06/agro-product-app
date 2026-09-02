@@ -45,13 +45,13 @@ Feature-first Clean Architecture — every feature lives in its own isolated sli
 ```
 lib/
 ├── core/
-│   ├── design_system/   # (Stage 2) colour tokens, typography, spacing, theme
+│   ├── design_system/   # Modern Agrarian design tokens, typography, shadows, motion, theme
 │   ├── di/              # Riverpod DI providers, Firebase bootstrap, Remote Config
 │   ├── error/           # Sealed Failure hierarchy + exception → failure mapper
 │   ├── localization/    # Supported locales (en / hi / mr)
 │   ├── network/         # Dio client wrapper + .env config reader
 │   ├── routing/         # go_router config, route constants, auth redirect (Stage 4)
-│   └── widgets/         # (Stage 2) shared design-system widgets
+│   └── widgets/         # Reusable design-system components (buttons, cards, inputs, glass, etc.)
 └── features/
     ├── auth/            # domain / data / presentation
     ├── onboarding/
@@ -121,7 +121,7 @@ flutter analyze
 
 ---
 
-## Current Status — Stage 1 Complete
+## Current Status — Stage 2 Complete
 
 > **Development follows a 17-stage build roadmap. Only completed stages are described below.**
 
@@ -129,22 +129,19 @@ flutter analyze
 Repository initialized with `main` / `develop` / `stage-N-*` branching strategy.
 
 ### ✅ Stage 1 — Flutter Project, Clean Architecture Skeleton & Core Infra
+- Scaffolded all 17 feature folders with `domain/`, `data/`, `presentation/` layers
+- Firebase initialized (Analytics, Crashlytics, Remote Config defaults)
+- Dependency injection via Riverpod `ProviderScope` and override points
+- Sealed `Failure` hierarchy + `Either<Failure, T>` return pattern
+- Dio client with `connectivity_plus` pre-flight checks
+- `easy_localization` (EN, HI, MR) and `go_router` routing infrastructure
+- Swappable repository plugin seams (Weather, Mandi, Recommendations, Payment)
 
-Everything in Stage 1 is wired and verified (`flutter analyze` clean, 6/6 tests pass, web debug build succeeds):
-
-- **Full project scaffold** — all 17 feature directories with `domain/`, `data/`, `presentation/` layers
-- **Firebase initialized** — `firebase_core` init, `firebase_analytics` router observer, `firebase_crashlytics` fatal/non-fatal error handlers, `firebase_remote_config` with feature-flag defaults
-- **Firebase configured for:** Android ✅ · Web ✅ · Windows ✅ · iOS ⏳ · macOS ⏳
-- **Dependency injection** — Riverpod `ProviderScope` at root; `appProviderOverrides()` for test swapping
-- **Error handling** — sealed `Failure` hierarchy (`NetworkFailure`, `ServerFailure`, `AuthFailure`, `NotFoundFailure`, `UnknownFailure`); `Either<Failure, T>` as the universal repository return type; exception-to-failure mapper covering Dio and Firebase exceptions
-- **Network layer** — Dio client with `connectivity_plus` pre-flight guard; typed `.env` config reader
-- **Routing** — go_router with `FirebaseAnalyticsObserver`; route constants for all 17 features; auth/role redirect deferred to Stage 4
-- **Localization** — `easy_localization` with EN / HI / MR locales; translation assets scaffolded
-- **Plug-in seams** (interfaces + mock implementations, Riverpod-swappable):
-  - `WeatherRepository` / `MockWeatherRepository`
-  - `MandiPriceRepository` / `MockMandiPriceRepository`
-  - `RecommendationRepository` / `MockRecommendationRepository`
-  - `PaymentGateway` / `MockPaymentGateway`
+### ✅ Stage 2 — Modern Agrarian Design System
+- **Design Tokens:** Deep forest green palette (`#012D1D`/`#00160C`), warm bone background (`#FFF8F5`), tonal surfaces, warm amber accent (`#FE932C`), *Plus Jakarta Sans* typography scale, 4-point spacing grid, component border radii, brand-tinted soft shadows, and motion curves/durations
+- **Core Widgets:** `AppButton` (4 variants, loading morph, press animation), `AppTextField` (focus glow, floating labels, refined error states), `AppCard` (5 surface variants), `AppGlass` (restrained backdrop blur & borders), `AppChip` (semantic status dots & selection), `AppDialog` & sheets, `AppLoading` (warm shimmer skeletons & spinners), `AppEmptyState` & `AppErrorState` (tonal circular containers & CTAs), `AppIcon` & `AppBadge`
+- **Theme:** Comprehensive Material 3 `AppTheme.light` wired to `MaterialApp.router`
+- **Interactive Showcase:** `DesignSystemPreviewScreen` (`/design-system-preview`) displaying all tokens and interactive component states
 
 ---
 
@@ -154,8 +151,8 @@ Everything in Stage 1 is wired and verified (`flutter analyze` clean, 6/6 tests 
 |-------|---------|--------|
 | 0 | Git & GitHub setup | ✅ Complete |
 | 1 | Flutter project, Clean Architecture skeleton & core infra | ✅ Complete |
-| 2 | Design system | ⬜ Next |
-| 3 | Screen designs (Stitch) | ⬜ |
+| 2 | Design system | ✅ Complete |
+| 3 | Screen designs (Stitch) | ⬜ Next |
 | 4 | `features/auth` | ⬜ |
 | 5 | `features/products` + search history + recently viewed | ⬜ |
 | 6 | `features/cart_checkout` | ⬜ |

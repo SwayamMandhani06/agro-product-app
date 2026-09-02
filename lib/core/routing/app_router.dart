@@ -7,6 +7,7 @@ import '../../features/admin/presentation/admin_screen.dart';
 import '../../features/auth/presentation/auth_screen.dart';
 import '../../features/cart_checkout/presentation/cart_checkout_screen.dart';
 import '../../features/forum/presentation/forum_screen.dart';
+import '../../features/home/presentation/design_system_preview.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/mandi_prices/presentation/mandi_prices_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
@@ -102,6 +103,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.forum,
         builder: (context, state) => const ForumScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.designSystemPreview,
+        builder: (context, state) => const DesignSystemPreviewScreen(),
       ),
     ],
   );

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/design_system/app_theme.dart';
 import 'core/routing/app_router.dart';
 
 class AgroProductApp extends ConsumerWidget {
@@ -12,12 +13,13 @@ class AgroProductApp extends ConsumerWidget {
     final router = ref.watch(goRouterProvider);
 
     return MaterialApp.router(
-      title: 'Agro Product App',
+      title:                    'Agro Product App',
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      routerConfig: router,
+      theme:                    AppTheme.light,
+      localizationsDelegates:   context.localizationDelegates,
+      supportedLocales:         context.supportedLocales,
+      locale:                   context.locale,
+      routerConfig:             router,
     );
   }
 }
