@@ -3,7 +3,7 @@
 // Mirrors apps/mobile/lib/features/products/data/mock_product_repository.dart
 // ============================================================
 
-import type { Product, ProductCategory, DeliveryAddress, Order } from '@/types';
+import type { Product, ProductCategory, DeliveryAddress, Order, MandiPrice } from '@/types';
 
 export const MOCK_CATEGORIES: ProductCategory[] = [
   { id: 'cat_seeds',       name: 'Seeds',          icon: 'sprout',        itemCount: 148 },
@@ -313,7 +313,7 @@ export const MOCK_ADDRESSES: DeliveryAddress[] = [
   },
 ];
 
-export const MOCK_MANDI_PRICES = [
+export const MOCK_MANDI_PRICES: MandiPrice[] = [
   { crop: 'Soybean', price: '₹4,320', change: '+₹45', trend: 'up', market: 'Indore Mandi' },
   { crop: 'Wheat', price: '₹2,180', change: '-₹20', trend: 'down', market: 'Dewas Mandi' },
   { crop: 'Cotton', price: '₹6,450', change: '+₹120', trend: 'up', market: 'Akola Mandi' },

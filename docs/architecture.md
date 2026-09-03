@@ -144,8 +144,13 @@ CREATE TABLE public.mandi_prices (
 
 ---
 
-## 4. Migration & Integration Strategy
+## 4. Migration & Integration Strategy (Completed in Stage 4D)
 
-1. **Phase 1 (Current)**: High-fidelity mock implementations running locally on both Flutter and Next.js, locked to identical entity structures.
-2. **Phase 2 (Credential Activation)**: Provide `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` to `apps/web/.env.local`, and corresponding config to Flutter.
-3. **Phase 3 (Repository Implementation)**: Concrete `SupabaseProductRepository` and `SupabaseOrderRepository` classes deployed via dependency injection providers.
+1. **Phase 1 (Completed)**: High-fidelity mock implementations running locally on both Flutter and Next.js, locked to identical entity structures.
+2. **Phase 2 (Completed)**: Canonical database schema migration (`supabase/migrations/20260903000000_stage_4d_canonical_schema.sql`), seed script (`supabase/seed.sql`), and environment templates for both mobile (`.env.example`) and web (`.env.example`).
+3. **Phase 3 (Completed)**: Concrete repository implementations:
+   - **Web**: `SupabaseProductRepository`, `SupabaseOrderRepository`, `SupabaseMandiRepository` in `apps/web/features/*/data/`.
+   - **Mobile**: `SupabaseProductRepository`, `SupabaseOrderRepository` in `apps/mobile/lib/features/*/data/` via `BackendConfig` and `Dio` PostgREST.
+   - **Offline Fallback**: Both platforms automatically and gracefully fall back to mock data if credentials are not configured or network requests fail.
+   - **SaaS Marketing Portal**: Live interactive marketing landing page deployed on Next.js root route (`/`).
+

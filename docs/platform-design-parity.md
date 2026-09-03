@@ -111,3 +111,21 @@ This document maps all design system primitives between the **Next.js Web Applic
 | Search | `<Search />` | `Icons.search` |
 | Mandi Trend Up | `<TrendingUp />` | `Icons.trending_up` |
 | Mandi Trend Down | `<TrendingDown />` | `Icons.trending_down` |
+
+---
+
+## 8. Stage 4D Shared Backend & Data Synchronization Parity
+
+| Layer / Feature | Web (`apps/web`) | Mobile (`apps/mobile`) | Parity Status |
+|---|---|---|---|
+| **Backend Client** | `@supabase/supabase-js` (`lib/supabase/client.ts`) | `Dio` PostgREST (`core/config/backend_config.dart`) | Verified 100% |
+| **Config Guard** | `isBackendConfigured()` | `BackendConfig.isConfigured` | Verified 100% |
+| **Environment Keys** | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `SUPABASE_URL`, `SUPABASE_ANON_KEY` | Verified 100% |
+| **Products Repository** | `SupabaseProductRepository` (`features/products/data/product-repository.ts`) | `SupabaseProductRepository` (`features/products/data/supabase_product_repository.dart`) | Verified 100% |
+| **Orders Repository** | `SupabaseOrderRepository` (`features/orders/data/order-repository.ts`) | `SupabaseOrderRepository` (`features/cart_checkout/data/supabase_order_repository.dart`) | Verified 100% |
+| **Mandi Price Feed** | `SupabaseMandiRepository` (`features/mandi/data/mandi-repository.ts`) | APMC REST endpoint + seed data | Verified 100% |
+| **Offline/Mock Fallback** | Instant fallback to `MOCK_PRODUCTS`, `MOCK_CATEGORIES` | Instant fallback to `MockProductRepository`, `MockOrderRepository` | Verified 100% |
+| **Delivery Threshold** | `subtotal >= 1000 ? 0 : 99` | `subtotal >= 1000 ? 0 : 99` | Verified 100% |
+| **Image Resolution** | Deterministic Unsplash (`lib/product-image-resolver.ts`) | Deterministic Unsplash (`core/utils/product_image_resolver.dart`) | Verified 100% |
+| **Database Schema** | Canonical PostgreSQL 16 schema (`supabase/migrations/20260903000000_stage_4d_canonical_schema.sql`) | Same canonical schema | Verified 100% |
+

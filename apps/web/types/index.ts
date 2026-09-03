@@ -188,3 +188,16 @@ export interface AuthSession {
   name?: string;
   email?: string;
 }
+
+// ============================================================
+// MANDI PRICES
+// ============================================================
+
+export interface MandiPrice {
+  crop: string;
+  price: string;
+  change: string;
+  trend: 'up' | 'down' | 'flat';
+  market: string;
+}
+

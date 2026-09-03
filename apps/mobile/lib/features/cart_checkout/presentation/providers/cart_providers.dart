@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/config/backend_config.dart';
 import '../../../products/domain/product.dart';
 import '../../data/mock_cart_repository.dart';
 import '../../data/mock_order_repository.dart';
+import '../../data/supabase_order_repository.dart';
 import '../../domain/cart_item.dart';
 import '../../domain/cart_repository.dart';
 import '../../domain/delivery_address.dart';
@@ -14,7 +16,11 @@ final cartRepositoryProvider = Provider<CartRepository>((ref) {
 });
 
 /// Singleton provider for the Order Repository.
+/// Uses Supabase when credentials are configured, mock otherwise.
 final orderRepositoryProvider = Provider<OrderRepository>((ref) {
+  if (BackendConfig.isConfigured) {
+    return SupabaseOrderRepository();
+  }
   return MockOrderRepository();
 });
 
