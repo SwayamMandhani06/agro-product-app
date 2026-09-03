@@ -1,10 +1,16 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/addresses/presentation/addresses_screen.dart';
 import '../../features/admin/presentation/admin_screen.dart';
-import '../../features/auth/presentation/auth_screen.dart';
+import '../../features/auth/presentation/providers/auth_providers.dart';
+import '../../features/auth/presentation/sign_in_screen.dart';
+import '../../features/auth/presentation/sign_up_screen.dart';
+import '../../features/auth/presentation/splash_screen.dart';
+import '../../features/auth/presentation/welcome_screen.dart';
 import '../../features/cart_checkout/domain/delivery_address.dart';
 import '../../features/cart_checkout/domain/order.dart';
 import '../../features/cart_checkout/presentation/cart_screen.dart';
@@ -32,17 +38,62 @@ import '../../features/weather/presentation/weather_screen.dart';
 import '../../features/wishlist/presentation/wishlist_screen.dart';
 import 'routes.dart';
 
+class _AuthRouterRefreshNotifier extends ChangeNotifier {
+  _AuthRouterRefreshNotifier(Ref ref) {
+    ref.listen<AuthState>(authStateProvider, (_, __) => notifyListeners());
+  }
+}
+
+final _authRouterRefreshProvider = Provider<_AuthRouterRefreshNotifier>((ref) {
+  return _AuthRouterRefreshNotifier(ref);
+});
+
 final goRouterProvider = Provider<GoRouter>((ref) {
-  final analytics = FirebaseAnalytics.instance;
+  final refreshNotifier = ref.watch(_authRouterRefreshProvider);
+
+  final observers = <NavigatorObserver>[];
+  try {
+    if (Firebase.apps.isNotEmpty) {
+      observers.add(FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance));
+    }
+  } catch (_) {}
 
   return GoRouter(
-    initialLocation: AppRoutes.home,
-    observers: [
-      FirebaseAnalyticsObserver(analytics: analytics),
-    ],
+    initialLocation: AppRoutes.splash,
+    refreshListenable: refreshNotifier,
+    observers: observers,
     redirect: (context, state) {
-      // TODO(Stage 4): Check auth state and user role, redirect unauthenticated
-      // users to /auth and role-restricted routes to the correct home.
+      final authState = ref.read(authStateProvider);
+      final location = state.matchedLocation;
+
+      // 1. Session is still initializing on launch
+      if (authState is AuthInitializing) {
+        return location == AppRoutes.splash ? null : AppRoutes.splash;
+      }
+
+      final isAuthenticated = authState is Authenticated;
+      final isAuthRoute = location == AppRoutes.splash ||
+          location == AppRoutes.welcome ||
+          location == AppRoutes.login ||
+          location == AppRoutes.register ||
+          location == AppRoutes.auth;
+
+      // 2. Unauthenticated user trying to access protected route
+      if (!isAuthenticated) {
+        if (!isAuthRoute && location != AppRoutes.designSystemPreview) {
+          return AppRoutes.welcome;
+        }
+        if (location == AppRoutes.splash) {
+          return AppRoutes.welcome;
+        }
+        return null;
+      }
+
+      // 3. Authenticated user visiting auth screens
+      if (isAuthenticated && isAuthRoute) {
+        return AppRoutes.home;
+      }
+
       return null;
     },
     routes: [
@@ -110,8 +161,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // Full-screen Top-level / Push Routes
       // -----------------------------------------------------------------------
       GoRoute(
+        path: AppRoutes.splash,
+        builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.welcome,
+        builder: (context, state) => const WelcomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.login,
+        builder: (context, state) => const SignInScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.register,
+        builder: (context, state) => const SignUpScreen(),
+      ),
+      GoRoute(
         path: AppRoutes.auth,
-        builder: (context, state) => const AuthScreen(),
+        builder: (context, state) => const WelcomeScreen(),
       ),
       GoRoute(
         path: AppRoutes.onboarding,

@@ -1,5 +1,12 @@
-import '../../../../core/widgets/feature_placeholder_screen.dart';
+import 'package:flutter/material.dart';
+import 'welcome_screen.dart';
 
-class AuthScreen extends FeaturePlaceholderScreen {
-  const AuthScreen({super.key}) : super(title: 'Auth');
+/// Legacy / convenience entry pointing to [WelcomeScreen].
+class AuthScreen extends StatelessWidget {
+  const AuthScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const WelcomeScreen();
+  }
 }
