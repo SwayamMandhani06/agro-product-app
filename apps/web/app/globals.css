@@ -1,0 +1,540 @@
+@import "tailwindcss";
+
+/* ============================================================
+   AGRITRADE DESIGN SYSTEM — CSS CUSTOM PROPERTIES
+   Source of truth: apps/mobile/lib/core/design_system/
+   ============================================================ */
+
+:root {
+  /* Brand — Forest Green */
+  --color-brand-50: #EAF6EF;
+  --color-brand-100: #CEEAD9;
+  --color-brand-200: #9FD4B0;
+  --color-brand-300: #5FBA86;
+  --color-brand-400: #2E9E5E;
+  --color-brand-500: #027A38;
+  --color-brand-600: #025A2A;
+  --color-brand-700: #01421E;
+  --color-brand-800: #012D1D;
+  --color-brand-900: #00160C;
+
+  /* Stitch Exact Tokens */
+  --color-forest: #0B3D2E;
+  --color-amber: #D97706;
+  --color-canvas: #F9F7F2;
+  --color-slate: #1E293B;
+  --color-surface-tint: #E4E2DD;
+  --color-forest-fixed: #002116;
+  --color-amber-fixed: #FFDCC3;
+
+  /* Accent — Warm Amber */
+  --color-amber-600: #914D00;
+  --color-amber-500: #B86200;
+  --color-amber-400: #FE932C;
+  --color-amber-300: #FFB46A;
+  --color-amber-100: #FFDEB8;
+  --color-amber-50: #FFF3E0;
+
+  /* Neutral — Warm Bone */
+  --color-neutral-900: #1A1510;
+  --color-neutral-800: #2D2620;
+  --color-neutral-700: #463D35;
+  --color-neutral-600: #60554C;
+  --color-neutral-500: #7A6E63;
+  --color-neutral-400: #9E9289;
+  --color-neutral-300: #C2B9B2;
+  --color-neutral-200: #DDD6D0;
+  --color-neutral-100: #EEE7E3;
+  --color-neutral-50: #F4ECE8;
+
+  /* Surface */
+  --color-bg: #FFF8F5;
+  --color-surface: #FFFFFF;
+  --color-surface-tinted: #FAF2EE;
+  --color-surface-muted: #F4ECE8;
+  --color-surface-subtle: #EEE7E3;
+  --color-surface-dark: #012D1D;
+
+  /* Semantic */
+  --color-success: #1A7A4A;
+  --color-success-light: #D4EED0;
+  --color-warning: #C17900;
+  --color-warning-light: #FFF0C2;
+  --color-error: #B72B2B;
+  --color-error-light: #FFE8E8;
+  --color-info: #1B6BAA;
+  --color-info-light: #DCEEFD;
+
+  /* Text */
+  --color-text-primary: #1A1510;
+  --color-text-secondary: #60554C;
+  --color-text-tertiary: #9E9289;
+  --color-text-disabled: #C2B9B2;
+  --color-text-inverse: #FFFFFF;
+
+  /* Border */
+  --color-border: rgba(1, 45, 29, 0.10);
+  --color-border-subtle: rgba(1, 45, 29, 0.05);
+  --color-border-focus: #01421E;
+  --color-divider: #EEE7E3;
+
+  /* Shimmer */
+  --color-shimmer-base: #F0EAE6;
+  --color-shimmer-highlight: #FFF8F5;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 3px rgba(1, 45, 29, 0.08), 0 1px 2px rgba(1, 45, 29, 0.04);
+  --shadow-md: 0 4px 12px rgba(1, 45, 29, 0.10), 0 2px 4px rgba(1, 45, 29, 0.06);
+  --shadow-lg: 0 8px 24px rgba(1, 45, 29, 0.12), 0 4px 8px rgba(1, 45, 29, 0.08);
+  --shadow-xl: 0 16px 40px rgba(1, 45, 29, 0.14), 0 8px 16px rgba(1, 45, 29, 0.08);
+
+  /* Layout */
+  --nav-height: 72px;
+  --bottom-bar-height: 64px;
+  --container-max: 1280px;
+  --content-max: 1024px;
+}
+
+/* ============================================================
+   GLOBAL RESET & BASE
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+
+.text-display { font-size: 36px; font-weight: 700; letter-spacing: -0.25px; line-height: 1.22; }
+.text-h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.25; }
+.text-h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.25px; line-height: 1.29; }
+.text-h3 { font-size: 24px; font-weight: 600; letter-spacing: 0; line-height: 1.33; }
+.text-title1 { font-size: 20px; font-weight: 700; letter-spacing: 0; line-height: 1.4; }
+.text-title2 { font-size: 16px; font-weight: 600; letter-spacing: 0.1px; line-height: 1.5; }
+.text-title3 { font-size: 14px; font-weight: 600; letter-spacing: 0.1px; line-height: 1.43; }
+.text-body1 { font-size: 16px; font-weight: 400; letter-spacing: 0.15px; line-height: 1.5; }
+.text-body2 { font-size: 14px; font-weight: 400; letter-spacing: 0.25px; line-height: 1.43; }
+.text-body3 { font-size: 12px; font-weight: 400; letter-spacing: 0.4px; line-height: 1.33; }
+.text-label1 { font-size: 14px; font-weight: 600; letter-spacing: 0.1px; line-height: 1.43; }
+.text-label2 { font-size: 12px; font-weight: 500; letter-spacing: 0.5px; line-height: 1.33; }
+.text-label3 { font-size: 11px; font-weight: 500; letter-spacing: 0.5px; line-height: 1.45; }
+.text-caption { font-size: 11px; font-weight: 400; letter-spacing: 0.4px; line-height: 1.45; }
+.text-overline { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; line-height: 1.6; text-transform: uppercase; }
+.text-price { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+
+/* ============================================================
+   LAYOUT UTILITIES
+   ============================================================ */
+
+.container-app {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .container-app { padding: 0 var(--space-xl); }
+}
+
+@media (min-width: 1024px) {
+  .container-app { padding: 0 var(--space-2xl); }
+}
+
+/* ============================================================
+   SHIMMER ANIMATION
+   ============================================================ */
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-shimmer-base) 25%,
+    var(--color-shimmer-highlight) 50%,
+    var(--color-shimmer-base) 75%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ============================================================
+   BADGE VARIANTS
+   ============================================================ */
+
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: var(--radius-full); font-size: 11px; font-weight: 600; letter-spacing: 0.3px; white-space: nowrap; }
+.badge-success { background: var(--color-success-light); color: var(--color-success); }
+.badge-warning { background: var(--color-warning-light); color: var(--color-warning); }
+.badge-error { background: var(--color-error-light); color: var(--color-error); }
+.badge-info { background: var(--color-info-light); color: var(--color-info); }
+.badge-forest { background: var(--color-brand-50); color: var(--color-forest); }
+.badge-amber { background: var(--color-amber-50); color: var(--color-amber-600); }
+.badge-slate { background: var(--color-surface-tint); color: var(--color-slate); }
+
+/* ============================================================
+   CARD BASE
+   ============================================================ */
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.card-hover {
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================================
+   BUTTON SYSTEM
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  transition: all 150ms ease;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-forest);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-md);
+  padding: 12px 24px;
+  font-size: 16px;
+}
+.btn-primary:hover:not(:disabled) { background: var(--color-brand-700); }
+.btn-primary:active:not(:disabled) { background: var(--color-brand-800); transform: scale(0.98); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-forest);
+  border: 1.5px solid var(--color-forest);
+  border-radius: var(--radius-md);
+  padding: 12px 24px;
+  font-size: 16px;
+}
+.btn-secondary:hover:not(:disabled) { background: var(--color-brand-50); }
+
+.btn-amber {
+  background: var(--color-amber);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-md);
+  padding: 12px 24px;
+  font-size: 16px;
+}
+.btn-amber:hover:not(:disabled) { background: var(--color-amber-600); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 14px;
+}
+.btn-ghost:hover:not(:disabled) { background: var(--color-surface-tint); }
+
+.btn-sm { padding: 8px 16px; font-size: 14px; border-radius: var(--radius-sm); }
+.btn-lg { padding: 16px 32px; font-size: 18px; border-radius: var(--radius-lg); }
+.btn-full { width: 100%; }
+
+/* ============================================================
+   INPUT SYSTEM
+   ============================================================ */
+
+.input-base {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 16px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  outline: none;
+}
+
+.input-base:focus {
+  border-color: var(--color-forest);
+  box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.12);
+}
+
+.input-base::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.input-error {
+  border-color: var(--color-error);
+}
+.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(183, 43, 43, 0.12);
+}
+
+/* ============================================================
+   QUANTITY STEPPER
+   ============================================================ */
+
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.qty-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-forest);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 150ms ease;
+  min-width: 40px;
+}
+.qty-btn:hover { background: var(--color-brand-50); }
+.qty-btn:disabled { color: var(--color-text-disabled); cursor: not-allowed; }
+
+.qty-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  padding: 0 8px;
+  min-width: 32px;
+  text-align: center;
+}
+
+/* ============================================================
+   DISCOUNT BADGE
+   ============================================================ */
+
+.discount-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  background: var(--color-amber-50);
+  color: var(--color-amber-600);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ============================================================
+   STAR RATING
+   ============================================================ */
+
+.rating-stars { color: var(--color-amber); display: inline-flex; align-items: center; gap: 2px; }
+
+/* ============================================================
+   ORDER STATUS TIMELINE
+   ============================================================ */
+
+.timeline-step { display: flex; gap: 16px; }
+.timeline-step:not(:last-child) .timeline-line {
+  width: 2px; background: var(--color-divider); flex-shrink: 0; margin-left: 11px; min-height: 32px;
+}
+.timeline-dot {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  display: flex; align-items: center; justify-content: center;
+}
+.timeline-dot.done { background: var(--color-forest); border-color: var(--color-forest); }
+.timeline-dot.active { background: var(--color-amber); border-color: var(--color-amber); }
+
+/* ============================================================
+   SCROLLBAR STYLING
+   ============================================================ */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-neutral-200); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-neutral-300); }
+
+/* ============================================================
+   FOCUS VISIBLE
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--color-forest);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   BOTTOM NAV (Mobile only)
+   ============================================================ */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-bar-height);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: stretch;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  transition: color 150ms ease;
+  position: relative;
+}
+
+.bottom-nav-item.active {
+  color: var(--color-forest);
+}
+
+.bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 3px;
+  background: var(--color-forest);
+  border-radius: 0 0 3px 3px;
+}
+
+/* ============================================================
+   TOP APP BAR
+   ============================================================ */
+
+.top-bar {
+  height: var(--nav-height);
+  background: var(--color-forest);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-md);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* ============================================================
+   SECTION HEADER
+   ============================================================ */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) var(--space-xl);
+  text-align: center;
+  gap: var(--space-md);
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-brand-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-forest);
+  font-size: 36px;
+}
+
+/* ============================================================
+   PRICE DISPLAY
+   ============================================================ */
+
+.price-primary { font-size: 20px; font-weight: 700; color: var(--color-forest); }
+.price-original { font-size: 14px; font-weight: 400; color: var(--color-text-tertiary); text-decoration: line-through; }
+.price-savings { font-size: 12px; font-weight: 600; color: var(--color-success); }
+
+/* ============================================================
+   TRANSITIONS
+   ============================================================ */
+
+.transition-all-150 { transition: all 150ms ease; }
+.transition-colors-150 { transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease; }
