@@ -17,6 +17,8 @@ import '../../features/home/presentation/main_shell_screen.dart';
 import '../../features/mandi_prices/presentation/mandi_prices_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
+import '../../features/orders/presentation/order_details_screen.dart';
+import '../../features/orders/presentation/order_tracking_screen.dart';
 import '../../features/orders/presentation/orders_screen.dart';
 import '../../features/products/presentation/categories_screen.dart';
 import '../../features/products/presentation/product_details_screen.dart';
@@ -172,6 +174,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ),
           );
         },
+      ),
+      GoRoute(
+        path: AppRoutes.orderDetails,
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return OrderDetailsScreen(orderId: id);
+        },
+        routes: [
+          GoRoute(
+            path: 'track',
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? '';
+              return OrderTrackingScreen(orderId: id);
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutes.wishlist,

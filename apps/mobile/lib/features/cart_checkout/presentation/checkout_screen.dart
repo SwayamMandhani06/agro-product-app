@@ -12,6 +12,7 @@ import '../../../../core/routing/routes.dart';
 import '../../../../core/widgets/app_loading.dart';
 import 'order_confirmed_screen.dart';
 import 'providers/cart_providers.dart';
+import '../../orders/presentation/providers/order_providers.dart';
 import 'widgets/address_selection_sheet.dart';
 import 'widgets/payment_selection_sheet.dart';
 
@@ -786,6 +787,7 @@ class CheckoutScreen extends ConsumerWidget {
         },
         (order) {
           ref.read(cartItemsProvider.notifier).clearCart();
+          ref.read(ordersProvider.notifier).loadOrders();
           ref.read(checkoutLoadingProvider.notifier).state = false;
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
