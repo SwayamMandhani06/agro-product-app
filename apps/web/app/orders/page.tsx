@@ -6,6 +6,7 @@ import AppShell from '@/components/layout/AppShell';
 import { useOrdersStore } from '@/features/orders/store';
 import type { Order, OrderStatus } from '@/types';
 import { ORDER_STATUS_LABELS } from '@/types';
+import { Package } from 'lucide-react';
 
 function formatPrice(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
@@ -28,18 +29,11 @@ const STATUS_COLORS: Record<OrderStatus, { bg: string; color: string }> = {
 function OrderCard({ order }: { order: Order }) {
   const statusStyle = STATUS_COLORS[order.status] ?? STATUS_COLORS.placed;
   const firstItem = order.items[0];
-  const CATEGORY_EMOJI: Record<string, string> = {
-    Seeds: '🌱', Fertilizers: '🧪', 'Crop Protection': '🛡️', Irrigation: '💧', 'Farm Tools': '🔧', 'Animal Care': '🐄',
-  };
-  const emoji = CATEGORY_EMOJI[firstItem?.product.category ?? ''] ?? '📦';
 
   return (
     <Link href={`/orders/${order.id}`} style={{ textDecoration: 'none' }}>
-      <div
-        className="card card-hover"
-        style={{ padding: '18px' }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+      <div className="card card-hover" style={{ padding: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
           <div>
             <p style={{ margin: '0 0 2px', fontSize: 13, fontWeight: 700, color: 'var(--color-forest)', letterSpacing: '0.3px' }}>
               {order.id}
@@ -50,10 +44,11 @@ function OrderCard({ order }: { order: Order }) {
           </div>
           <span
             style={{
-              padding: '4px 12px',
-              borderRadius: 99,
-              fontSize: 12,
+              padding: '2px 8px',
+              borderRadius: 4,
+              fontSize: 11,
               fontWeight: 700,
+              letterSpacing: '0.2px',
               background: statusStyle.bg,
               color: statusStyle.color,
             }}
@@ -62,28 +57,32 @@ function OrderCard({ order }: { order: Order }) {
           </span>
         </div>
 
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center', borderTop: '1px solid var(--color-divider)', paddingTop: 14 }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', borderTop: '1px solid var(--color-divider)', paddingTop: 12 }}>
           <div
             style={{
-              width: 52,
-              height: 52,
-              borderRadius: 10,
-              background: 'var(--color-brand-50)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 26,
+              width: 48,
+              height: 48,
+              borderRadius: 8,
+              overflow: 'hidden',
               flexShrink: 0,
+              border: '1px solid var(--color-divider)',
+              background: 'var(--color-neutral-50)',
             }}
           >
-            {emoji}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`https://picsum.photos/seed/${firstItem?.product.id}/120/120`}
+              alt=""
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              loading="lazy"
+            />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p
               style={{
                 margin: '0 0 2px',
                 fontSize: 14,
-                fontWeight: 700,
+                fontWeight: 600,
                 color: 'var(--color-text-primary)',
                 display: '-webkit-box',
                 WebkitLineClamp: 1,
@@ -98,15 +97,15 @@ function OrderCard({ order }: { order: Order }) {
                 </span>
               )}
             </p>
-            <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)' }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-secondary)' }}>
               via {order.paymentMethod}
             </p>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <p style={{ margin: '0 0 2px', fontSize: 17, fontWeight: 800, color: 'var(--color-forest)' }}>
+            <p style={{ margin: '0 0 2px', fontSize: 16, fontWeight: 700, color: 'var(--color-text-primary)' }}>
               {formatPrice(order.totalAmount)}
             </p>
-            <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-tertiary)' }}>Total</p>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>Total</p>
           </div>
         </div>
       </div>
@@ -136,23 +135,23 @@ export default function OrdersPage() {
   return (
     <AppShell>
       <div className="container-app" style={{ paddingTop: 24, paddingBottom: 40 }}>
-        <h1 style={{ margin: '0 0 20px', fontSize: 24, fontWeight: 700 }}>My Orders</h1>
+        <h1 style={{ margin: '0 0 16px', fontSize: 22, fontWeight: 700 }}>My Orders</h1>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 20, borderBottom: '2px solid var(--color-divider)' }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 20, borderBottom: '1px solid var(--color-divider)', paddingBottom: 2 }}>
           {TABS.map((t) => (
             <button
               key={t.value}
               id={`orders-tab-${t.value}`}
               onClick={() => setTab(t.value)}
               style={{
-                padding: '10px 16px',
+                padding: '8px 14px',
                 background: 'none',
                 border: 'none',
                 borderBottom: tab === t.value ? '2px solid var(--color-forest)' : '2px solid transparent',
-                marginBottom: -2,
+                marginBottom: -3,
                 cursor: 'pointer',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: tab === t.value ? 700 : 500,
                 color: tab === t.value ? 'var(--color-forest)' : 'var(--color-text-secondary)',
                 whiteSpace: 'nowrap',
@@ -166,19 +165,19 @@ export default function OrdersPage() {
 
         {filtered.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">📦</div>
-            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>No orders yet</h2>
-            <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 15 }}>
+            <div className="empty-icon"><Package size={28} strokeWidth={1.5} /></div>
+            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>No orders yet</h2>
+            <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 14 }}>
               {tab === 'all' ? "You haven't placed any orders yet." : `No ${tab} orders found.`}
             </p>
             {tab === 'all' && (
-              <Link href="/products" className="btn btn-primary" id="orders-shop-now-btn" style={{ borderRadius: 12 }}>
+              <Link href="/products" className="btn btn-primary" id="orders-shop-now-btn">
                 Shop Now
               </Link>
             )}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {filtered.map((order) => (
               <OrderCard key={order.id} order={order} />
             ))}

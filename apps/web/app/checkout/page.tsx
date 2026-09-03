@@ -7,17 +7,28 @@ import AppShell from '@/components/layout/AppShell';
 import { useCartStore } from '@/features/cart/store';
 import { useOrdersStore } from '@/features/orders/store';
 import { MOCK_ADDRESSES } from '@/lib/mock-data';
-
+import {
+  ArrowLeft,
+  ShoppingCart,
+  MapPin,
+  Phone,
+  CreditCard,
+  Smartphone,
+  Landmark,
+  Banknote,
+  Package,
+  Check,
+} from 'lucide-react';
 
 function formatPrice(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
 }
 
 const PAYMENT_METHODS = [
-  { id: 'upi', label: 'UPI / Google Pay / PhonePe', icon: '📱' },
-  { id: 'card', label: 'Credit / Debit Card', icon: '💳' },
-  { id: 'netbanking', label: 'Net Banking', icon: '🏦' },
-  { id: 'cod', label: 'Cash on Delivery', icon: '💵' },
+  { id: 'upi', label: 'UPI / Google Pay / PhonePe', Icon: Smartphone },
+  { id: 'card', label: 'Credit / Debit Card', Icon: CreditCard },
+  { id: 'netbanking', label: 'Net Banking', Icon: Landmark },
+  { id: 'cod', label: 'Cash on Delivery', Icon: Banknote },
 ];
 
 export default function CheckoutPage() {
@@ -38,10 +49,12 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <AppShell>
-        <div className="empty-state" style={{ paddingTop: 80 }}>
-          <div className="empty-icon">🛒</div>
-          <p style={{ fontWeight: 600, fontSize: 16, margin: 0 }}>Cart is empty</p>
-          <Link href="/products" className="btn btn-primary">Browse Products</Link>
+        <div className="container-app" style={{ paddingTop: 60, paddingBottom: 40 }}>
+          <div className="empty-state">
+            <div className="empty-icon"><ShoppingCart size={28} strokeWidth={1.5} /></div>
+            <p style={{ fontWeight: 600, fontSize: 16, margin: 0 }}>Cart is empty</p>
+            <Link href="/products" className="btn btn-primary">Browse Products</Link>
+          </div>
         </div>
       </AppShell>
     );
@@ -57,8 +70,8 @@ export default function CheckoutPage() {
 
   const SECTION_STYLE = {
     background: 'var(--color-surface)',
-    borderRadius: 16,
-    border: '1px solid var(--color-border)',
+    borderRadius: 12,
+    border: '1px solid var(--color-divider)',
     padding: '20px',
     marginBottom: 16,
   };
@@ -68,7 +81,17 @@ export default function CheckoutPage() {
       <div className="container-app" style={{ paddingTop: 24, paddingBottom: 40 }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-          <Link href="/cart" style={{ color: 'var(--color-text-secondary)', textDecoration: 'none', fontSize: 20 }}>←</Link>
+          <Link
+            href="/cart"
+            style={{
+              color: 'var(--color-text-secondary)',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <ArrowLeft size={18} strokeWidth={2} />
+          </Link>
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>Checkout</h1>
         </div>
 
@@ -79,19 +102,19 @@ export default function CheckoutPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <div
                   style={{
-                    width: 28,
-                    height: 28,
+                    width: 24,
+                    height: 24,
                     borderRadius: '50%',
                     background: i <= 1 ? 'var(--color-forest)' : 'var(--color-neutral-200)',
                     color: i <= 1 ? '#fff' : 'var(--color-text-tertiary)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: 700,
                   }}
                 >
-                  {i < 1 ? '✓' : i + 1}
+                  {i < 1 ? <Check size={13} strokeWidth={2.5} /> : i + 1}
                 </div>
                 <span style={{ fontSize: 13, fontWeight: i === 1 ? 700 : 500, color: i <= 1 ? 'var(--color-forest)' : 'var(--color-text-tertiary)' }}>
                   {step}
@@ -108,7 +131,10 @@ export default function CheckoutPage() {
           <div>
             {/* Delivery address */}
             <div style={SECTION_STYLE}>
-              <h2 style={{ margin: '0 0 16px', fontSize: 17, fontWeight: 700 }}>📍 Delivery Address</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                <MapPin size={18} strokeWidth={2} color="var(--color-forest)" />
+                <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Delivery Address</h2>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {MOCK_ADDRESSES.map((addr) => (
                   <label
@@ -118,8 +144,8 @@ export default function CheckoutPage() {
                       display: 'flex',
                       gap: 14,
                       padding: '14px 16px',
-                      borderRadius: 12,
-                      border: `2px solid ${selectedAddressId === addr.id ? 'var(--color-forest)' : 'var(--color-border)'}`,
+                      borderRadius: 10,
+                      border: `1.5px solid ${selectedAddressId === addr.id ? 'var(--color-forest)' : 'var(--color-divider)'}`,
                       background: selectedAddressId === addr.id ? 'var(--color-brand-50)' : 'transparent',
                       cursor: 'pointer',
                       transition: 'all 150ms ease',
@@ -135,15 +161,15 @@ export default function CheckoutPage() {
                     />
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontWeight: 700, fontSize: 15 }}>{addr.recipientName}</span>
+                        <span style={{ fontWeight: 700, fontSize: 14 }}>{addr.recipientName}</span>
                         <span className="badge badge-slate">{addr.tag}</span>
                         {addr.isDefault && <span className="badge badge-forest">Default</span>}
                       </div>
-                      <p style={{ margin: '0 0 2px', fontSize: 14, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
+                      <p style={{ margin: '0 0 4px', fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.45 }}>
                         {addr.addressLine}, {addr.city}, {addr.state} {addr.pincode}
                       </p>
-                      <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-tertiary)' }}>
-                        📞 {addr.phone}
+                      <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-tertiary)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <Phone size={12} strokeWidth={2} /> {addr.phone}
                       </p>
                     </div>
                   </label>
@@ -153,20 +179,23 @@ export default function CheckoutPage() {
 
             {/* Payment method */}
             <div style={SECTION_STYLE}>
-              <h2 style={{ margin: '0 0 16px', fontSize: 17, fontWeight: 700 }}>💳 Payment Method</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                <CreditCard size={18} strokeWidth={2} color="var(--color-forest)" />
+                <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Payment Method</h2>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {PAYMENT_METHODS.map((pm) => (
+                {PAYMENT_METHODS.map(({ id, label, Icon }) => (
                   <label
-                    key={pm.id}
-                    id={`checkout-payment-${pm.id}`}
+                    key={id}
+                    id={`checkout-payment-${id}`}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 14,
-                      padding: '13px 16px',
-                      borderRadius: 12,
-                      border: `2px solid ${selectedPayment === pm.id ? 'var(--color-forest)' : 'var(--color-border)'}`,
-                      background: selectedPayment === pm.id ? 'var(--color-brand-50)' : 'transparent',
+                      gap: 12,
+                      padding: '12px 14px',
+                      borderRadius: 10,
+                      border: `1.5px solid ${selectedPayment === id ? 'var(--color-forest)' : 'var(--color-divider)'}`,
+                      background: selectedPayment === id ? 'var(--color-brand-50)' : 'transparent',
                       cursor: 'pointer',
                       transition: 'all 150ms ease',
                     }}
@@ -174,13 +203,13 @@ export default function CheckoutPage() {
                     <input
                       type="radio"
                       name="payment"
-                      value={pm.id}
-                      checked={selectedPayment === pm.id}
-                      onChange={() => setSelectedPayment(pm.id)}
+                      value={id}
+                      checked={selectedPayment === id}
+                      onChange={() => setSelectedPayment(id)}
                       style={{ accentColor: 'var(--color-forest)' }}
                     />
-                    <span style={{ fontSize: 20 }}>{pm.icon}</span>
-                    <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text-primary)' }}>{pm.label}</span>
+                    <Icon size={18} strokeWidth={1.8} color="var(--color-text-secondary)" />
+                    <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text-primary)' }}>{label}</span>
                   </label>
                 ))}
               </div>
@@ -188,7 +217,10 @@ export default function CheckoutPage() {
 
             {/* Order items summary */}
             <div style={SECTION_STYLE}>
-              <h2 style={{ margin: '0 0 14px', fontSize: 17, fontWeight: 700 }}>📦 Order Items ({items.length})</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                <Package size={18} strokeWidth={2} color="var(--color-forest)" />
+                <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Order Items ({items.length})</h2>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {items.map((item) => (
                   <div key={item.product.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 14 }}>
@@ -208,7 +240,7 @@ export default function CheckoutPage() {
           {/* Summary panel */}
           <div>
             <div className="card" style={{ padding: 20, position: 'sticky', top: 100 }}>
-              <h3 style={{ margin: '0 0 16px', fontSize: 17, fontWeight: 700 }}>Bill Summary</h3>
+              <h3 style={{ margin: '0 0 16px', fontSize: 16, fontWeight: 700 }}>Bill Summary</h3>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
@@ -232,9 +264,9 @@ export default function CheckoutPage() {
                   display: 'flex',
                   justifyContent: 'space-between',
                   padding: '14px 0',
-                  borderTop: '2px solid var(--color-divider)',
+                  borderTop: '1px solid var(--color-divider)',
                   marginBottom: 20,
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: 800,
                 }}
               >
@@ -246,7 +278,7 @@ export default function CheckoutPage() {
               <div
                 style={{
                   background: 'var(--color-canvas)',
-                  borderRadius: 10,
+                  borderRadius: 8,
                   padding: '12px 14px',
                   marginBottom: 16,
                   fontSize: 13,
@@ -262,7 +294,7 @@ export default function CheckoutPage() {
                 onClick={handlePlaceOrder}
                 disabled={placing}
                 className="btn btn-primary btn-full"
-                style={{ borderRadius: 12, padding: '14px 24px', fontSize: 16 }}
+                style={{ padding: '12px 20px', fontSize: 15 }}
               >
                 {placing ? 'Placing Order…' : `Place Order · ${formatPrice(total)}`}
               </button>

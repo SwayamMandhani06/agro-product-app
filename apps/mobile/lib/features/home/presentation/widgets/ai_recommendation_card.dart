@@ -67,8 +67,8 @@ class AiRecommendationCard extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('✨', style: TextStyle(fontSize: 11)),
-                      SizedBox(width: 4),
+                      Icon(Icons.auto_awesome, size: 12, color: Colors.white),
+                      SizedBox(width: 5),
                       Text(
                         'AGRITRADE AI',
                         style: TextStyle(

@@ -7,8 +7,17 @@ import AppShell from '@/components/layout/AppShell';
 import { useAuthStore } from '@/features/auth/store';
 import { useOrdersStore } from '@/features/orders/store';
 import { MOCK_ADDRESSES } from '@/lib/mock-data';
-
-
+import {
+  Package,
+  MapPin,
+  Heart,
+  Bell,
+  MessageCircle,
+  Phone,
+  ChevronRight,
+  Leaf,
+  LogOut,
+} from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, signOut } = useAuthStore();
@@ -26,11 +35,11 @@ export default function ProfilePage() {
   };
 
   const MENU_ITEMS = [
-    { label: 'My Orders', desc: `${orders.length} total orders`, href: '/orders', icon: '📦' },
-    { label: 'Saved Addresses', desc: `${MOCK_ADDRESSES.length} addresses saved`, href: '#', icon: '📍' },
-    { label: 'Wishlist', desc: 'Your saved products', href: '/products', icon: '❤️' },
-    { label: 'Notifications', desc: 'Order updates & offers', href: '#', icon: '🔔' },
-    { label: 'Help & Support', desc: 'FAQs, contact us', href: '#', icon: '💬' },
+    { label: 'My Orders', desc: `${orders.length} total orders`, href: '/orders', Icon: Package },
+    { label: 'Saved Addresses', desc: `${MOCK_ADDRESSES.length} addresses saved`, href: '#', Icon: MapPin },
+    { label: 'Wishlist', desc: 'Your saved products', href: '/products', Icon: Heart },
+    { label: 'Notifications', desc: 'Order updates & offers', href: '#', Icon: Bell },
+    { label: 'Help & Support', desc: 'FAQs, contact us', href: '#', Icon: MessageCircle },
   ];
 
   return (
@@ -39,59 +48,57 @@ export default function ProfilePage() {
         {/* Profile header */}
         <div
           style={{
-            background: `linear-gradient(135deg, var(--color-forest) 0%, var(--color-brand-700) 100%)`,
-            borderRadius: 20,
-            padding: '28px',
-            marginBottom: 20,
+            background: 'var(--color-forest)',
+            borderRadius: 12,
+            padding: '24px',
+            marginBottom: 16,
             color: '#fff',
-            position: 'relative',
-            overflow: 'hidden',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
-          <div style={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             <div
               style={{
-                width: 72,
-                height: 72,
+                width: 60,
+                height: 60,
                 borderRadius: '50%',
                 background: 'var(--color-amber)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 32,
+                fontSize: 24,
                 fontWeight: 800,
                 color: '#fff',
                 flexShrink: 0,
-                border: '3px solid rgba(255,255,255,0.3)',
+                border: '2px solid rgba(255,255,255,0.2)',
               }}
             >
               {user?.name?.charAt(0).toUpperCase() ?? 'F'}
             </div>
             <div>
-              <h1 style={{ margin: '0 0 4px', fontSize: 22, fontWeight: 800, letterSpacing: '-0.3px' }}>
+              <h1 style={{ margin: '0 0 2px', fontSize: 20, fontWeight: 700, letterSpacing: '-0.2px' }}>
                 {user?.name}
               </h1>
-              <p style={{ margin: '0 0 4px', color: 'rgba(255,255,255,0.8)', fontSize: 14 }}>
+              <p style={{ margin: '0 0 2px', color: 'rgba(255,255,255,0.75)', fontSize: 13 }}>
                 {user?.email}
               </p>
               {user?.phone && (
-                <p style={{ margin: 0, color: 'rgba(255,255,255,0.65)', fontSize: 13 }}>
-                  📞 {user.phone}
+                <p style={{ margin: 0, color: 'rgba(255,255,255,0.65)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <Phone size={11} strokeWidth={2} /> {user.phone}
                 </p>
               )}
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 0, marginTop: 20, borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: 16 }}>
+          <div style={{ display: 'flex', gap: 0, marginTop: 20, borderTop: '1px solid rgba(255,255,255,0.12)', paddingTop: 14 }}>
             {[
-              { label: 'Active', value: activeOrders.length },
+              { label: 'Active Orders', value: activeOrders.length },
               { label: 'Delivered', value: deliveredOrders.length },
               { label: 'Total Spent', value: `₹${Math.round(totalSpent / 100) * 100 >= 1000 ? (totalSpent / 1000).toFixed(1) + 'K' : totalSpent}` },
             ].map((stat, i) => (
-              <div key={stat.label} style={{ flex: 1, textAlign: 'center', borderRight: i < 2 ? '1px solid rgba(255,255,255,0.15)' : 'none' }}>
-                <p style={{ margin: '0 0 2px', fontSize: 20, fontWeight: 800 }}>{stat.value}</p>
-                <p style={{ margin: 0, fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>{stat.label}</p>
+              <div key={stat.label} style={{ flex: 1, textAlign: 'center', borderRight: i < 2 ? '1px solid rgba(255,255,255,0.12)' : 'none' }}>
+                <p style={{ margin: '0 0 2px', fontSize: 18, fontWeight: 700 }}>{stat.value}</p>
+                <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.2px' }}>{stat.label}</p>
               </div>
             ))}
           </div>
@@ -99,16 +106,16 @@ export default function ProfilePage() {
 
         {/* Menu items */}
         <div className="card" style={{ marginBottom: 16, overflow: 'hidden' }}>
-          {MENU_ITEMS.map((item, i) => (
+          {MENU_ITEMS.map(({ label, desc, href, Icon }, i) => (
             <Link
-              key={item.label}
-              href={item.href}
-              id={`profile-${item.label.toLowerCase().replace(/\s/g, '-')}`}
+              key={label}
+              href={href}
+              id={`profile-${label.toLowerCase().replace(/\s/g, '-')}`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 14,
-                padding: '16px 20px',
+                padding: '14px 18px',
                 textDecoration: 'none',
                 borderBottom: i < MENU_ITEMS.length - 1 ? '1px solid var(--color-divider)' : 'none',
                 background: 'var(--color-surface)',
@@ -117,26 +124,26 @@ export default function ProfilePage() {
             >
               <div
                 style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 12,
+                  width: 38,
+                  height: 38,
+                  borderRadius: 8,
                   background: 'var(--color-brand-50)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 22,
                   flexShrink: 0,
+                  color: 'var(--color-forest)',
                 }}
               >
-                {item.icon}
+                <Icon size={18} strokeWidth={2} />
               </div>
               <div style={{ flex: 1 }}>
-                <p style={{ margin: '0 0 2px', fontSize: 15, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-                  {item.label}
+                <p style={{ margin: '0 0 2px', fontSize: 14, fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                  {label}
                 </p>
-                <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)' }}>{item.desc}</p>
+                <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-tertiary)' }}>{desc}</p>
               </div>
-              <span style={{ color: 'var(--color-text-tertiary)', fontSize: 18 }}>›</span>
+              <ChevronRight size={16} strokeWidth={2} color="var(--color-text-tertiary)" />
             </Link>
           ))}
         </div>
@@ -145,17 +152,18 @@ export default function ProfilePage() {
         <div
           style={{
             background: 'var(--color-surface)',
-            borderRadius: 16,
-            border: '1px solid var(--color-border)',
-            padding: '14px 20px',
+            borderRadius: 10,
+            border: '1px solid var(--color-divider)',
+            padding: '12px 18px',
             marginBottom: 16,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <span style={{ fontSize: 14, color: 'var(--color-text-secondary)' }}>
-            🌿 AgriTrade Web v1.0
+          <span style={{ fontSize: 13, color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Leaf size={14} strokeWidth={2} color="var(--color-forest)" />
+            AgriTrade Web v1.0
           </span>
           <span className="badge badge-forest">FARMER</span>
         </div>
@@ -165,9 +173,17 @@ export default function ProfilePage() {
           id="profile-signout-btn"
           onClick={() => setSignOutDialog(true)}
           className="btn btn-secondary btn-full"
-          style={{ borderRadius: 14, padding: '14px 24px', fontSize: 16, borderColor: 'var(--color-error)', color: 'var(--color-error)' }}
+          style={{
+            borderRadius: 10,
+            padding: '12px 20px',
+            fontSize: 14,
+            borderColor: 'var(--color-error)',
+            color: 'var(--color-error)',
+            gap: 8,
+          }}
         >
-          🚪 Sign Out
+          <LogOut size={16} strokeWidth={2} />
+          Sign Out
         </button>
       </div>
 
@@ -185,23 +201,23 @@ export default function ProfilePage() {
               left: '50%',
               transform: 'translate(-50%, -50%)',
               background: 'var(--color-surface)',
-              borderRadius: 20,
-              padding: '28px',
+              borderRadius: 12,
+              padding: '24px',
               width: '90%',
               maxWidth: 380,
               zIndex: 101,
               boxShadow: 'var(--shadow-xl)',
             }}
           >
-            <h3 style={{ margin: '0 0 10px', fontSize: 20, fontWeight: 700 }}>Sign Out?</h3>
-            <p style={{ margin: '0 0 24px', color: 'var(--color-text-secondary)', fontSize: 15 }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 700 }}>Sign Out?</h3>
+            <p style={{ margin: '0 0 20px', color: 'var(--color-text-secondary)', fontSize: 14 }}>
               Are you sure you want to sign out of AgriTrade?
             </p>
-            <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ display: 'flex', gap: 10 }}>
               <button
                 onClick={() => setSignOutDialog(false)}
                 className="btn btn-secondary"
-                style={{ flex: 1, borderRadius: 12 }}
+                style={{ flex: 1, padding: '10px 16px', fontSize: 14 }}
               >
                 Cancel
               </button>
@@ -209,7 +225,7 @@ export default function ProfilePage() {
                 id="profile-confirm-signout-btn"
                 onClick={handleSignOut}
                 className="btn btn-primary"
-                style={{ flex: 1, borderRadius: 12, background: 'var(--color-error)' }}
+                style={{ flex: 1, padding: '10px 16px', fontSize: 14, background: 'var(--color-error)', borderColor: 'var(--color-error)' }}
               >
                 Sign Out
               </button>

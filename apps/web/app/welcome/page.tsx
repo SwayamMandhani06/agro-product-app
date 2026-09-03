@@ -4,34 +4,33 @@ import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/features/auth/store';
+import { Leaf, Sprout, TrendingDown, Truck, ChevronRight } from 'lucide-react';
+
+const VALUE_PROPS = [
+  {
+    Icon: Sprout,
+    title: 'Certified Seeds & Inputs',
+    desc: 'Sourced directly from verified agri-companies and government-approved suppliers.',
+  },
+  {
+    Icon: TrendingDown,
+    title: 'Farm-Gate Pricing',
+    desc: 'Best prices updated daily with live mandi rate tracking for your region.',
+  },
+  {
+    Icon: Truck,
+    title: 'Doorstep Delivery',
+    desc: 'Free delivery on orders above ₹1,000. Same-day dispatch from local hubs.',
+  },
+];
 
 export default function WelcomePage() {
   const { status } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      router.replace('/home');
-    }
+    if (status === 'authenticated') router.replace('/home');
   }, [status, router]);
-
-  const VALUE_PROPS = [
-    {
-      icon: '🌱',
-      title: 'Certified Seeds & Inputs',
-      desc: 'Sourced directly from verified agri-companies and government-approved suppliers.',
-    },
-    {
-      icon: '💰',
-      title: 'Farm-Gate Pricing',
-      desc: 'Best prices updated daily with live mandi rate tracking for your region.',
-    },
-    {
-      icon: '🚛',
-      title: 'Doorstep Delivery',
-      desc: 'Free delivery on orders above ₹1,000. Same-day dispatch from local hubs.',
-    },
-  ];
 
   return (
     <div
@@ -40,117 +39,182 @@ export default function WelcomePage() {
         background: 'var(--color-canvas)',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '32px 16px',
       }}
     >
-      {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: 40 }}>
+      {/* Top bar */}
+      <header
+        style={{
+          padding: '20px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 9,
+          borderBottom: '1px solid var(--color-divider)',
+          background: '#fff',
+        }}
+      >
         <div
           style={{
-            width: 80,
-            height: 80,
-            borderRadius: 24,
+            width: 30,
+            height: 30,
+            borderRadius: 6,
             background: 'var(--color-forest)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 40,
-            margin: '0 auto 20px',
-            boxShadow: 'var(--shadow-lg)',
+            color: '#fff',
           }}
         >
-          🌿
+          <Leaf size={16} strokeWidth={2.2} />
         </div>
-        <h1
+        <span
           style={{
-            margin: '0 0 8px',
-            fontSize: 32,
-            fontWeight: 800,
+            fontSize: 16,
+            fontWeight: 700,
             color: 'var(--color-forest)',
-            letterSpacing: '-0.5px',
+            letterSpacing: '-0.2px',
           }}
         >
           AGRI TRADE
-        </h1>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 16 }}>
-          India&apos;s Farmer-First Agri Marketplace
-        </p>
-      </div>
+        </span>
+      </header>
 
-      {/* Value props */}
+      {/* Content */}
       <div
         style={{
+          flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          gap: 12,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '40px 24px',
+          maxWidth: 560,
+          margin: '0 auto',
           width: '100%',
-          maxWidth: 480,
-          marginBottom: 40,
         }}
       >
-        {VALUE_PROPS.map((vp) => (
+        {/* Hero */}
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <div
-            key={vp.title}
             style={{
+              width: 64,
+              height: 64,
+              borderRadius: 12,
+              background: 'var(--color-forest)',
               display: 'flex',
-              gap: 16,
-              background: 'var(--color-surface)',
-              borderRadius: 16,
-              padding: '16px 20px',
-              border: '1px solid var(--color-border)',
-              boxShadow: 'var(--shadow-sm)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              color: '#fff',
+              boxShadow: 'var(--shadow-lg)',
             }}
           >
-            <div style={{ fontSize: 28, flexShrink: 0 }}>{vp.icon}</div>
-            <div>
-              <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: 15, color: 'var(--color-text-primary)' }}>
-                {vp.title}
-              </p>
-              <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.45 }}>
-                {vp.desc}
-              </p>
-            </div>
+            <Leaf size={32} strokeWidth={1.8} />
           </div>
-        ))}
-      </div>
+          <h1
+            style={{
+              margin: '0 0 10px',
+              fontSize: 32,
+              fontWeight: 800,
+              color: 'var(--color-forest)',
+              letterSpacing: '-0.5px',
+            }}
+          >
+            AGRI TRADE
+          </h1>
+          <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 16, lineHeight: 1.5 }}>
+            India&apos;s Farmer-First Agricultural Marketplace
+          </p>
+        </div>
 
-      {/* CTAs */}
-      <div style={{ width: '100%', maxWidth: 480, display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <Link
-          href="/login"
-          id="welcome-signin-btn"
-          className="btn btn-primary btn-full"
-          style={{ borderRadius: 14, padding: '15px 24px', fontSize: 17 }}
+        {/* Value propositions */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+            width: '100%',
+            marginBottom: 36,
+          }}
         >
-          Sign In to Your Account
-        </Link>
-        <Link
-          href="/signup"
-          id="welcome-signup-btn"
-          className="btn btn-secondary btn-full"
-          style={{ borderRadius: 14, padding: '14px 24px', fontSize: 17 }}
-        >
-          Create New Account
-        </Link>
-      </div>
+          {VALUE_PROPS.map(({ Icon, title, desc }) => (
+            <div
+              key={title}
+              style={{
+                display: 'flex',
+                gap: 14,
+                background: '#fff',
+                borderRadius: 10,
+                padding: '14px 16px',
+                border: '1px solid var(--color-divider)',
+                alignItems: 'flex-start',
+              }}
+            >
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  background: 'var(--color-brand-50)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  color: 'var(--color-forest)',
+                }}
+              >
+                <Icon size={18} strokeWidth={2} />
+              </div>
+              <div>
+                <p
+                  style={{
+                    margin: '0 0 3px',
+                    fontWeight: 700,
+                    fontSize: 14,
+                    color: 'var(--color-text-primary)',
+                  }}
+                >
+                  {title}
+                </p>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.45 }}>
+                  {desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
 
-      {/* Demo hint */}
-      <div
-        style={{
-          marginTop: 24,
-          padding: '12px 20px',
-          background: 'var(--color-brand-50)',
-          borderRadius: 12,
-          border: '1px solid var(--color-brand-100)',
-          maxWidth: 480,
-          width: '100%',
-          textAlign: 'center',
-        }}
-      >
-        <p style={{ margin: 0, fontSize: 13, color: 'var(--color-forest)', fontWeight: 500 }}>
-          🌾 Demo account: <strong>farmer@agritrade.in</strong> / <strong>farmer123</strong>
+        {/* CTAs */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
+          <Link
+            href="/login"
+            id="welcome-signin-btn"
+            className="btn btn-primary btn-full"
+            style={{ justifyContent: 'space-between', padding: '13px 20px' }}
+          >
+            <span>Sign In</span>
+            <ChevronRight size={18} strokeWidth={2.5} />
+          </Link>
+          <Link
+            href="/signup"
+            id="welcome-signup-btn"
+            className="btn btn-secondary btn-full"
+            style={{ justifyContent: 'space-between', padding: '12px 20px' }}
+          >
+            <span>Create Account</span>
+            <ChevronRight size={18} strokeWidth={2.5} />
+          </Link>
+        </div>
+
+        {/* Demo note */}
+        <p
+          style={{
+            marginTop: 24,
+            fontSize: 12,
+            color: 'var(--color-text-tertiary)',
+            textAlign: 'center',
+          }}
+        >
+          Demo credentials available on the Sign In screen
         </p>
       </div>
     </div>
