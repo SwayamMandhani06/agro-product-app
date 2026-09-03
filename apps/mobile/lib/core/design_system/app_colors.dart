@@ -26,6 +26,17 @@ abstract final class AppColors {
   static const Color onPrimary      = Color(0xFFFFFFFF);
 
   // ---------------------------------------------------------------------------
+  // Google Stitch AgriTrade Exact Tokens
+  // ---------------------------------------------------------------------------
+  static const Color stitchForestGreen = Color(0xFF0B3D2E); // Stitch primary
+  static const Color stitchAmber       = Color(0xFFD97706); // Stitch accent
+  static const Color stitchCanvas      = Color(0xFFF9F7F2); // Stitch neutral canvas
+  static const Color stitchSlate       = Color(0xFF1E293B); // Stitch dark tertiary
+  static const Color stitchSurfaceTint = Color(0xFFE4E2DD); // Stitch surface variant
+  static const Color stitchForestFixed = Color(0xFF002116);
+  static const Color stitchAmberFixed  = Color(0xFFFFDCC3);
+
+  // ---------------------------------------------------------------------------
   // Accent — Warm Amber
   // ---------------------------------------------------------------------------
   static const Color amber600 = Color(0xFF914D00);
