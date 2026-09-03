@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
 import { getProductById, getSimilarProducts } from '@/lib/mock-data';
+import { ProductImageResolver } from '@/lib/product-image-resolver';
 import { useCartStore } from '@/features/cart/store';
 import { Package, Truck, ShoppingCart, CheckCircle, Star } from 'lucide-react';
 
@@ -50,7 +51,7 @@ export default function ProductDetailPage() {
   const inCart = hasItem(product.id);
   const cartQty = getQty(product.id);
 
-  const imgSrc = `https://picsum.photos/seed/${product.id}/600/400`;
+  const imgSrc = ProductImageResolver.resolve(product.id, product.category);
 
   const handleAddToCart = () => {
     addItem(product, quantity);
@@ -327,7 +328,7 @@ export default function ProductDetailPage() {
             <h2 style={{ margin: '0 0 16px', fontSize: 20, fontWeight: 700 }}>Similar Products</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 14 }}>
               {similar.map((p) => {
-                const simImgSrc = `https://picsum.photos/seed/${p.id}/400/280`;
+                const simImgSrc = ProductImageResolver.resolveThumbnail(p.id, p.category);
                 return (
                   <Link key={p.id} href={`/products/${p.id}`} style={{ textDecoration: 'none' }}>
                     <div className="card card-hover">

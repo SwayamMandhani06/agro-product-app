@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import { useOrdersStore } from '@/features/orders/store';
+import { ProductImageResolver } from '@/lib/product-image-resolver';
 import { useCartStore } from '@/features/cart/store';
 import {
   ORDER_STATUS_LABELS,
@@ -283,7 +284,7 @@ export default function OrderDetailPage() {
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={`https://picsum.photos/seed/${item.product.id}/120/120`}
+                        src={ProductImageResolver.resolveThumbnail(item.product.id, item.product.category)}
                         alt={item.product.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         loading="lazy"

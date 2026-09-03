@@ -192,3 +192,92 @@ class AppLoadingOverlay extends StatelessWidget {
         ),
       );
 }
+
+/// Skeleton placeholder for product cards.
+class ProductCardSkeleton extends StatelessWidget {
+  const ProductCardSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 170,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: AppRadius.card,
+        border: Border.all(color: AppColors.neutral100),
+      ),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppSkeleton(
+            height: 130,
+            radius: BorderRadius.vertical(top: Radius.circular(10)),
+          ),
+          Padding(
+            padding: EdgeInsets.all(AppSpacing.sm),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppSkeleton(width: 60, height: 10),
+                SizedBox(height: 6),
+                AppSkeleton(width: 130, height: 14),
+                SizedBox(height: 10),
+                AppSkeleton(width: 80, height: 16),
+                SizedBox(height: 10),
+                AppSkeleton(
+                  width: double.infinity,
+                  height: 32,
+                  radius: AppRadius.smAll,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Skeleton placeholder for dashboard sections.
+class DashboardSkeleton extends StatelessWidget {
+  const DashboardSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppSkeleton(
+          width: double.infinity,
+          height: 140,
+          radius: BorderRadius.all(Radius.circular(12)),
+        ),
+        SizedBox(height: AppSpacing.base),
+        AppSkeleton(
+          width: double.infinity,
+          height: 90,
+          radius: BorderRadius.all(Radius.circular(12)),
+        ),
+        SizedBox(height: AppSpacing.base),
+        Row(
+          children: [
+            Expanded(
+              child: AppSkeleton(
+                height: 70,
+                radius: BorderRadius.all(Radius.circular(10)),
+              ),
+            ),
+            SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: AppSkeleton(
+                height: 70,
+                radius: BorderRadius.all(Radius.circular(10)),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
