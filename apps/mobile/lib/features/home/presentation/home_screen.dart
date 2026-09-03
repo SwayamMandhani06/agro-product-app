@@ -29,6 +29,7 @@ class HomeScreen extends ConsumerWidget {
     final mandiAsync = ref.watch(dashboardMandiPricesProvider);
     final categoriesAsync = ref.watch(categoriesProvider);
     final productsAsync = ref.watch(featuredProductsProvider);
+    final farmerName = ref.watch(farmerNameProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -49,8 +50,8 @@ class HomeScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 1. Top Bar / Farmer Greeting
-                const FarmerGreetingHeader(
-                  farmerName: 'Rahul',
+                FarmerGreetingHeader(
+                  farmerName: farmerName,
                   location: 'Pune, Maharashtra',
                   unreadNotifications: 2,
                 ),

@@ -13,7 +13,7 @@ import '../../../../core/routing/routes.dart';
 class FarmerGreetingHeader extends StatelessWidget {
   const FarmerGreetingHeader({
     super.key,
-    this.farmerName = 'Rahul',
+    this.farmerName = 'Farmer',
     this.location = 'Pune, Maharashtra',
     this.unreadNotifications = 2,
     this.cartItemCount = 0,

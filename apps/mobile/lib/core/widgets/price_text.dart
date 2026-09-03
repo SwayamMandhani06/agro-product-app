@@ -115,18 +115,9 @@ class PriceText extends StatelessWidget {
       spacing: AppSpacing.xs,
       runSpacing: 2,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Text(_formatter.format(price), style: priceStyle),
-            if (unit != null) ...[
-              const SizedBox(width: AppSpacing.xxs),
-              Text('/ $unit', style: unitStyle),
-            ],
-          ],
-        ),
+        Text(_formatter.format(price), style: priceStyle),
+        if (unit != null)
+          Text('/ $unit', style: unitStyle),
         if (originalPrice != null && originalPrice! > price)
           Text(_formatter.format(originalPrice), style: strikethroughStyle),
         if (showDiscountBadge && discount != null && discount > 0)

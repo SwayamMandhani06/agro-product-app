@@ -15,6 +15,7 @@ import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/orders/presentation/orders_screen.dart';
 import '../../features/products/presentation/categories_screen.dart';
+import '../../features/products/presentation/product_details_screen.dart';
 import '../../features/products/presentation/products_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/recommendations/presentation/recommendations_screen.dart';
@@ -112,7 +113,23 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.products,
-        builder: (context, state) => const ProductsScreen(),
+        builder: (context, state) {
+          final category = state.uri.queryParameters['category'];
+          final query = state.uri.queryParameters['query'];
+          return ProductsScreen(
+            initialCategory: category,
+            initialQuery: query,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: ':id',
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? '';
+              return ProductDetailsScreen(productId: id);
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutes.cartCheckout,
