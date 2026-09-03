@@ -5,6 +5,7 @@ import '../../../core/design_system/app_colors.dart';
 import '../../../core/design_system/app_spacing.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
+import '../../cart_checkout/presentation/providers/cart_providers.dart';
 import '../../mandi_prices/presentation/providers/mandi_prices_provider.dart';
 import '../../products/presentation/providers/product_providers.dart';
 import '../../weather/presentation/providers/weather_provider.dart';
@@ -30,6 +31,7 @@ class HomeScreen extends ConsumerWidget {
     final categoriesAsync = ref.watch(categoriesProvider);
     final productsAsync = ref.watch(featuredProductsProvider);
     final farmerName = ref.watch(farmerNameProvider);
+    final cartCount = ref.watch(cartItemCountProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -54,6 +56,7 @@ class HomeScreen extends ConsumerWidget {
                   farmerName: farmerName,
                   location: 'Pune, Maharashtra',
                   unreadNotifications: 2,
+                  cartItemCount: cartCount,
                 ),
 
                 const SizedBox(height: AppSpacing.sm),

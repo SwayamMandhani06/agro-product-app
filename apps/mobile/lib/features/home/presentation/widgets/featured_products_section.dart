@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_colors.dart';
@@ -6,10 +8,11 @@ import '../../../../core/design_system/app_radius.dart';
 import '../../../../core/design_system/app_spacing.dart';
 import '../../../../core/routing/routes.dart';
 import '../../../../core/widgets/product_card.dart';
+import '../../../cart_checkout/presentation/providers/cart_providers.dart';
 import '../../../products/domain/product.dart';
 
 /// Featured/Recommended Products 2-column grid for the Farmer Home Dashboard.
-class FeaturedProductsSection extends StatefulWidget {
+class FeaturedProductsSection extends ConsumerStatefulWidget {
   const FeaturedProductsSection({
     super.key,
     required this.products,
@@ -18,11 +21,11 @@ class FeaturedProductsSection extends StatefulWidget {
   final List<Product> products;
 
   @override
-  State<FeaturedProductsSection> createState() =>
+  ConsumerState<FeaturedProductsSection> createState() =>
       _FeaturedProductsSectionState();
 }
 
-class _FeaturedProductsSectionState extends State<FeaturedProductsSection> {
+class _FeaturedProductsSectionState extends ConsumerState<FeaturedProductsSection> {
   late Set<String> _wishlistIds;
 
   @override
@@ -111,12 +114,20 @@ class _FeaturedProductsSectionState extends State<FeaturedProductsSection> {
               isFavorite: isFav,
               onTap: () => context.push('${AppRoutes.products}/${product.id}'),
               onAddToCart: () {
+                HapticFeedback.lightImpact();
+                ref.read(cartItemsProvider.notifier).addItem(product, quantity: 1);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('${product.title} added to cart'),
                     duration: const Duration(seconds: 2),
                     behavior: SnackBarBehavior.floating,
                     backgroundColor: AppColors.stitchForestGreen,
+                    action: SnackBarAction(
+                      label: 'VIEW CART',
+                      textColor: Colors.white,
+                      onPressed: () => context.push(AppRoutes.cartCheckout),
+                    ),
                   ),
                 );
               },

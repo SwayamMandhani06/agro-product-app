@@ -18,6 +18,7 @@ class FarmerGreetingHeader extends StatelessWidget {
     this.unreadNotifications = 2,
     this.cartItemCount = 0,
     this.onLocationTap,
+    this.onCartTap,
   });
 
   final String farmerName;
@@ -25,6 +26,7 @@ class FarmerGreetingHeader extends StatelessWidget {
   final int unreadNotifications;
   final int cartItemCount;
   final VoidCallback? onLocationTap;
+  final VoidCallback? onCartTap;
 
   String get _timeGreeting {
     final hour = DateTime.now().hour;
@@ -143,6 +145,60 @@ class FarmerGreetingHeader extends StatelessWidget {
                               decoration: const BoxDecoration(
                                 color: AppColors.error,
                                 shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // Shopping Bag Action Icon with Badge
+              const SizedBox(width: AppSpacing.xs),
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onCartTap ?? () => context.push(AppRoutes.cartCheckout),
+                  borderRadius: BorderRadius.circular(AppRadius.full),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.borderSubtle),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        const Icon(
+                          Icons.shopping_bag_outlined,
+                          size: 20,
+                          color: AppColors.textPrimary,
+                        ),
+                        if (cartItemCount > 0)
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              decoration: const BoxDecoration(
+                                color: AppColors.stitchForestGreen,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                cartItemCount > 99 ? '99+' : '$cartItemCount',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
