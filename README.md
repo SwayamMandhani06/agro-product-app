@@ -12,60 +12,99 @@ Originally conceptualized as a Community Engagement Project (CEP) at PCCOE, rebu
 
 ## Implemented User Journey
 
-AgriTrade provides a seamless, end-to-end agricultural commerce experience:
+AgriTrade provides a seamless, end-to-end agricultural commerce and authenticated farmer experience:
 
 ```text
-               Farmer Home Dashboard
-                         │
-         ┌───────────────┴───────────────┐
-         ▼                               ▼
-  Category Discovery              Featured Products
-         │                               │
-         ▼                               ▼
-  Product Listing Grid            Product Details
-  (Filter & Sort)                        │
-         │                               ▼
-         └───────────────────────►  Add to Cart
-                                         │
-                                         ▼
-                                     Cart Screen
-                                 (Manage Quantities)
-                                         │
-                                         ▼
-                                   Checkout Screen
-                            (Address & Payment Selection)
-                                         │
-                                         ▼
-                                 Place Mock Order
-                                         │
-                                         ▼
-                              Order Confirmed Screen
-                                         │
-                                         ▼
-                                  My Orders List
-                            (All / Active / Delivered)
-                                         │
-                                         ▼
-                                Order Details Screen
-                                         │
-                        ┌────────────────┴────────────────┐
-                        ▼                                 ▼
-             Order Tracking Timeline                Reorder Items
-          (Placed → Out for Delivery)           (Merge into Cart)
+               Application Launch (Splash Screen)
+                               │
+                [Session Restoration Check]
+                               │
+            ┌──────────────────┴──────────────────┐
+            ▼                                     ▼
+     [Unauthenticated]                     [Authenticated]
+      Welcome Screen                              │
+      (Value Props)                               │
+            │                                     │
+     ┌──────┴──────┐                              │
+     ▼             ▼                              │
+  Sign In       Sign Up                           │
+     │             │                              │
+     └──────┬──────┘                              │
+            ▼                                     │
+      Authenticate & Persist                      │
+            │                                     │
+            └─────────────────► ◄─────────────────┘
+                                │
+                      Farmer Home Dashboard
+                                │
+                ┌───────────────┴───────────────┐
+                ▼                               ▼
+         Category Discovery              Featured Products
+                │                               │
+                ▼                               ▼
+         Product Listing Grid            Product Details
+         (Filter & Sort)                        │
+                │                               ▼
+                └───────────────────────►  Add to Cart
+                                                │
+                                                ▼
+                                            Cart Screen
+                                        (Manage Quantities)
+                                                │
+                                                ▼
+                                          Checkout Screen
+                                   (Address & Payment Selection)
+                                                │
+                                                ▼
+                                        Place Mock Order
+                                                │
+                                                ▼
+                                     Order Confirmed Screen
+                                                │
+                                                ▼
+                                         My Orders List
+                                   (All / Active / Delivered)
+                                                │
+                                                ▼
+                                       Order Details Screen
+                                                │
+                               ┌────────────────┴────────────────┐
+                               ▼                                 ▼
+                    Order Tracking Timeline                Reorder Items
+                 (Placed → Out for Delivery)           (Merge into Cart)
+                               │
+                               ▼
+                    Farmer Profile & Settings
+                               │
+                            Sign Out
+                               │
+                               ▼
+                         Welcome Screen
 ```
 
 ---
 
-## Key Features Completed (Through Stage 3E)
+## Key Features Completed
 
-### 1. Farmer Home Dashboard (Stage 3B)
+### 1. Authentication, Session Management & App Entry (Stage 4A)
+* **Google Stitch Splash Screen:** Matching Stitch `6831455a4a284ef7b95f228fd20fbb27` with deep agrarian forest green background (`#0B3D2E`), centralized AgriTrade branding, and animated pulsing dots loading indicator.
+* **Welcome Screen:** Unauthenticated entry portal featuring certified farm inputs, transparent wholesale pricing, and doorstep delivery value propositions with dual "Sign In" and "Create Account" actions.
+* **Sign In Screen:** Matching Stitch `af256a0b38d24d77b5304c8b889e9fdc` with clean card surface, phone/email input, password visibility toggle, validation, error banner, and one-tap demo farmer credentials helper (`farmer@agritrade.in` / `farmer123`).
+* **Create Account Screen:** Full registration experience supporting farmer name, mobile/email, password rules, and confirmation matching.
+* **Clean Architecture Domain:** Decoupled `AppUser` entity and `AuthRepository` interface allowing drop-in replacement with `FirebaseAuthRepository` in future stages.
+* **Persistent Session Management:** Hive-backed session storage (`HiveAuthSessionStorage`) preserving session tokens across app restarts, with in-memory fallback (`InMemoryAuthSessionStorage`) for ultra-fast, isolated unit testing.
+* **Riverpod Auth State Management:** Reactive `AuthState` sealed hierarchy (`AuthInitializing`, `Authenticated`, `Unauthenticated`, `AuthLoading`, `AuthError`) and `AuthNotifier`.
+* **Route Protection & GoRouter Redirection:** Zero-flicker launch checking, strict redirection of unauthenticated traffic to `/welcome`, and preservation of deep links.
+* **Sign Out Integration:** Profile screen identity summary with verified farmer badge and clean sign out action returning the user to the Welcome portal.
+
+### 2. Farmer Home Dashboard (Stage 3B)
 * **Personalized Greeting & Context:** Farmer profile banner (`Rahul Sharma`) with location and live cart count badge.
 * **Weather & Farm Insights:** Real-time localized weather card with crop-specific advisory alerts.
 * **Mandi Market Rates:** Live commodity price ticker across regional APMC markets.
 * **Agricultural Category Shortcuts:** Quick access to Seeds, Fertilizers, Pesticides, and Farm Machinery.
 * **Featured Agri Products:** Curated products with promotional discount tags, ratings, and quick-add actions.
 
-### 2. Product Discovery Experience (Stage 3C)
+### 3. Product Discovery Experience (Stage 3C)
 * **Visual Category Browsing:** Interactive grid of agricultural categories with dynamic counts and badges.
 * **Product Listing Grid:** Responsive two-column product card catalog with high-resolution imagery.
 * **Instant Search & Autocomplete:** Real-time search with instant filtering by query, category, and brand.
@@ -73,7 +112,7 @@ AgriTrade provides a seamless, end-to-end agricultural commerce experience:
 * **Sort Bottom Sheet:** Sorting by Featured, Price (Low to High), Price (High to Low), and Customer Rating.
 * **Product Details Screen:** Detailed specifications, packaging sizes, verified seller credential cards, customer ratings breakdown, and similar products carousel.
 
-### 3. Cart & Checkout Experience (Stage 3D)
+### 4. Cart & Checkout Experience (Stage 3D)
 * **Reactive Cart Badges:** Real-time badge indicators across the AppBar, Dashboard, and Product Details screens.
 * **Cart Management:** Cart item list with thumbnail previews, instant quantity steppers `[-] X [+]`, and item removal.
 * **Duplicate Quantity Merging:** Adding existing items from discovery smoothly merges quantities without creating duplicates.
@@ -82,7 +121,7 @@ AgriTrade provides a seamless, end-to-end agricultural commerce experience:
 * **Interactive Bottom Sheets:** Saved delivery address selector with address tags (`Farm`, `Home`) and payment method selector (`Cash on Delivery`, `UPI`, `Net Banking`, `Card`).
 * **Order Placement & Confirmation:** Asynchronous checkout simulation, automatic cart clearing, and animated confirmation screen with unique order tracking ID `#AT...`.
 
-### 4. Orders, Details & Tracking (Stage 3E)
+### 5. Orders, Details & Tracking (Stage 3E)
 * **My Orders Screen:** Tabbed filter chips (`All`, `Active`, `Delivered`, `Cancelled`) with live status chips and pull-to-refresh.
 * **Polished Empty State:** Dedicated zero-orders screen featuring minimal iconography, explanatory copy, and a primary "Start Shopping" CTA.
 * **Order Details Screen:** Comprehensive post-purchase summary with order ID, creation timestamp, product item breakdown, bill calculation, recipient address, and payment method.
@@ -98,85 +137,20 @@ AgriTrade provides a seamless, end-to-end agricultural commerce experience:
 ## Technology Stack
 
 | Layer | Technologies |
-|-------|--------------|
-| **Core Framework** | Flutter 3.x (Dart 3.x) targeting Android & iOS |
-| **State Management** | Flutter Riverpod 2 (`StateNotifier`, `Provider`, `FutureProvider`, `ProviderScope`) |
-| **Routing** | GoRouter 14 (`StatefulShellRoute.indexedStack`, nested routes, deep-link safe) |
-| **Visual Authority** | Google Stitch Design System (Project ID: `15601137375538914645`) |
-| **Design System** | Modern Agrarian Palette (`#0B3D2E` Forest Green, `#D97706` Amber, `#F9F7F2` Canvas), Material 3, Plus Jakarta Sans |
-| **Image Caching** | `cached_network_image` with local fallbacks |
-| **Functional Architecture** | `fpdart` (`Either<Failure, T>`), Repository Pattern with clean abstractions |
-| **Formatting** | `intl` (Indian Rupee `₹`, standard date-time representations) |
+| :--- | :--- |
+| **Framework** | Flutter 3.x (Dart 3.x) |
+| **Architecture** | Clean Architecture (Domain, Data, Presentation) |
+| **State Management** | Flutter Riverpod (StateNotifier, StateProvider, Provider) |
+| **Navigation & Routing** | GoRouter with StatefulShellRoute and Auth Guarding |
+| **Functional Error Handling** | `fpdart` (`Either<Failure, T>`, `Result<T>`) |
+| **Design System** | Google Stitch Design Tokens (Forest Green `#0B3D2E`, Amber `#D97706`, Canvas `#F9F7F2`) |
+| **Persistence** | Hive Key-Value Store (`hive_flutter`) with Session Storage |
+| **Analytics & Core** | Firebase Core & Firebase Analytics (safely conditioned) |
+| **Testing** | Flutter Test (Unit, Provider, Widget, and Navigation Integration) |
 
 ---
 
-## Repository Architecture
-
-```text
-agro-product-app/
-│
-├── apps/
-│   ├── mobile/                      # Production Flutter Application
-│   │   ├── android/                 # Native Android project configuration
-│   │   ├── ios/                     # Native iOS project configuration
-│   │   ├── lib/
-│   │   │   ├── core/
-│   │   │   │   ├── design_system/   # Design tokens (AppColors, AppTypography, AppSpacing, AppRadius)
-│   │   │   │   ├── di/              # Firebase bootstrap and service locator overrides
-│   │   │   │   ├── error/           # Sealed Failure hierarchy
-│   │   │   │   ├── routing/         # GoRouter routing, paths, and shell navigation
-│   │   │   │   └── widgets/         # Reusable core widgets (AppButton, AppCard, AppLoading)
-│   │   │   │
-│   │   │   └── features/
-│   │   │       ├── home/            # Farmer Dashboard, Greeting Header, Mandi Rates
-│   │   │       ├── products/        # Categories, Product Listing, Search, Product Details
-│   │   │       ├── cart_checkout/   # Cart, Checkout, Order Confirmation, CartItem, Order entities
-│   │   │       ├── orders/          # My Orders, Order Details, Tracking Timeline, OrderCard
-│   │   │       ├── weather/         # Weather domain & data abstractions
-│   │   │       ├── mandi_prices/    # APMC market rates domain & data abstractions
-│   │   │       ├── profile/         # Profile management
-│   │   │       └── auth/            # Authentication contracts
-│   │   │
-│   │   ├── test/                    # 77 automated unit & widget test suites
-│   │   ├── pubspec.yaml             # Mobile dependencies and asset declarations
-│   │   └── analysis_options.yaml    # Strict linting rules
-│   │
-│   └── web/                         # Reserved for future Next.js application
-│
-└── README.md
-```
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Flutter SDK $\ge 3.24.0$
-- Dart SDK $\ge 3.5.0$
-- Android Studio / VS Code with Flutter extension
-- Android SDK $\ge 34$ / iOS Xcode $\ge 15$
-
-### Running Locally
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/SwayamMandhani06/agro-product-app.git
-cd agro-product-app
-
-# 2. Navigate to the mobile workspace
-cd apps/mobile
-
-# 3. Install dependencies
-flutter pub get
-
-# 4. Run the mobile application on a connected device or emulator
-flutter run
-```
-
----
-
-## Testing & Verification
+## Quality Assurance & Verification
 
 The codebase maintains 100% test passing rates with strict analyzer hygiene:
 
@@ -189,11 +163,11 @@ flutter analyze
 
 # 2. Run automated unit and widget tests
 flutter test
-# Output: All 77 tests passed!
+# Output: All 94 tests passed! (77 baseline + 17 Stage 4A auth tests)
 
 # 3. Verify Android debug build pipeline
 flutter build apk --debug
-# Output: Built build/app/outputs/flutter-apk/app-debug.apk
+# Output: Built build/app/outputs/flutter-apk/app-debug.apk in 42.9s
 ```
 
 ---
@@ -208,9 +182,11 @@ Stage 3A — Navigation Shell & Core AgriTrade Widgets       ✅ Complete
 Stage 3B — Farmer Home Dashboard                          ✅ Complete (Commit: 97fd4bb)
 Stage 3C — Product Discovery Experience                   ✅ Complete (Commit: d41bd83)
 Stage 3D — Cart & Checkout Experience                     ✅ Complete (Commit: 0f60322)
-Stage 3E — Orders, Order Details & Tracking               ✅ Complete (Active Branch)
+Stage 3E — Orders, Order Details & Tracking               ✅ Complete (Commit: 86a7951)
+Stage 4A — Auth, Session Management & App Entry Flow      ✅ Complete (Active Branch: stage-4a-authentication)
 ─────────────────────────────────────────────────────────────────────────────
-Stage 4  — Real Authentication & User Profiles            ⬜ Planned / Next
+Stage 4B — Live Phone OTP Authentication & Supabase/Firebase ⬜ Planned / Next
+Stage 4C — Farmer Profile & Farm Land Parcel Management   ⬜ Planned
 Stage 5  — Live Firestore Backend & Real-time Sync        ⬜ Planned
 Stage 6  — Payment Gateway Integration (Razorpay/UPI)      ⬜ Planned
 Stage 7  — Real-time Courier & Logistics Tracking APIs     ⬜ Planned
@@ -224,7 +200,8 @@ Stage 8  — Seller & Manufacturer Portal                   ⬜ Planned
 ```text
 main                       — Production releases (stable)
 develop                    — Active integration branch
-stage-3-orders-tracking    — Stage 3E Orders & Tracking feature branch
+stage-4a-authentication    — Stage 4A Authentication feature branch
+stage-3-orders-tracking    — Stage 3E Orders & Tracking branch
 ```
 
 ---

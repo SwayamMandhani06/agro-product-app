@@ -1,7 +1,9 @@
 class AppRoutes {
   static const home = '/';
   static const auth = '/auth';
+  static const welcome = '/welcome';
   static const login = '/auth/login';
+  static const register = '/auth/register';
   static const otpVerify = '/auth/verify-otp';
   static const languageSelect = '/auth/language-select';
   static const roleSelect = '/auth/role-select';
