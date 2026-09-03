@@ -305,9 +305,9 @@ Stage 3D — Cart & Checkout Experience                     ✅ Complete (Commit
 Stage 3E — Orders, Order Details & Tracking               ✅ Complete (Commit: 86a7951)
 Stage 4A — Auth, Session Management & App Entry Flow      ✅ Complete (Commit: 0e7da3e)
 Stage 3QA— Mobile Visual QA & Web Parity Implementation    ✅ Complete (Branch: stage-3-visual-qa-web-parity)
+Stage 4B — Premium Visual Redesign & Backend Foundation    ✅ Complete (Branch: stage-4b-premium-ui-backend-foundation)
 ─────────────────────────────────────────────────────────────────────────────
-Stage 4B — Live Phone OTP Authentication & Cloud Sync      ⬜ Planned / Next
-Stage 4C — Farmer Profile & Farm Land Parcel Management   ⬜ Planned
+Stage 4C — Farmer Profile & Farm Land Parcel Management   ⬜ Planned / Next
 Stage 5  — Live Backend Database & Real-time Sync          ⬜ Planned
 Stage 6  — Payment Gateway Integration (Razorpay/UPI)      ⬜ Planned
 Stage 7  — Logistics Partner API Integration              ⬜ Planned
@@ -316,13 +316,24 @@ Stage 8  — Seller & Manufacturer Marketplace Portal       ⬜ Planned
 
 ---
 
+## Design System & Architecture Documentation
+
+Detailed architectural and design specifications are maintained in the [`docs/`](./docs) directory:
+
+- [**Design System Specification**](./docs/design-system.md) — Typography, restrained radius (≤12px), semantic color tokens, Lucide icon system, and design principles.
+- [**System Architecture & ADR-004**](./docs/architecture.md) — Dual-target synchronization, Supabase PostgreSQL schema, RLS policies, and migration roadmap.
+- [**Platform-Neutral API Contracts**](./docs/api-contract.md) — Canonical entity schemas (Products, Categories, Orders, Mandi Rates, Addresses) shared by Mobile and Web.
+
+---
+
 ## Branching Strategy
 
 ```text
-main                                — Production releases (stable)
-develop                             — Active integration branch
-stage-4a-authentication             — Stage 4A Authentication feature branch
-stage-3-visual-qa-web-parity        — Stage 3 Visual QA & Next.js Web Parity branch
+main                                    — Production releases (stable)
+develop                                 — Active integration branch
+stage-4a-authentication                 — Stage 4A Authentication feature branch
+stage-3-visual-qa-web-parity            — Stage 3 Visual QA & Next.js Web Parity branch
+stage-4b-premium-ui-backend-foundation  — Premium Visual Redesign & Stage 4B Backend Foundation
 ```
 
 ---
