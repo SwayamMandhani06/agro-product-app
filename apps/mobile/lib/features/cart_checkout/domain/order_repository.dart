@@ -16,4 +16,5 @@ abstract interface class OrderRepository {
 
   Future<Result<List<Order>>> getOrders();
   Future<Result<Order>> getOrderById(String orderId);
+  Future<Result<Order>> updateOrderStatus(String orderId, OrderStatus newStatus);
 }

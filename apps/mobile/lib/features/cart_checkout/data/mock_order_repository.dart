@@ -9,9 +9,10 @@ import '../domain/order_repository.dart';
 
 /// In-memory mock implementation of [OrderRepository].
 class MockOrderRepository implements OrderRepository {
-  MockOrderRepository();
+  MockOrderRepository({List<Order>? initialOrders})
+      : _orders = initialOrders != null ? List.from(initialOrders) : [];
 
-  final List<Order> _orders = [];
+  final List<Order> _orders;
 
   @override
   Future<Result<Order>> placeOrder({
@@ -38,6 +39,8 @@ class MockOrderRepository implements OrderRepository {
       createdAt: DateTime.now(),
       status: OrderStatus.confirmed,
       estimatedDelivery: 'Tomorrow – 2 days',
+      deliveryAgentName: 'Ramesh Kumar',
+      deliveryAgentPhone: '+91 98765 43210',
     );
 
     _orders.insert(0, order);
@@ -56,5 +59,24 @@ class MockOrderRepository implements OrderRepository {
       return right(_orders[index]);
     }
     return left(const NotFoundFailure('Order not found'));
+  }
+
+  @override
+  Future<Result<Order>> updateOrderStatus(
+    String orderId,
+    OrderStatus newStatus,
+  ) async {
+    final index = _orders.indexWhere((o) => o.id == orderId);
+    if (index >= 0) {
+      final updated = _orders[index].copyWith(status: newStatus);
+      _orders[index] = updated;
+      return right(updated);
+    }
+    return left(const NotFoundFailure('Order not found'));
+  }
+
+  /// Helper to clear orders (useful in automated tests).
+  void clearOrders() {
+    _orders.clear();
   }
 }
