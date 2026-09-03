@@ -9,11 +9,14 @@ import '../../features/cart_checkout/presentation/cart_checkout_screen.dart';
 import '../../features/forum/presentation/forum_screen.dart';
 import '../../features/home/presentation/design_system_preview.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/home/presentation/main_shell_screen.dart';
 import '../../features/mandi_prices/presentation/mandi_prices_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/orders/presentation/orders_screen.dart';
+import '../../features/products/presentation/categories_screen.dart';
 import '../../features/products/presentation/products_screen.dart';
+import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/recommendations/presentation/recommendations_screen.dart';
 import '../../features/reviews/presentation/reviews_screen.dart';
 import '../../features/search/presentation/search_screen.dart';
@@ -36,10 +39,69 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(
-        path: AppRoutes.home,
-        builder: (context, state) => const HomeScreen(),
+      // -----------------------------------------------------------------------
+      // Main App Shell with Floating Bottom Navigation
+      // -----------------------------------------------------------------------
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return MainShellScreen(navigationShell: navigationShell);
+        },
+        branches: [
+          // Branch 0: Home
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.home,
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+
+          // Branch 1: Categories
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.categories,
+                builder: (context, state) => const CategoriesScreen(),
+              ),
+            ],
+          ),
+
+          // Branch 2: Mandi Prices
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.mandiPrices,
+                builder: (context, state) => const MandiPricesScreen(),
+              ),
+            ],
+          ),
+
+          // Branch 3: Orders
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.orders,
+                builder: (context, state) => const OrdersScreen(),
+              ),
+            ],
+          ),
+
+          // Branch 4: Profile
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.profile,
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
+
+      // -----------------------------------------------------------------------
+      // Full-screen Top-level / Push Routes
+      // -----------------------------------------------------------------------
       GoRoute(
         path: AppRoutes.auth,
         builder: (context, state) => const AuthScreen(),
@@ -55,10 +117,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.cartCheckout,
         builder: (context, state) => const CartCheckoutScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.orders,
-        builder: (context, state) => const OrdersScreen(),
       ),
       GoRoute(
         path: AppRoutes.wishlist,
@@ -91,10 +149,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.weather,
         builder: (context, state) => const WeatherScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.mandiPrices,
-        builder: (context, state) => const MandiPricesScreen(),
       ),
       GoRoute(
         path: AppRoutes.notifications,

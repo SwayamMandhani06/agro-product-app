@@ -16,6 +16,7 @@ abstract final class AppRadius {
   static const double xl     = 24;
   static const double xxl    = 32;
   static const double circle = 9999;
+  static const double full   = 9999;
 
   // ---------------------------------------------------------------------------
   // BorderRadius helpers
@@ -29,6 +30,7 @@ abstract final class AppRadius {
   static const BorderRadius xlAll     = BorderRadius.all(Radius.circular(xl));
   static const BorderRadius xxlAll    = BorderRadius.all(Radius.circular(xxl));
   static const BorderRadius circleAll = BorderRadius.all(Radius.circular(circle));
+  static const BorderRadius fullAll   = circleAll;
 
   // ---------------------------------------------------------------------------
   // Component defaults
