@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
 import { useCartStore } from '@/features/cart/store';
+import { ProductImageResolver } from '@/lib/product-image-resolver';
 import { ShoppingCart, X, ArrowRight } from 'lucide-react';
 
 function formatPrice(n: number) {
@@ -98,7 +99,7 @@ export default function CartPage() {
                       }}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={`https://picsum.photos/seed/${item.product.id}/160/160`} alt={item.product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                      <img src={ProductImageResolver.resolveThumbnail(item.product.id, item.product.category)} alt={item.product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                       {discount > 0 && (
                         <span className="discount-badge" style={{ position: 'absolute', bottom: 2, left: 2, fontSize: 9 }}>
                           {discount}%

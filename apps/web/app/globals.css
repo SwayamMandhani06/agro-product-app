@@ -105,6 +105,26 @@
   --shadow-lg: 0 6px 20px rgba(1, 45, 29, 0.11), 0 2px 6px rgba(0, 0, 0, 0.06);
   --shadow-xl: 0 12px 32px rgba(1, 45, 29, 0.12), 0 4px 12px rgba(0, 0, 0, 0.07);
 
+  /* Motion & Animation Tokens (AppMotion parity) */
+  --motion-instant: 0ms;
+  --motion-micro: 100ms;
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-normal: 250ms;
+  --motion-slow: 350ms;
+  --ease-standard: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+  --ease-decelerate: cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-accelerate: cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1.0);
+
+  /* Glassmorphism Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-bg-dark: rgba(11, 61, 46, 0.90);
+  --glass-border: rgba(1, 45, 29, 0.08);
+  --glass-border-light: rgba(255, 255, 255, 0.18);
+  --glass-blur: blur(12px);
+  --glass-shadow: 0 4px 20px rgba(1, 45, 29, 0.08);
+
   /* Layout */
   --nav-height: 64px;
   --bottom-bar-height: 60px;
@@ -691,3 +711,123 @@ img {
     grid-template-columns: 1fr 320px !important;
   }
 }
+
+/* ============================================================
+   GLASSMORPHISM PRIMITIVES (selective & high-contrast)
+   ============================================================ */
+
+.glass-surface {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-nav {
+  background: var(--glass-bg-dark);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border-light);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--motion-fast) var(--ease-decelerate), box-shadow var(--motion-fast) var(--ease-decelerate);
+}
+
+.glass-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   MOTION & ANIMATION PRIMITIVES
+   ============================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scalePress {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+.fade-in {
+  animation: fadeIn var(--motion-base) var(--ease-decelerate) both;
+}
+
+.slide-up {
+  animation: slideUp var(--motion-normal) var(--ease-decelerate) both;
+}
+
+.stagger-1 { animation-delay: 40ms; }
+.stagger-2 { animation-delay: 80ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 160ms; }
+
+.interactive-press:active {
+  transform: scale(0.98);
+  transition: transform var(--motion-micro) var(--ease-standard);
+}
+
+/* Accessibility: honor user motion reduction settings */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   SKELETON SHIMMER LOADERS
+   ============================================================ */
+
+@keyframes shimmerSweep {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-shimmer-base) 25%,
+    var(--color-shimmer-highlight) 50%,
+    var(--color-shimmer-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmerSweep 1.5s infinite linear;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-text {
+  height: 14px;
+  margin-bottom: 8px;
+  border-radius: var(--radius-xs);
+}
+
+.skeleton-avatar {
+  border-radius: var(--radius-full);
+}
+

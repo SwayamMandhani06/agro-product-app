@@ -14,13 +14,14 @@ import {
   Leaf,
   Package,
   LogOut,
+  Bell,
 } from 'lucide-react';
 
 const emptySubscribe = () => () => {};
 const useMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => false);
 
 const NAV_LINKS = [
-  { href: '/home',       label: 'Home' },
+  { href: '/home',       label: 'Dashboard' },
   { href: '/categories', label: 'Categories' },
   { href: '/products',   label: 'Products' },
   { href: '/orders',     label: 'My Orders' },
@@ -68,7 +69,7 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
           >
             <Leaf size={24} strokeWidth={2} />
           </div>
-          <p style={{ color: 'var(--color-text-tertiary)', fontSize: 13, margin: 0 }}>Loading…</p>
+          <p style={{ color: 'var(--color-text-tertiary)', fontSize: 13, margin: 0 }}>Loading AgriTrade…</p>
         </div>
       </div>
     );
@@ -77,22 +78,21 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
   return (
     <div style={{ minHeight: '100vh', background: 'var(--color-bg)' }}>
       {/* ============================================================
-          TOP NAVIGATION BAR
+          TOP NAVIGATION BAR (SaaS Glassmorphic Header)
           ============================================================ */}
       <header
+        className="glass-nav"
         style={{
-          background: 'var(--color-forest)',
           position: 'sticky',
           top: 0,
           zIndex: 50,
-          boxShadow: '0 1px 0 rgba(255,255,255,0.06), 0 2px 8px rgba(0,0,0,0.18)',
         }}
       >
         <div
           className="container-app"
           style={{ display: 'flex', alignItems: 'center', height: 'var(--nav-height)', gap: 24 }}
         >
-          {/* Brand */}
+          {/* Brand Logo */}
           <Link
             href="/home"
             style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none', flexShrink: 0 }}
@@ -102,7 +102,7 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                 width: 32,
                 height: 32,
                 borderRadius: 6,
-                background: 'rgba(255,255,255,0.14)',
+                background: 'rgba(255,255,255,0.16)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -119,20 +119,20 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
           {/* Desktop Nav Links */}
           <nav style={{ display: 'none', gap: 2 }} className="desktop-nav">
             {NAV_LINKS.map((link) => {
-              const active = pathname === link.href || pathname.startsWith(link.href + '/');
+              const active = pathname === link.href || (pathname.startsWith(link.href + '/') && link.href !== '/home');
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   style={{
-                    color: active ? '#fff' : 'rgba(255,255,255,0.70)',
+                    color: active ? '#fff' : 'rgba(255,255,255,0.72)',
                     textDecoration: 'none',
                     fontWeight: active ? 600 : 500,
-                    fontSize: 14,
-                    padding: '5px 12px',
+                    fontSize: 13.5,
+                    padding: '6px 13px',
                     borderRadius: 6,
-                    background: active ? 'rgba(255,255,255,0.14)' : 'transparent',
-                    transition: 'all 150ms ease',
+                    background: active ? 'rgba(255,255,255,0.16)' : 'transparent',
+                    transition: 'all var(--motion-fast) var(--ease-standard)',
                     letterSpacing: '0.1px',
                   }}
                 >
@@ -147,7 +147,40 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
 
           {/* Right actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            {/* Cart */}
+            {/* Notification Bell (Parity with Mobile 2 Unread) */}
+            <button
+              title="Notifications"
+              style={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                background: 'rgba(255,255,255,0.10)',
+                color: '#fff',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background var(--motion-fast) var(--ease-standard)',
+              }}
+            >
+              <Bell size={17} strokeWidth={2} />
+              <span
+                style={{
+                  position: 'absolute',
+                  top: 7,
+                  right: 7,
+                  width: 7,
+                  height: 7,
+                  borderRadius: '50%',
+                  background: 'var(--color-amber)',
+                  boxShadow: '0 0 0 2px var(--color-forest)',
+                }}
+              />
+            </button>
+
+            {/* Cart Button */}
             <Link
               href="/cart"
               id="nav-cart-btn"
@@ -156,16 +189,16 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 38,
-                height: 38,
+                width: 36,
+                height: 36,
                 borderRadius: 8,
                 background: 'rgba(255,255,255,0.10)',
                 color: '#fff',
                 textDecoration: 'none',
-                transition: 'background 150ms ease',
+                transition: 'background var(--motion-fast) var(--ease-standard)',
               }}
             >
-              <ShoppingCart size={19} strokeWidth={2} />
+              <ShoppingCart size={18} strokeWidth={2} />
               {cartCount > 0 && (
                 <span
                   style={{
@@ -189,7 +222,7 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
               )}
             </Link>
 
-            {/* User avatar / dropdown */}
+            {/* User Avatar / Dropdown */}
             <div style={{ position: 'relative' }}>
               <button
                 id="nav-user-btn"
@@ -201,18 +234,18 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                   background: 'rgba(255,255,255,0.10)',
                   border: 'none',
                   borderRadius: 8,
-                  padding: '5px 10px 5px 5px',
+                  padding: '4px 10px 4px 4px',
                   cursor: 'pointer',
                   color: '#fff',
                   fontSize: 13,
                   fontWeight: 600,
-                  transition: 'background 150ms ease',
+                  transition: 'background var(--motion-fast) var(--ease-standard)',
                 }}
               >
                 <div
                   style={{
-                    width: 26,
-                    height: 26,
+                    width: 28,
+                    height: 28,
                     borderRadius: '50%',
                     background: 'var(--color-amber)',
                     display: 'flex',
@@ -236,6 +269,7 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                     onClick={() => setMenuOpen(false)}
                   />
                   <div
+                    className="slide-up"
                     style={{
                       position: 'absolute',
                       top: 'calc(100% + 8px)',
@@ -244,7 +278,7 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                       borderRadius: 10,
                       boxShadow: 'var(--shadow-xl)',
                       border: '1px solid var(--color-divider)',
-                      minWidth: 200,
+                      minWidth: 210,
                       zIndex: 50,
                       overflow: 'hidden',
                     }}
@@ -276,7 +310,7 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                           alignItems: 'center',
                           gap: 10,
                           padding: '11px 16px',
-                          fontSize: 14,
+                          fontSize: 13.5,
                           fontWeight: 500,
                           color: 'var(--color-text-primary)',
                           textDecoration: 'none',
@@ -293,7 +327,7 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                       style={{
                         width: '100%',
                         padding: '11px 16px',
-                        fontSize: 14,
+                        fontSize: 13.5,
                         fontWeight: 600,
                         color: 'var(--color-error)',
                         background: 'none',
@@ -324,9 +358,9 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
       </main>
 
       {/* ============================================================
-          BOTTOM NAVIGATION (mobile only)
+          BOTTOM NAVIGATION (mobile web only)
           ============================================================ */}
-      <nav className="bottom-nav" id="bottom-nav">
+      <nav className="bottom-nav glass-surface" id="bottom-nav">
         {BOTTOM_NAV.map(({ href, label, Icon, badge }) => {
           const active = pathname === href || (pathname.startsWith(href + '/') && href !== '/home');
           return (

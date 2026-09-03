@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import { MOCK_PRODUCTS, MOCK_CATEGORIES } from '@/lib/mock-data';
+import { ProductImageResolver } from '@/lib/product-image-resolver';
+import { ProductCardSkeleton } from '@/components/common/Skeleton';
 import { useCartStore } from '@/features/cart/store';
 import type { Product, ProductSortKey } from '@/types';
 import { Search, SlidersHorizontal, ShoppingCart, CheckCircle, Star, Package } from 'lucide-react';
@@ -36,7 +38,7 @@ function ProductCard({ product }: { product: Product }) {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
-  const imgSrc = `https://picsum.photos/seed/${product.id}/400/280`;
+  const imgSrc = ProductImageResolver.resolve(product.id, product.category);
 
   return (
     <div className="card card-hover">
@@ -283,7 +285,19 @@ function ProductsContent() {
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={<div style={{ padding: 32, textAlign: 'center', color: 'var(--color-text-tertiary)', fontSize: 14 }}>Loading…</div>}>
+    <Suspense
+      fallback={
+        <AppShell>
+          <div className="container-app" style={{ paddingTop: 32, paddingBottom: 40 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(175px, 1fr))', gap: 14 }}>
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        </AppShell>
+      }
+    >
       <ProductsContent />
     </Suspense>
   );

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
 import { useOrdersStore } from '@/features/orders/store';
+import { ProductImageResolver } from '@/lib/product-image-resolver';
 import type { Order, OrderStatus } from '@/types';
 import { ORDER_STATUS_LABELS } from '@/types';
 import { Package } from 'lucide-react';
@@ -71,7 +72,7 @@ function OrderCard({ order }: { order: Order }) {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={`https://picsum.photos/seed/${firstItem?.product.id}/120/120`}
+              src={ProductImageResolver.resolveThumbnail(firstItem?.product.id ?? '', firstItem?.product.category ?? '')}
               alt=""
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               loading="lazy"
