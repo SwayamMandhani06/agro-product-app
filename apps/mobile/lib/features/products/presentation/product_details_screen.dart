@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,6 +13,7 @@ import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
 import '../../../core/widgets/price_text.dart';
 import '../../../core/widgets/product_card.dart';
+import '../../cart_checkout/presentation/providers/cart_providers.dart';
 import '../domain/product.dart';
 import 'providers/product_providers.dart';
 
@@ -49,6 +51,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   }
 
   void _onAddToCart(Product product, int quantity) {
+    HapticFeedback.mediumImpact();
+    ref.read(cartItemsProvider.notifier).addItem(product, quantity: quantity);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Added $quantity x "${product.title}" to cart'),
@@ -99,6 +104,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
   Widget _buildProductScaffold(BuildContext context, Product product, int quantity) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final cartCount = ref.watch(cartItemCountProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -159,6 +165,49 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               ),
             ),
           ),
+          // Shopping Cart Action Icon with Badge
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: CircleAvatar(
+              backgroundColor: AppColors.surface,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.shopping_bag_outlined, size: 20),
+                    color: AppColors.textPrimary,
+                    onPressed: () => context.push(AppRoutes.cartCheckout),
+                  ),
+                  if (cartCount > 0)
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: AppColors.stitchForestGreen,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          cartCount > 99 ? '99+' : '$cartCount',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Stack(

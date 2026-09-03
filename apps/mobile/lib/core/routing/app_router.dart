@@ -5,7 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../features/addresses/presentation/addresses_screen.dart';
 import '../../features/admin/presentation/admin_screen.dart';
 import '../../features/auth/presentation/auth_screen.dart';
-import '../../features/cart_checkout/presentation/cart_checkout_screen.dart';
+import '../../features/cart_checkout/domain/delivery_address.dart';
+import '../../features/cart_checkout/domain/order.dart';
+import '../../features/cart_checkout/presentation/cart_screen.dart';
+import '../../features/cart_checkout/presentation/checkout_screen.dart';
+import '../../features/cart_checkout/presentation/order_confirmed_screen.dart';
 import '../../features/forum/presentation/forum_screen.dart';
 import '../../features/home/presentation/design_system_preview.dart';
 import '../../features/home/presentation/home_screen.dart';
@@ -133,7 +137,41 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.cartCheckout,
-        builder: (context, state) => const CartCheckoutScreen(),
+        builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.checkout,
+        builder: (context, state) => const CheckoutScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.orderConfirmed,
+        builder: (context, state) {
+          final order = state.extra as Order?;
+          if (order != null) {
+            return OrderConfirmedScreen(order: order);
+          }
+          return OrderConfirmedScreen(
+            order: Order(
+              id: '#AT${100000 + DateTime.now().millisecondsSinceEpoch % 900000}',
+              items: const [],
+              address: const DeliveryAddress(
+                id: 'addr_1',
+                recipientName: 'Rahul Sharma',
+                phone: '+91 98765 43210',
+                addressLine: 'Flat 402, Shivneri Residency, Baner Road',
+                city: 'Pune',
+                state: 'Maharashtra',
+                pincode: '411045',
+              ),
+              paymentMethod: 'Cash on Delivery',
+              subtotal: 0,
+              deliveryFee: 0,
+              discount: 0,
+              totalAmount: 0,
+              createdAt: DateTime.now(),
+            ),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.wishlist,

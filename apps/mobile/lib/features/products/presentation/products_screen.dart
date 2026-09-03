@@ -12,6 +12,7 @@ import '../../../core/widgets/app_loading.dart';
 import '../../../core/widgets/product_card.dart';
 import '../domain/product.dart';
 import 'providers/product_providers.dart';
+import '../../cart_checkout/presentation/providers/cart_providers.dart';
 import 'widgets/product_filter_sheet.dart';
 import 'widgets/product_sort_sheet.dart';
 
@@ -71,6 +72,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   }
 
   void _onAddToCart(Product product) {
+    ref.read(cartItemsProvider.notifier).addItem(product, quantity: 1);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Added ${product.title} to cart'),
@@ -105,6 +108,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         : 'All Products';
 
     final activeFilterCount = filter.activeFilterCount;
+    final cartCount = ref.watch(cartItemCountProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -128,12 +132,43 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         elevation: 0,
         centerTitle: false,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined),
-            color: AppColors.textPrimary,
-            tooltip: 'Cart',
-            onPressed: () => context.push(AppRoutes.cartCheckout),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart_outlined),
+                color: AppColors.textPrimary,
+                tooltip: 'Cart',
+                onPressed: () => context.push(AppRoutes.cartCheckout),
+              ),
+              if (cartCount > 0)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: const BoxDecoration(
+                      color: AppColors.stitchForestGreen,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      cartCount > 99 ? '99+' : '$cartCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
+          const SizedBox(width: 4),
         ],
       ),
       body: Column(
