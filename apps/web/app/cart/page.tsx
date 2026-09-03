@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
 import { useCartStore } from '@/features/cart/store';
+import { ShoppingCart, X, ArrowRight } from 'lucide-react';
 
 function formatPrice(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
@@ -29,28 +30,20 @@ export default function CartPage() {
   const total = totalAmount();
   const count = totalItemCount();
 
-  const CATEGORY_EMOJI: Record<string, string> = {
-    Seeds: '🌱',
-    Fertilizers: '🧪',
-    'Crop Protection': '🛡️',
-    Irrigation: '💧',
-    'Farm Tools': '🔧',
-    'Animal Care': '🐄',
-  };
+  const CATEGORY_EMOJI_UNUSED = {}; // replaced by images
+  void CATEGORY_EMOJI_UNUSED;
 
   if (items.length === 0) {
     return (
       <AppShell>
         <div className="container-app" style={{ paddingTop: 24, paddingBottom: 40 }}>
           <div className="empty-state" style={{ paddingTop: 64 }}>
-            <div className="empty-icon" style={{ fontSize: 40 }}>🛒</div>
-            <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-              Your cart is empty
-            </h2>
-            <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 15, maxWidth: 300, textAlign: 'center' }}>
+            <div className="empty-icon"><ShoppingCart size={28} strokeWidth={1.5} /></div>
+            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: 'var(--color-text-primary)' }}>Your cart is empty</h2>
+            <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 14, maxWidth: 300, textAlign: 'center' }}>
               Add seeds, fertilizers, or farm tools to get started.
             </p>
-            <Link href="/products" className="btn btn-primary" id="cart-browse-btn" style={{ borderRadius: 12, padding: '13px 28px' }}>
+            <Link href="/products" className="btn btn-primary" id="cart-browse-btn">
               Browse Products
             </Link>
           </div>
@@ -83,7 +76,6 @@ export default function CartPage() {
               const discount = item.product.originalPrice
                 ? Math.round(((item.product.originalPrice - item.product.price) / item.product.originalPrice) * 100)
                 : 0;
-              const emoji = CATEGORY_EMOJI[item.product.category ?? ''] ?? '📦';
 
               return (
                 <div
@@ -97,19 +89,18 @@ export default function CartPage() {
                       style={{
                         width: 80,
                         height: 80,
-                        borderRadius: 12,
-                        background: 'linear-gradient(135deg, var(--color-brand-50), var(--color-brand-100))',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 36,
+                        borderRadius: 8,
+                        overflow: 'hidden',
                         flexShrink: 0,
                         position: 'relative',
+                        border: '1px solid var(--color-divider)',
+                        background: 'var(--color-neutral-50)',
                       }}
                     >
-                      {emoji}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={`https://picsum.photos/seed/${item.product.id}/160/160`} alt={item.product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                       {discount > 0 && (
-                        <span className="discount-badge" style={{ position: 'absolute', bottom: -4, right: -4, fontSize: 9 }}>
+                        <span className="discount-badge" style={{ position: 'absolute', bottom: 2, left: 2, fontSize: 9 }}>
                           {discount}%
                         </span>
                       )}
@@ -142,7 +133,7 @@ export default function CartPage() {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
                         {/* Price */}
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                          <span style={{ fontSize: 17, fontWeight: 800, color: 'var(--color-forest)' }}>
+                          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-text-primary)' }}>
                             {formatPrice(item.product.price * item.quantity)}
                           </span>
                           {item.product.originalPrice && (
@@ -177,17 +168,9 @@ export default function CartPage() {
                     <button
                       id={`cart-remove-${item.product.id}`}
                       onClick={() => removeItem(item.product.id)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: 'var(--color-text-tertiary)',
-                        fontSize: 18,
-                        alignSelf: 'flex-start',
-                        padding: 4,
-                      }}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-tertiary)', alignSelf: 'flex-start', padding: 4, display: 'flex', alignItems: 'center', borderRadius: 4, transition: 'color 150ms ease' }}
                     >
-                      ✕
+                      <X size={16} strokeWidth={2} />
                     </button>
                   </div>
                 </div>
@@ -221,9 +204,7 @@ export default function CartPage() {
                   </span>
                 </div>
                 {fee === 0 && (
-                  <p style={{ margin: 0, fontSize: 12, color: 'var(--color-success)' }}>
-                    🎉 Free delivery applied!
-                  </p>
+                  <p style={{ margin: 0, fontSize: 12, color: 'var(--color-success)', fontWeight: 500 }}>Free delivery applied</p>
                 )}
                 {fee > 0 && (
                   <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-tertiary)' }}>
@@ -247,13 +228,8 @@ export default function CartPage() {
                 <span style={{ color: 'var(--color-forest)' }}>{formatPrice(total)}</span>
               </div>
 
-              <Link
-                href="/checkout"
-                id="cart-checkout-btn"
-                className="btn btn-primary btn-full"
-                style={{ borderRadius: 12, padding: '14px 24px', fontSize: 16 }}
-              >
-                Proceed to Checkout →
+              <Link href="/checkout" id="cart-checkout-btn" className="btn btn-primary btn-full" style={{ gap: 6 }}>
+                Proceed to Checkout <ArrowRight size={16} strokeWidth={2.5} />
               </Link>
 
               <Link

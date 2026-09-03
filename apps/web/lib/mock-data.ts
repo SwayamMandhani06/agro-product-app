@@ -6,12 +6,12 @@
 import type { Product, ProductCategory, DeliveryAddress, Order } from '@/types';
 
 export const MOCK_CATEGORIES: ProductCategory[] = [
-  { id: 'cat_seeds', name: 'Seeds', icon: '🌱', itemCount: 148 },
-  { id: 'cat_fertilizers', name: 'Fertilizers', icon: '🧪', itemCount: 92 },
-  { id: 'cat_protection', name: 'Crop Protection', icon: '🛡️', itemCount: 76 },
-  { id: 'cat_tools', name: 'Farm Tools', icon: '🔧', itemCount: 115 },
-  { id: 'cat_irrigation', name: 'Irrigation', icon: '💧', itemCount: 54 },
-  { id: 'cat_animal', name: 'Animal Care', icon: '🐄', itemCount: 38 },
+  { id: 'cat_seeds',       name: 'Seeds',          icon: 'sprout',        itemCount: 148 },
+  { id: 'cat_fertilizers', name: 'Fertilizers',    icon: 'flask',         itemCount: 92  },
+  { id: 'cat_protection',  name: 'Crop Protection', icon: 'shield-check', itemCount: 76  },
+  { id: 'cat_tools',       name: 'Farm Tools',      icon: 'wrench',       itemCount: 115 },
+  { id: 'cat_irrigation',  name: 'Irrigation',      icon: 'droplets',     itemCount: 54  },
+  { id: 'cat_animal',      name: 'Animal Care',     icon: 'beef',         itemCount: 38  },
 ];
 
 export const MOCK_PRODUCTS: Product[] = [

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import { useOrdersStore } from '@/features/orders/store';
+import { CheckCircle2, Truck, MapPin, ArrowRight } from 'lucide-react';
 
 function formatPrice(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
@@ -29,19 +30,19 @@ function ConfirmedContent() {
           {/* Success animation */}
           <div
             style={{
-              width: 100,
-              height: 100,
-              borderRadius: '50%',
+              width: 88,
+              height: 88,
+              borderRadius: 12,
               background: 'var(--color-success-light)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 52,
               margin: '0 auto 24px',
-              border: '3px solid var(--color-success)',
+              border: '1px solid var(--color-success)',
+              color: 'var(--color-success)',
             }}
           >
-            ✅
+            <CheckCircle2 size={48} strokeWidth={1.5} />
           </div>
 
           <h1 style={{ margin: '0 0 8px', fontSize: 26, fontWeight: 800, color: 'var(--color-text-primary)' }}>
@@ -100,12 +101,14 @@ function ConfirmedContent() {
                 <span style={{ color: 'var(--color-forest)' }}>{formatPrice(order.totalAmount)}</span>
               </div>
 
-              <div style={{ marginTop: 14, padding: '12px 14px', background: 'var(--color-canvas)', borderRadius: 10 }}>
-                <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)' }}>
-                  🚛 Estimated Delivery: {order.estimatedDelivery}
+              <div style={{ marginTop: 14, padding: '12px 14px', background: 'var(--color-canvas)', borderRadius: 8 }}>
+                <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Truck size={14} strokeWidth={2} color="var(--color-forest)" />
+                  Estimated Delivery: {order.estimatedDelivery}
                 </p>
-                <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-tertiary)' }}>
-                  📍 {order.address.city}, {order.address.state}
+                <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-tertiary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <MapPin size={13} strokeWidth={2} />
+                  {order.address.city}, {order.address.state}
                 </p>
               </div>
             </div>
@@ -116,15 +119,15 @@ function ConfirmedContent() {
               href={`/orders/${orderId}`}
               id="confirmed-track-btn"
               className="btn btn-primary btn-full"
-              style={{ borderRadius: 12, padding: '14px 24px', fontSize: 16 }}
+              style={{ gap: 6, padding: '13px 24px', fontSize: 15 }}
             >
-              Track My Order →
+              Track My Order <ArrowRight size={16} strokeWidth={2.5} />
             </Link>
             <Link
               href="/home"
               id="confirmed-home-btn"
               className="btn btn-secondary btn-full"
-              style={{ borderRadius: 12, padding: '13px 24px', fontSize: 16 }}
+              style={{ padding: '12px 24px', fontSize: 15 }}
             >
               Back to Home
             </Link>

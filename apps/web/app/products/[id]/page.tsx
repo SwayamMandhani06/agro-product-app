@@ -6,6 +6,7 @@ import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
 import { getProductById, getSimilarProducts } from '@/lib/mock-data';
 import { useCartStore } from '@/features/cart/store';
+import { Package, Truck, ShoppingCart, CheckCircle, Star } from 'lucide-react';
 
 function formatPrice(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
@@ -30,8 +31,8 @@ export default function ProductDetailPage() {
     return (
       <AppShell>
         <div className="empty-state" style={{ paddingTop: 64 }}>
-          <div className="empty-icon">📦</div>
-          <h2>Product not found</h2>
+          <div className="empty-icon"><Package size={28} strokeWidth={1.5} /></div>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>Product not found</h2>
           <Link href="/products" className="btn btn-primary">Browse Products</Link>
         </div>
       </AppShell>
@@ -49,13 +50,7 @@ export default function ProductDetailPage() {
   const inCart = hasItem(product.id);
   const cartQty = getQty(product.id);
 
-  const emoji =
-    product.category === 'Seeds' ? '🌱'
-    : product.category === 'Fertilizers' ? '🧪'
-    : product.category === 'Crop Protection' ? '🛡️'
-    : product.category === 'Irrigation' ? '💧'
-    : product.category === 'Farm Tools' ? '🔧'
-    : '🐄';
+  const imgSrc = `https://picsum.photos/seed/${product.id}/600/400`;
 
   const handleAddToCart = () => {
     addItem(product, quantity);
@@ -89,22 +84,11 @@ export default function ProductDetailPage() {
           {/* Left: image + info */}
           <div>
             {/* Image */}
-            <div
-              className="card"
-              style={{
-                height: 280,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 96,
-                background: 'linear-gradient(135deg, var(--color-brand-50) 0%, var(--color-brand-100) 100%)',
-                position: 'relative',
-                marginBottom: 20,
-              }}
-            >
-              {emoji}
+            <div className="product-img-wrap" style={{ height: 280, borderRadius: 12, marginBottom: 20, position: 'relative', border: '1px solid var(--color-divider)' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={imgSrc} alt={product.title} />
               {discount > 0 && (
-                <span className="discount-badge" style={{ position: 'absolute', top: 16, left: 16, fontSize: 13, padding: '4px 12px' }}>
+                <span className="discount-badge" style={{ position: 'absolute', top: 12, left: 12 }}>
                   {discount}% OFF
                 </span>
               )}
@@ -132,7 +116,10 @@ export default function ProductDetailPage() {
               <p style={{ margin: 0, fontSize: 14, color: 'var(--color-text-secondary)' }}>
                 by {product.sellerName}
                 {product.sellerRating && (
-                  <span style={{ marginLeft: 8, color: 'var(--color-amber)' }}>★ {product.sellerRating} Seller</span>
+                  <span style={{ marginLeft: 8, color: 'var(--color-text-secondary)', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                    <Star size={12} fill="var(--color-amber)" color="var(--color-amber)" strokeWidth={1} />
+                    <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{product.sellerRating}</span> Seller
+                  </span>
                 )}
               </p>
             </div>
@@ -142,7 +129,7 @@ export default function ProductDetailPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
                 <div style={{ display: 'flex', gap: 2 }}>
                   {Array.from({ length: 5 }, (_, i) => (
-                    <span key={i} style={{ color: i < Math.floor(product.rating!) ? 'var(--color-amber)' : 'var(--color-neutral-200)', fontSize: 18 }}>★</span>
+                    <Star key={i} size={16} fill={i < Math.floor(product.rating!) ? 'var(--color-amber)' : 'var(--color-neutral-200)'} color={i < Math.floor(product.rating!) ? 'var(--color-amber)' : 'var(--color-neutral-200)'} strokeWidth={1} />
                   ))}
                 </div>
                 <span style={{ fontWeight: 700, fontSize: 15 }}>{product.rating}</span>
@@ -174,9 +161,9 @@ export default function ProductDetailPage() {
 
             {/* Stock */}
             {product.stockCount && (
-              <p style={{ margin: '0 0 16px', fontSize: 13 }}>
+              <p style={{ margin: '0 0 16px', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{ color: product.stockCount < 10 ? 'var(--color-warning)' : 'var(--color-success)', fontWeight: 600 }}>
-                  {product.stockCount < 10 ? `⚠️ Only ${product.stockCount} left` : `✓ In Stock (${product.stockCount})`}
+                  {product.stockCount < 10 ? `Only ${product.stockCount} left` : `In Stock (${product.stockCount} units)`}
                 </span>
               </p>
             )}
@@ -215,8 +202,8 @@ export default function ProductDetailPage() {
                 {product.highlights && (
                   <ul style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {product.highlights.map((h, i) => (
-                      <li key={i} style={{ display: 'flex', gap: 8, fontSize: 14 }}>
-                        <span style={{ color: 'var(--color-success)', fontSize: 16 }}>✓</span>
+                      <li key={i} style={{ display: 'flex', gap: 8, fontSize: 14, alignItems: 'flex-start' }}>
+                        <CheckCircle size={15} strokeWidth={2.5} color="var(--color-success)" style={{ flexShrink: 0, marginTop: 1 }} />
                         <span>{h}</span>
                       </li>
                     ))}
@@ -309,46 +296,25 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Delivery info */}
-              <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--color-text-secondary)' }}>
-                🚛 Free delivery on orders above ₹1,000 · Delivers to {product.deliveryLocation}
+              <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Truck size={14} strokeWidth={2} />
+                Free delivery on orders above ₹1,000 · Delivers to {product.deliveryLocation}
               </p>
 
               {/* Cart badge */}
               {inCart && (
                 <div
-                  style={{
-                    background: 'var(--color-success-light)',
-                    border: '1px solid var(--color-success)',
-                    borderRadius: 8,
-                    padding: '8px 12px',
-                    marginBottom: 12,
-                    fontSize: 13,
-                    color: 'var(--color-success)',
-                    fontWeight: 500,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
+                  style={{ background: 'var(--color-success-light)', border: '1px solid var(--color-success)', borderRadius: 8, padding: '8px 12px', marginBottom: 12, fontSize: 13, color: 'var(--color-success)', fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
                 >
-                  <span>✓ {cartQty} in cart</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle size={14} strokeWidth={2.5} />{cartQty} in cart</span>
                   <button onClick={() => removeItem(product.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-error)', fontSize: 12, fontWeight: 600 }}>Remove</button>
                 </div>
               )}
 
-              <button
-                id="detail-add-cart-btn"
-                onClick={handleAddToCart}
-                className="btn btn-secondary btn-full"
-                style={{ marginBottom: 10, borderRadius: 12, padding: '13px 24px' }}
-              >
-                🛒 Add to Cart
+              <button id="detail-add-cart-btn" onClick={handleAddToCart} className="btn btn-secondary btn-full" style={{ marginBottom: 10, gap: 6 }}>
+                <ShoppingCart size={15} strokeWidth={2} />Add to Cart
               </button>
-              <button
-                id="detail-buy-now-btn"
-                onClick={handleBuyNow}
-                className="btn btn-primary btn-full"
-                style={{ borderRadius: 12, padding: '13px 24px' }}
-              >
+              <button id="detail-buy-now-btn" onClick={handleBuyNow} className="btn btn-primary btn-full" style={{ gap: 6 }}>
                 Buy Now
               </button>
             </div>
@@ -361,20 +327,17 @@ export default function ProductDetailPage() {
             <h2 style={{ margin: '0 0 16px', fontSize: 20, fontWeight: 700 }}>Similar Products</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 14 }}>
               {similar.map((p) => {
-                const e =
-                  p.category === 'Seeds' ? '🌱'
-                  : p.category === 'Fertilizers' ? '🧪'
-                  : p.category === 'Crop Protection' ? '🛡️'
-                  : p.category === 'Irrigation' ? '💧'
-                  : p.category === 'Farm Tools' ? '🔧'
-                  : '🐄';
+                const simImgSrc = `https://picsum.photos/seed/${p.id}/400/280`;
                 return (
                   <Link key={p.id} href={`/products/${p.id}`} style={{ textDecoration: 'none' }}>
                     <div className="card card-hover">
-                      <div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, background: 'var(--color-brand-50)' }}>{e}</div>
+                      <div className="product-img-wrap" style={{ height: 100 }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={simImgSrc} alt={p.title} loading="lazy" />
+                      </div>
                       <div style={{ padding: '10px 12px' }}>
-                        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, color: 'var(--color-text-primary)', lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.title}</p>
-                        <p style={{ margin: 0, fontSize: 14, fontWeight: 800, color: 'var(--color-forest)' }}>{formatPrice(p.price)}</p>
+                        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.title}</p>
+                        <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--color-text-primary)' }}>{formatPrice(p.price)}</p>
                       </div>
                     </div>
                   </Link>

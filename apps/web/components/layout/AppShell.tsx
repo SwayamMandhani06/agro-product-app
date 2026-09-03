@@ -5,37 +5,42 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/features/auth/store';
 import { useCartStore } from '@/features/cart/store';
+import {
+  Home,
+  LayoutGrid,
+  Sprout,
+  ShoppingCart,
+  User,
+  Leaf,
+  Package,
+  LogOut,
+} from 'lucide-react';
 
 const emptySubscribe = () => () => {};
 const useMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => false);
 
 const NAV_LINKS = [
-  { href: '/home', label: 'Home' },
+  { href: '/home',       label: 'Home' },
   { href: '/categories', label: 'Categories' },
-  { href: '/products', label: 'Products' },
-  { href: '/orders', label: 'My Orders' },
+  { href: '/products',   label: 'Products' },
+  { href: '/orders',     label: 'My Orders' },
 ];
 
 const BOTTOM_NAV = [
-  { href: '/home', label: 'Home', icon: HomeIcon },
-  { href: '/categories', label: 'Categories', icon: GridIcon },
-  { href: '/products', label: 'Products', icon: LeafIcon },
-  { href: '/cart', label: 'Cart', icon: CartIcon, badge: true },
-  { href: '/profile', label: 'Profile', icon: UserIcon },
+  { href: '/home',       label: 'Home',       Icon: Home,         badge: false },
+  { href: '/categories', label: 'Categories', Icon: LayoutGrid,   badge: false },
+  { href: '/products',   label: 'Products',   Icon: Sprout,       badge: false },
+  { href: '/cart',       label: 'Cart',       Icon: ShoppingCart, badge: true  },
+  { href: '/profile',    label: 'Profile',    Icon: User,         badge: false },
 ];
 
-export default function AppShellLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const pathname = usePathname();
-  const router = useRouter();
+export default function AppShellLayout({ children }: { children: React.ReactNode }) {
+  const pathname  = usePathname();
+  const router    = useRouter();
   const { status, user, signOut } = useAuthStore();
   const cartCount = useCartStore((s) => s.totalItemCount());
   const [menuOpen, setMenuOpen] = useState(false);
-  const mounted = useMounted();
-
+  const mounted   = useMounted();
 
   // Route guard
   useEffect(() => {
@@ -46,32 +51,24 @@ export default function AppShellLayout({
 
   if (!mounted || status === 'unauthenticated' || status === 'initializing') {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'var(--color-canvas)',
-        }}
-      >
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-canvas)' }}>
         <div style={{ textAlign: 'center' }}>
           <div
             style={{
-              width: 56,
-              height: 56,
-              borderRadius: '50%',
+              width: 48,
+              height: 48,
+              borderRadius: 10,
               background: 'var(--color-forest)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 16px',
-              fontSize: 28,
+              margin: '0 auto 14px',
+              color: '#fff',
             }}
           >
-            🌿
+            <Leaf size={24} strokeWidth={2} />
           </div>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: 14 }}>Loading…</p>
+          <p style={{ color: 'var(--color-text-tertiary)', fontSize: 13, margin: 0 }}>Loading…</p>
         </div>
       </div>
     );
@@ -80,7 +77,7 @@ export default function AppShellLayout({
   return (
     <div style={{ minHeight: '100vh', background: 'var(--color-bg)' }}>
       {/* ============================================================
-          TOP NAVIGATION BAR (desktop & tablet)
+          TOP NAVIGATION BAR
           ============================================================ */}
       <header
         style={{
@@ -88,63 +85,39 @@ export default function AppShellLayout({
           position: 'sticky',
           top: 0,
           zIndex: 50,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          boxShadow: '0 1px 0 rgba(255,255,255,0.06), 0 2px 8px rgba(0,0,0,0.18)',
         }}
       >
         <div
           className="container-app"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            height: 64,
-            gap: 24,
-          }}
+          style={{ display: 'flex', alignItems: 'center', height: 'var(--nav-height)', gap: 24 }}
         >
-          {/* Logo */}
+          {/* Brand */}
           <Link
             href="/home"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              textDecoration: 'none',
-              flexShrink: 0,
-            }}
+            style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none', flexShrink: 0 }}
           >
             <div
               style={{
-                width: 36,
-                height: 36,
-                borderRadius: 10,
-                background: 'rgba(255,255,255,0.15)',
+                width: 32,
+                height: 32,
+                borderRadius: 6,
+                background: 'rgba(255,255,255,0.14)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 20,
-              }}
-            >
-              🌿
-            </div>
-            <span
-              style={{
                 color: '#fff',
-                fontSize: 20,
-                fontWeight: 700,
-                letterSpacing: '-0.3px',
               }}
             >
+              <Leaf size={18} strokeWidth={2.2} />
+            </div>
+            <span style={{ color: '#fff', fontSize: 17, fontWeight: 700, letterSpacing: '-0.2px' }}>
               AGRI TRADE
             </span>
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav
-            style={{
-              display: 'none',
-              gap: 4,
-            }}
-            className="desktop-nav"
-          >
+          <nav style={{ display: 'none', gap: 2 }} className="desktop-nav">
             {NAV_LINKS.map((link) => {
               const active = pathname === link.href || pathname.startsWith(link.href + '/');
               return (
@@ -152,14 +125,15 @@ export default function AppShellLayout({
                   key={link.href}
                   href={link.href}
                   style={{
-                    color: active ? '#fff' : 'rgba(255,255,255,0.75)',
+                    color: active ? '#fff' : 'rgba(255,255,255,0.70)',
                     textDecoration: 'none',
                     fontWeight: active ? 600 : 500,
                     fontSize: 14,
-                    padding: '6px 14px',
-                    borderRadius: 8,
-                    background: active ? 'rgba(255,255,255,0.15)' : 'transparent',
+                    padding: '5px 12px',
+                    borderRadius: 6,
+                    background: active ? 'rgba(255,255,255,0.14)' : 'transparent',
                     transition: 'all 150ms ease',
+                    letterSpacing: '0.1px',
                   }}
                 >
                   {link.label}
@@ -172,7 +146,7 @@ export default function AppShellLayout({
           <div style={{ flex: 1 }} />
 
           {/* Right actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             {/* Cart */}
             <Link
               href="/cart"
@@ -182,28 +156,28 @@ export default function AppShellLayout({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                background: 'rgba(255,255,255,0.12)',
+                width: 38,
+                height: 38,
+                borderRadius: 8,
+                background: 'rgba(255,255,255,0.10)',
                 color: '#fff',
                 textDecoration: 'none',
                 transition: 'background 150ms ease',
               }}
             >
-              <CartIcon size={20} />
+              <ShoppingCart size={19} strokeWidth={2} />
               {cartCount > 0 && (
                 <span
                   style={{
                     position: 'absolute',
-                    top: -4,
-                    right: -4,
+                    top: -3,
+                    right: -3,
                     background: 'var(--color-amber)',
                     color: '#fff',
                     borderRadius: '50%',
-                    width: 18,
-                    height: 18,
-                    fontSize: 10,
+                    width: 17,
+                    height: 17,
+                    fontSize: 9,
                     fontWeight: 700,
                     display: 'flex',
                     alignItems: 'center',
@@ -215,7 +189,7 @@ export default function AppShellLayout({
               )}
             </Link>
 
-            {/* User avatar / menu */}
+            {/* User avatar / dropdown */}
             <div style={{ position: 'relative' }}>
               <button
                 id="nav-user-btn"
@@ -224,27 +198,27 @@ export default function AppShellLayout({
                   display: 'flex',
                   alignItems: 'center',
                   gap: 8,
-                  background: 'rgba(255,255,255,0.12)',
+                  background: 'rgba(255,255,255,0.10)',
                   border: 'none',
-                  borderRadius: 10,
-                  padding: '6px 12px',
+                  borderRadius: 8,
+                  padding: '5px 10px 5px 5px',
                   cursor: 'pointer',
                   color: '#fff',
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: 600,
                   transition: 'background 150ms ease',
                 }}
               >
                 <div
                   style={{
-                    width: 28,
-                    height: 28,
+                    width: 26,
+                    height: 26,
                     borderRadius: '50%',
                     background: 'var(--color-amber)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: 700,
                   }}
                 >
@@ -258,11 +232,7 @@ export default function AppShellLayout({
               {menuOpen && (
                 <>
                   <div
-                    style={{
-                      position: 'fixed',
-                      inset: 0,
-                      zIndex: 40,
-                    }}
+                    style={{ position: 'fixed', inset: 0, zIndex: 40 }}
                     onClick={() => setMenuOpen(false)}
                   />
                   <div
@@ -271,9 +241,9 @@ export default function AppShellLayout({
                       top: 'calc(100% + 8px)',
                       right: 0,
                       background: 'var(--color-surface)',
-                      borderRadius: 12,
+                      borderRadius: 10,
                       boxShadow: 'var(--shadow-xl)',
-                      border: '1px solid var(--color-border)',
+                      border: '1px solid var(--color-divider)',
                       minWidth: 200,
                       zIndex: 50,
                       overflow: 'hidden',
@@ -286,7 +256,7 @@ export default function AppShellLayout({
                         background: 'var(--color-brand-50)',
                       }}
                     >
-                      <p style={{ margin: 0, fontWeight: 700, fontSize: 15, color: 'var(--color-forest)' }}>
+                      <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: 'var(--color-forest)' }}>
                         {user?.name}
                       </p>
                       <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--color-text-secondary)' }}>
@@ -294,25 +264,27 @@ export default function AppShellLayout({
                       </p>
                     </div>
                     {[
-                      { href: '/profile', label: '👤  My Profile' },
-                      { href: '/orders', label: '📦  My Orders' },
-                    ].map((item) => (
+                      { href: '/profile', label: 'My Profile',  IconC: User    },
+                      { href: '/orders',  label: 'My Orders',   IconC: Package },
+                    ].map(({ href, label, IconC }) => (
                       <Link
-                        key={item.href}
-                        href={item.href}
+                        key={href}
+                        href={href}
                         onClick={() => setMenuOpen(false)}
                         style={{
-                          display: 'block',
-                          padding: '12px 16px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 10,
+                          padding: '11px 16px',
                           fontSize: 14,
                           fontWeight: 500,
                           color: 'var(--color-text-primary)',
                           textDecoration: 'none',
-                          transition: 'background 150ms ease',
                           borderBottom: '1px solid var(--color-divider)',
                         }}
                       >
-                        {item.label}
+                        <IconC size={15} strokeWidth={2} color="var(--color-text-tertiary)" />
+                        {label}
                       </Link>
                     ))}
                     <button
@@ -320,7 +292,7 @@ export default function AppShellLayout({
                       onClick={() => { signOut(); setMenuOpen(false); router.replace('/welcome'); }}
                       style={{
                         width: '100%',
-                        padding: '12px 16px',
+                        padding: '11px 16px',
                         fontSize: 14,
                         fontWeight: 600,
                         color: 'var(--color-error)',
@@ -328,10 +300,13 @@ export default function AppShellLayout({
                         border: 'none',
                         cursor: 'pointer',
                         textAlign: 'left',
-                        transition: 'background 150ms ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
                       }}
                     >
-                      🚪  Sign Out
+                      <LogOut size={15} strokeWidth={2} />
+                      Sign Out
                     </button>
                   </div>
                 </>
@@ -344,20 +319,15 @@ export default function AppShellLayout({
       {/* ============================================================
           PAGE CONTENT
           ============================================================ */}
-      <main
-        style={{
-          minHeight: 'calc(100vh - 64px)',
-          paddingBottom: 80, // room for mobile bottom nav
-        }}
-      >
+      <main style={{ minHeight: 'calc(100vh - var(--nav-height))', paddingBottom: 72 }}>
         {children}
       </main>
 
       {/* ============================================================
-          BOTTOM NAVIGATION (mobile only — shown via CSS)
+          BOTTOM NAVIGATION (mobile only)
           ============================================================ */}
       <nav className="bottom-nav" id="bottom-nav">
-        {BOTTOM_NAV.map(({ href, label, icon: Icon, badge }) => {
+        {BOTTOM_NAV.map(({ href, label, Icon, badge }) => {
           const active = pathname === href || (pathname.startsWith(href + '/') && href !== '/home');
           return (
             <Link
@@ -367,19 +337,19 @@ export default function AppShellLayout({
               className={`bottom-nav-item ${active ? 'active' : ''}`}
             >
               <div style={{ position: 'relative' }}>
-                <Icon size={22} />
+                <Icon size={20} strokeWidth={active ? 2.2 : 1.75} />
                 {badge && cartCount > 0 && (
                   <span
                     style={{
                       position: 'absolute',
-                      top: -6,
-                      right: -8,
+                      top: -5,
+                      right: -7,
                       background: 'var(--color-amber)',
                       color: '#fff',
                       borderRadius: '50%',
-                      width: 16,
-                      height: 16,
-                      fontSize: 9,
+                      width: 15,
+                      height: 15,
+                      fontSize: 8,
                       fontWeight: 700,
                       display: 'flex',
                       alignItems: 'center',
@@ -390,7 +360,9 @@ export default function AppShellLayout({
                   </span>
                 )}
               </div>
-              <span style={{ fontSize: 10, fontWeight: active ? 600 : 500 }}>{label}</span>
+              <span style={{ fontSize: 9, fontWeight: active ? 600 : 500, letterSpacing: '0.3px', textTransform: 'uppercase' }}>
+                {label}
+              </span>
             </Link>
           );
         })}
@@ -405,49 +377,5 @@ export default function AppShellLayout({
         }
       `}</style>
     </div>
-  );
-}
-
-// ============================================================
-// INLINE ICON COMPONENTS
-// ============================================================
-
-function HomeIcon({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-    </svg>
-  );
-}
-
-function GridIcon({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z" />
-    </svg>
-  );
-}
-
-function LeafIcon({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 3.25-13 7.5 1.56-6.31 7.67-9 7.67-9-.86.56-1.3.9-1.3.9A6.44 6.44 0 0 1 17 8z" />
-    </svg>
-  );
-}
-
-function CartIcon({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 6.1 17 7 17h11v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H18c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 22.46 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2z" />
-    </svg>
-  );
-}
-
-function UserIcon({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-    </svg>
   );
 }
