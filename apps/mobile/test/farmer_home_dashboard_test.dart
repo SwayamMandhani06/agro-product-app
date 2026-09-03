@@ -90,7 +90,7 @@ void main() {
 
       // 1. Farmer greeting
       expect(find.byType(FarmerGreetingHeader), findsOneWidget);
-      expect(find.textContaining('Rahul'), findsOneWidget);
+      expect(find.textContaining('Farmer'), findsOneWidget);
       expect(find.text("Here’s what’s happening on your farm today."), findsOneWidget);
 
       // 2. Weather hero card
