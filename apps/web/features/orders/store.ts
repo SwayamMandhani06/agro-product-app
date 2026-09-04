@@ -21,6 +21,12 @@ interface OrdersState {
     paymentMethod: string
   ) => Order;
   cancelOrder: (orderId: string) => void;
+  updateOrderStatus: (
+    orderId: string,
+    status: Order['status'],
+    details?: { estimatedDelivery?: string; agentName?: string; agentPhone?: string }
+  ) => void;
+  advanceOrderStatus: (orderId: string) => Order['status'] | null;
   reorder: (orderId: string) => CartItem[];
   getOrderById: (orderId: string) => Order | undefined;
 }
@@ -66,6 +72,45 @@ export const useOrdersStore = create<OrdersState>()(
         }));
       },
 
+      updateOrderStatus: (orderId, status, details) => {
+        set((state) => ({
+          orders: state.orders.map((o) => {
+            if (o.id === orderId) {
+              return {
+                ...o,
+                status,
+                estimatedDelivery: details?.estimatedDelivery ?? o.estimatedDelivery,
+                deliveryAgentName: details?.agentName ?? o.deliveryAgentName,
+                deliveryAgentPhone: details?.agentPhone ?? o.deliveryAgentPhone,
+              };
+            }
+            return o;
+          }),
+        }));
+      },
+
+      advanceOrderStatus: (orderId) => {
+        const order = get().getOrderById(orderId);
+        if (!order || order.status === 'cancelled' || order.status === 'delivered') {
+          return null;
+        }
+
+        const stages: Order['status'][] = [
+          'placed',
+          'confirmed',
+          'processing',
+          'shipped',
+          'outForDelivery',
+          'delivered',
+        ];
+
+        const currentIndex = stages.indexOf(order.status);
+        if (currentIndex < 0 || currentIndex >= stages.length - 1) return null;
+
+        const nextStatus = stages[currentIndex + 1];
+        get().updateOrderStatus(orderId, nextStatus);
+        return nextStatus;
+      },
 
       reorder: (orderId: string) => {
         const order = get().getOrderById(orderId);
@@ -76,6 +121,7 @@ export const useOrdersStore = create<OrdersState>()(
         return get().orders.find((o) => o.id === orderId);
       },
     }),
+
     {
       name: 'agritrade-orders',
     }

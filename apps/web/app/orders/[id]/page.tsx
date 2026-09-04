@@ -7,12 +7,26 @@ import AppShell from '@/components/layout/AppShell';
 import { useOrdersStore } from '@/features/orders/store';
 import { ProductImageResolver } from '@/lib/product-image-resolver';
 import { useCartStore } from '@/features/cart/store';
+import { useNotificationsStore } from '@/features/notifications/notifications-store';
+
 import {
   ORDER_STATUS_LABELS,
   ORDER_TIMELINE_STEPS,
   orderStatusStep,
   type OrderStatus,
 } from '@/types';
+
+const STAGE_CONTEXT: Record<OrderStatus, string> = {
+  placed: 'Consignment registered with AgriTrade digital procurement desk.',
+  confirmed: 'Seller inventory allocated and certified for dispatch.',
+  processing: 'Quality inspection passed. Lot sealed at Pune Central Fulfillment Hub.',
+  shipped: 'In transit via Delhivery Rural Express. Consignment in regional distribution.',
+  outForDelivery: 'Dispatched for last-mile doorstep transit to your farm gate.',
+  delivered: 'Handed over to farm recipient at registered delivery address.',
+  cancelled: 'Order has been cancelled.',
+};
+
+
 import {
   ArrowLeft,
   Package,
@@ -163,10 +177,16 @@ export default function OrderDetailPage() {
             {/* Tracking timeline (not cancelled) */}
             {!isCancelled && (
               <div className="card" style={{ padding: '20px', marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-                  <Truck size={18} strokeWidth={2} color="var(--color-forest)" />
-                  <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Track Order</h2>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Truck size={18} strokeWidth={2} color="var(--color-forest)" />
+                    <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Operational Logistics Tracking</h2>
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-forest)', background: 'var(--color-brand-50)', padding: '3px 8px', borderRadius: 4 }}>
+                    AWB #DL-{order.id.replace('ORD-', '')}
+                  </span>
                 </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                   {ORDER_TIMELINE_STEPS.map((step, i) => {
                     const done = i < stepIndex;
@@ -197,23 +217,39 @@ export default function OrderDetailPage() {
                           )}
                         </div>
 
-                        {/* Right: label */}
-                        <div style={{ paddingBottom: 4 }}>
-                          <p
-                            style={{
-                              margin: '2px 0 2px',
-                              fontSize: 14,
-                              fontWeight: active ? 700 : done ? 600 : 400,
-                              color: active ? 'var(--color-amber-600)' : done ? 'var(--color-forest)' : 'var(--color-text-tertiary)',
-                            }}
-                          >
-                            {ORDER_STATUS_LABELS[step]}
+                        {/* Right: label & context */}
+                        <div style={{ paddingBottom: 4, flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                            <p
+                              style={{
+                                margin: '2px 0 2px',
+                                fontSize: 14,
+                                fontWeight: active ? 700 : done ? 600 : 500,
+                                color: active ? 'var(--color-amber-600)' : done ? 'var(--color-forest)' : 'var(--color-text-tertiary)',
+                              }}
+                            >
+                              {ORDER_STATUS_LABELS[step]}
+                            </p>
+                            {done && (
+                              <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>Completed</span>
+                            )}
+                            {active && (
+                              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-amber-600)', background: 'var(--color-amber-50)', padding: '1px 6px', borderRadius: 3 }}>
+                                Current Stage
+                              </span>
+                            )}
+                          </div>
+                          <p style={{ margin: '3px 0 0', fontSize: 12.5, color: active ? 'var(--color-text-primary)' : 'var(--color-text-secondary)', lineHeight: 1.5 }}>
+                            {STAGE_CONTEXT[step]}
                           </p>
-                          {active && (
-                            <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-secondary)' }}>
-                              {step === 'shipped' && order.deliveryAgentName
-                                ? `Delivery agent: ${order.deliveryAgentName} · ${order.deliveryAgentPhone}`
-                                : 'Currently at this stage'}
+                          {active && step === 'shipped' && (
+                            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--color-text-secondary)', fontWeight: 500 }}>
+                              Carrier: Delhivery Rural Express · Logistics Hub: Pune Central
+                            </p>
+                          )}
+                          {active && step === 'outForDelivery' && (
+                            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--color-text-secondary)', fontWeight: 500 }}>
+                              Delivery Agent: {order.deliveryAgentName || 'Ramesh Shinde'} ({order.deliveryAgentPhone || '+91 98220 44120'})
                             </p>
                           )}
                         </div>
@@ -221,6 +257,7 @@ export default function OrderDetailPage() {
                     );
                   })}
                 </div>
+
                 <div
                   style={{
                     marginTop: 20,
@@ -231,14 +268,51 @@ export default function OrderDetailPage() {
                     color: 'var(--color-text-secondary)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8,
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 12,
                   }}
                 >
-                  <Calendar size={15} strokeWidth={2} color="var(--color-forest)" />
-                  <span>Estimated delivery: <strong>{order.estimatedDelivery}</strong></span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Calendar size={15} strokeWidth={2} color="var(--color-forest)" />
+                    <span>Estimated delivery: <strong>{order.estimatedDelivery}</strong></span>
+                  </div>
+
+                  {/* Interactive Simulation Controls */}
+                  {order.status !== 'delivered' && (
+                    <button
+                      onClick={() => {
+                        const { advanceOrderStatus } = useOrdersStore.getState();
+                        const next = advanceOrderStatus(order.id);
+                        if (next) {
+                          useNotificationsStore.getState().addNotification({
+                            userId: 'usr_default',
+                            title: `Order Update: ${ORDER_STATUS_LABELS[next]}`,
+                            body: `Order #${order.id} has progressed to stage: ${ORDER_STATUS_LABELS[next]}.`,
+                            type: 'orders',
+                            actionRoute: `/orders/${order.id}`,
+                          });
+                        }
+                      }}
+                      style={{
+                        fontSize: 11.5,
+                        fontWeight: 600,
+                        padding: '4px 10px',
+                        borderRadius: 4,
+                        background: '#fff',
+                        border: '1px solid var(--color-border)',
+                        color: 'var(--color-forest)',
+                        cursor: 'pointer',
+                      }}
+                      title="Advance order stage to simulate live real-time logistics events"
+                    >
+                      Simulate Next Stage →
+                    </button>
+                  )}
                 </div>
               </div>
             )}
+
 
             {/* Cancelled notice */}
             {isCancelled && (
