@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:go_router/go_router.dart';
+
 import '../../../core/design_system/app_colors.dart';
 import '../../../core/design_system/app_spacing.dart';
+import '../../../core/routing/routes.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/product_card.dart';
 import '../../cart_checkout/presentation/providers/cart_providers.dart';
 import '../../mandi_prices/presentation/providers/mandi_prices_provider.dart';
+import '../../notifications/presentation/providers/notification_providers.dart';
 import '../../products/presentation/providers/product_providers.dart';
+import '../../products/presentation/providers/recently_viewed_provider.dart';
 import '../../weather/presentation/providers/weather_provider.dart';
 import 'widgets/ai_recommendation_card.dart';
 import 'widgets/category_grid_section.dart';
@@ -32,6 +38,8 @@ class HomeScreen extends ConsumerWidget {
     final productsAsync = ref.watch(featuredProductsProvider);
     final farmerName = ref.watch(farmerNameProvider);
     final cartCount = ref.watch(cartItemCountProvider);
+    final unreadNotifs = ref.watch(unreadNotificationsCountProvider);
+    final recentProducts = ref.watch(recentlyViewedProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -55,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
                 FarmerGreetingHeader(
                   farmerName: farmerName,
                   location: 'Pune, Maharashtra',
-                  unreadNotifications: 2,
+                  unreadNotifications: unreadNotifs,
                   cartItemCount: cartCount,
                 ),
 
@@ -140,6 +148,51 @@ class HomeScreen extends ConsumerWidget {
                               ref.invalidate(featuredProductsProvider),
                         ),
                       ),
+
+                      // 8. Recently Inspected Inputs
+                      if (recentProducts.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.base),
+                        const Text(
+                          'Recently Inspected Inputs',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        SizedBox(
+                          height: 295,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: recentProducts.length,
+                            separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+                            itemBuilder: (context, index) {
+                              final item = recentProducts[index];
+                              return SizedBox(
+                                width: 170,
+                                child: ProductCard(
+                                  id: item.id,
+                                  title: item.title,
+                                  price: item.price,
+                                  originalPrice: item.originalPrice,
+                                  unit: item.unit,
+                                  sellerName: item.sellerName,
+                                  category: item.category,
+                                  imageUrl: item.imageUrl,
+                                  rating: item.rating,
+                                  reviewCount: item.reviewCount,
+                                  inStock: item.inStock,
+                                  variant: ProductCardVariant.grid,
+                                  onTap: () {
+                                    context.push('${AppRoutes.products}/${item.id}');
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
 
                       // Safe area bottom padding for floating glass AppBottomNavBar
                       const SizedBox(height: 100),

@@ -337,3 +337,169 @@ VALUES
   (gen_random_uuid(), 'Tomato (Hybrid)', '₹1,250 / qtl', '+₹120 (+10.6%)', 'up', 'Narayangaon APMC', 'Maharashtra', 1250.00, 1000.00, 1450.00, 1800.00, now()),
   (gen_random_uuid(), 'Potato (Jyoti)', '₹1,420 / qtl', '-₹20 (-1.39%)', 'down', 'Pune APMC', 'Maharashtra', 1420.00, 1300.00, 1550.00, 1400.00, now()),
   (gen_random_uuid(), 'Maize (Kharif Feed)', '₹2,180 / qtl', '+₹15 (+0.69%)', 'up', 'Chhindwara APMC', 'Madhya Pradesh', 2180.00, 2050.00, 2280.00, 950.00, now());
+
+-- -----------------------------------------------------------------------------
+-- 4. PRODUCT REVIEWS (Stage 4E)
+-- -----------------------------------------------------------------------------
+INSERT INTO public.reviews (id, product_id, user_id, user_name, rating, title, comment, verified_purchase, created_at)
+VALUES
+  (
+    'a1b2c3d4-0001-4000-8000-000000000001',
+    'prod_1',
+    'usr_farmer_01',
+    'Suresh Patil',
+    5.0,
+    'Exceptional 94% Germination Rate',
+    'Planted 4 bags across 6 acres in loamy black soil. Uniform emergence within 4 days of sowing. Strong resistance to yellow mosaic virus throughout the monsoon season.',
+    true,
+    now() - INTERVAL '4 days'
+  ),
+  (
+    'a1b2c3d4-0002-4000-8000-000000000002',
+    'prod_1',
+    'usr_farmer_02',
+    'Rajesh Deshmukh',
+    4.5,
+    'High pod count and strong stalks',
+    'Vigorous vegetative growth and excellent nodulation. Clean packaging with certified tag and batch barcode.',
+    true,
+    now() - INTERVAL '12 days'
+  ),
+  (
+    'a1b2c3d4-0003-4000-8000-000000000003',
+    'prod_1',
+    'usr_farmer_03',
+    'Vikas Ghadge',
+    4.0,
+    'Good quality, prompt doorstep delivery',
+    'Bag arrived tightly sealed. A bit more moisture sensitivity in heavy waterlogged zones, but overall outstanding harvest volume.',
+    true,
+    now() - INTERVAL '19 days'
+  ),
+  (
+    'a1b2c3d4-0004-4000-8000-000000000004',
+    'prod_2',
+    'usr_farmer_04',
+    'Anil Jadhav',
+    5.0,
+    'Fast-acting nitrogen boost',
+    'Dissolves clear in fertigation lines without clogging micro-emitters. Visible leaf greening within 48 hours of foliar application.',
+    true,
+    now() - INTERVAL '6 days'
+  ),
+  (
+    'a1b2c3d4-0005-4000-8000-000000000005',
+    'prod_3',
+    'usr_farmer_05',
+    'Santosh Shinde',
+    5.0,
+    'Complete stem borer eradication',
+    'Applied on kharif paddy. Controlled whorl-maggot and stem borer with residual action for over 3 weeks. Genuine factory seal.',
+    true,
+    now() - INTERVAL '9 days'
+  );
+
+-- -----------------------------------------------------------------------------
+-- 5. NOTIFICATIONS (Stage 4E)
+-- -----------------------------------------------------------------------------
+INSERT INTO public.notifications (id, user_id, title, body, type, is_read, action_route, created_at)
+VALUES
+  (
+    'b2c3d4e5-0001-4000-8000-000000000001',
+    'usr_default',
+    'Order #AT842918 Dispatched',
+    'Your consignment of Premium Hybrid Soybean Seeds is in transit with Delhivery logistics. Expected delivery tomorrow.',
+    'orders',
+    false,
+    '/orders/ORD-2024-001',
+    now() - INTERVAL '2 hours'
+  ),
+  (
+    'b2c3d4e5-0002-4000-8000-000000000002',
+    'usr_default',
+    'Mandi Surge: Yellow Soybean up +₹45',
+    'Indore APMC benchmark modal price reached ₹4,320 / qtl today with strong solvent extraction mill demand.',
+    'prices',
+    false,
+    '/mandi',
+    now() - INTERVAL '5 hours'
+  ),
+  (
+    'b2c3d4e5-0003-4000-8000-000000000003',
+    'usr_default',
+    'Weather Advisory: High Rainfall in Pune',
+    '68% precipitation probability forecast over next 24 hours. Postpone open-field nitrogen fertilizer broadcast and foliar sprays.',
+    'weather',
+    true,
+    '/weather',
+    now() - INTERVAL '1 day'
+  ),
+  (
+    'b2c3d4e5-0004-4000-8000-000000000004',
+    'usr_default',
+    'Restock: EcoGrow Organic Liquid Fertilizer',
+    'Fresh manufacturing batch of 1L bottles is now back in stock at direct manufacturer pricing.',
+    'products',
+    true,
+    '/products/prod_7',
+    now() - INTERVAL '2 days'
+  );
+
+-- -----------------------------------------------------------------------------
+-- 6. COMMUNITY KNOWLEDGE FEED (Stage 4E)
+-- -----------------------------------------------------------------------------
+INSERT INTO public.community_posts (id, user_id, author_name, category, title, content, likes_count, comments_count, created_at)
+VALUES
+  (
+    'c3d4e5f6-0001-4000-8000-000000000001',
+    'usr_farmer_10',
+    'Balaram More (Satara)',
+    'Crop Management',
+    'Best practices for managing Yellow Mosaic Virus in early Kharif soybean',
+    'For farmers experiencing early vector infestation: ensure seed treatment with Thiamethoxam 30 FS at 10ml/kg. Avoid excessive urea in the first 25 days as soft vegetative flush attracts whiteflies. Intercropping with pigeon pea or maize has reduced our vector spread by over 40% this season.',
+    38,
+    7,
+    now() - INTERVAL '1 day'
+  ),
+  (
+    'c3d4e5f6-0002-4000-8000-000000000002',
+    'usr_farmer_11',
+    'Mahesh Kadam (Nashik)',
+    'Market Discussion',
+    'Lasalgaon onion arrivals steady, export quota dynamics overview',
+    'With summer storage stocks depleting and red onion arrivals picking up in Lasalgaon APMC, modal rates are consolidating between ₹1,800 to ₹1,950 per quintal. Traders report consistent demand from South Indian terminal markets. Recommended to stagger warehouse releases over the next 3 weeks.',
+    29,
+    4,
+    now() - INTERVAL '2 days'
+  ),
+  (
+    'c3d4e5f6-0003-4000-8000-000000000003',
+    'usr_farmer_12',
+    'Dnyaneshwar Shinde (Baramati)',
+    'Irrigation',
+    'Transitioning sugarcane to inline drip with sub-surface fertigation',
+    'After shifting 8 acres of ratoon sugarcane from flood furrow to 16mm inline pressure-compensating drip (0.4m emitter spacing), water consumption dropped by 45% and electricity costs were reduced by half. We also inject 19:19:19 and liquid potash directly during peak elongation.',
+    52,
+    11,
+    now() - INTERVAL '3 days'
+  );
+
+INSERT INTO public.community_comments (id, post_id, user_id, author_name, content, created_at)
+VALUES
+  (
+    gen_random_uuid(),
+    'c3d4e5f6-0001-4000-8000-000000000001',
+    'usr_farmer_02',
+    'Rajesh Deshmukh',
+    'Agreed on seed treatment. We used the certified hybrid soybean from the catalog and germination was above 95% with zero viral symptoms.',
+    now() - INTERVAL '18 hours'
+  ),
+  (
+    gen_random_uuid(),
+    'c3d4e5f6-0001-4000-8000-000000000001',
+    'usr_farmer_03',
+    'Vikas Ghadge',
+    'Yellow sticky traps (15 traps per acre) at canopy height also gave us early warning before whiteflies multiplied.',
+    now() - INTERVAL '14 hours'
+  );
+

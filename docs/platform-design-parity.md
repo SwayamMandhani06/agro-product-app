@@ -129,3 +129,19 @@ This document maps all design system primitives between the **Next.js Web Applic
 | **Image Resolution** | Deterministic Unsplash (`lib/product-image-resolver.ts`) | Deterministic Unsplash (`core/utils/product_image_resolver.dart`) | Verified 100% |
 | **Database Schema** | Canonical PostgreSQL 16 schema (`supabase/migrations/20260903000000_stage_4d_canonical_schema.sql`) | Same canonical schema | Verified 100% |
 
+---
+
+## 9. Stage 4E Farmer Intelligence & Engagement Parity Matrix
+
+| Feature Domain | Web Implementation (`apps/web`) | Mobile Implementation (`apps/mobile`) | Parity Status |
+|---|---|---|---|
+| **Farmer Wishlist / Saved Items** | `/saved` (`app/saved/page.tsx`), `useWishlistStore` (`features/wishlist/wishlist-store.ts`), `SupabaseWishlistRepository` | `WishlistScreen` (`features/wishlist/presentation/wishlist_screen.dart`), `wishlistProvider`, `SupabaseWishlistRepository` | Verified 100% |
+| **Agronomic Product Reviews** | Review breakdown card + verified farmer review list in `/products/[id]`, `SupabaseReviewRepository` | Review summary card, breakdown bars + `WriteReviewSheet` modal in `ProductDetailsScreen`, `SupabaseReviewRepository` | Verified 100% |
+| **Notification Center & Alerts** | `/notifications` route (`app/notifications/page.tsx`), category tabs, mark-all-as-read, unread badge | `NotificationsScreen` (`features/notifications/presentation/notifications_screen.dart`), filter chips, unread counter | Verified 100% |
+| **Community Farmer Forum** | `/community` route (`app/community/page.tsx`), topic filters, upvoting, collapsible comments, create post modal | `ForumScreen` (`features/forum/presentation/forum_screen.dart`), upvoting, verified tags, add reply sheet | Verified 100% |
+| **Weather & Spray Intelligence** | `/weather` route (`app/weather/page.tsx`), 5-day forecast, agro-advisory cards, spray window indicator | `WeatherScreen` (`features/weather/presentation/weather_screen.dart`), `WeatherHeroCard`, spray condition alerts | Verified 100% |
+| **Mandi Price APMC Terminal** | `/mandi` route (`app/mandi/page.tsx`), commodity search, price range filters, modal/min/max comparison | `MandiPricesScreen` (`features/mandi_prices/presentation/mandi_prices_screen.dart`), 7-day sparkline charts, market comparisons | Verified 100% |
+| **Recently Inspected Inputs** | `recently-viewed-store.ts` (Zustand + local storage), horizontal carousel in `/products/[id]` | `recently_viewed_provider.dart` (Riverpod), horizontal carousel in `ProductDetailsScreen` | Verified 100% |
+| **PostgreSQL 16 Schema (Stage 4E)** | `wishlists`, `reviews`, `notifications`, `community_posts`, `community_comments` with RLS policies | Same PostgreSQL tables & migration scripts (`supabase/migrations/20260904000000_stage_4e_schema.sql`) | Verified 100% |
+
+

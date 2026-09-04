@@ -14,8 +14,14 @@ import '../../../core/widgets/app_loading.dart';
 import '../../../core/widgets/price_text.dart';
 import '../../../core/widgets/product_card.dart';
 import '../../cart_checkout/presentation/providers/cart_providers.dart';
+import '../../reviews/presentation/providers/reviews_provider.dart';
+import '../../reviews/presentation/widgets/review_card.dart';
+import '../../reviews/presentation/widgets/review_summary_card.dart';
+import '../../reviews/presentation/widgets/write_review_sheet.dart';
+import '../../wishlist/presentation/providers/wishlist_provider.dart';
 import '../domain/product.dart';
 import 'providers/product_providers.dart';
+import 'providers/recently_viewed_provider.dart';
 
 /// Full-screen Product Details screen featuring media gallery, specs, seller info,
 /// similar product recommendations, and a sticky add-to-cart bottom bar.
@@ -35,7 +41,7 @@ class ProductDetailsScreen extends ConsumerStatefulWidget {
 
 class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   int _currentImageIndex = 0;
-  bool _isFavorite = false;
+  bool _recordedView = false;
   late final PageController _pageController;
 
   @override
@@ -105,6 +111,15 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   Widget _buildProductScaffold(BuildContext context, Product product, int quantity) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     final cartCount = ref.watch(cartItemCountProvider);
+    final isSaved = ref.watch(isProductSavedProvider(product.id));
+
+    // Record view into recently viewed history (once per screen load)
+    if (!_recordedView) {
+      _recordedView = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(recentlyViewedProvider.notifier).recordView(product);
+      });
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -149,18 +164,16 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               backgroundColor: AppColors.surface,
               child: IconButton(
                 icon: Icon(
-                  _isFavorite || product.isFavorite
+                  isSaved
                       ? Icons.favorite_rounded
                       : Icons.favorite_border_rounded,
                   size: 20,
-                  color: (_isFavorite || product.isFavorite)
+                  color: isSaved
                       ? AppColors.error
                       : AppColors.textPrimary,
                 ),
                 onPressed: () {
-                  setState(() {
-                    _isFavorite = !_isFavorite;
-                  });
+                  ref.read(wishlistProvider.notifier).toggle(product.id);
                 },
               ),
             ),
@@ -299,8 +312,17 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     _buildAccordionSection(product),
                     const SizedBox(height: AppSpacing.lg),
 
+                    // Customer Ratings & Agronomic Reviews
+                    _buildReviewsSection(context, product),
+                    const SizedBox(height: AppSpacing.lg),
+
                     // Similar Products Section
                     _buildSimilarProducts(product),
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // Recently Viewed Products Section
+                    _buildRecentlyViewedSection(context, product.id),
+                    const SizedBox(height: 80), // Padding above sticky bottom bar
                   ],
                 ),
               ),
@@ -806,6 +828,126 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
       },
       loading: () => const SizedBox.shrink(),
       error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+
+  Widget _buildReviewsSection(BuildContext context, Product product) {
+    final summaryAsync = ref.watch(productReviewSummaryProvider(product.id));
+    final reviewsAsync = ref.watch(productReviewsProvider(product.id));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Expanded(
+              child: Text(
+                'Ratings & Farmer Reviews',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                WriteReviewSheet.show(
+                  context,
+                  productId: product.id,
+                  productTitle: product.title,
+                );
+              },
+              child: const Text(
+                'Write Review',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.stitchForestGreen,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+
+        // Summary Breakdown Card
+        summaryAsync.when(
+          data: (summary) => ReviewSummaryCard(summary: summary),
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+
+        // Top 2 Reviews
+        reviewsAsync.when(
+          data: (reviews) {
+            if (reviews.isEmpty) return const SizedBox.shrink();
+            return Column(
+              children: reviews.take(2).map((r) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: ReviewCard(review: r),
+                );
+              }).toList(),
+            );
+          },
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecentlyViewedSection(BuildContext context, String currentProductId) {
+    final recentItems = ref.watch(recentProductsExcludingProvider(currentProductId));
+    if (recentItems.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Recently Inspected Inputs',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        SizedBox(
+          height: 295,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: recentItems.length,
+            separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+            itemBuilder: (context, index) {
+              final item = recentItems[index];
+              return SizedBox(
+                width: 170,
+                child: ProductCard(
+                  id: item.id,
+                  title: item.title,
+                  price: item.price,
+                  originalPrice: item.originalPrice,
+                  unit: item.unit,
+                  sellerName: item.sellerName,
+                  category: item.category,
+                  imageUrl: item.imageUrl,
+                  rating: item.rating,
+                  reviewCount: item.reviewCount,
+                  inStock: item.inStock,
+                  variant: ProductCardVariant.grid,
+                  onTap: () {
+                    context.push('${AppRoutes.products}/${item.id}');
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

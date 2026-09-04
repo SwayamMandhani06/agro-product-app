@@ -91,23 +91,26 @@ export default function SaaSMarketingHomePage() {
                 letterSpacing: '0.4px',
               }}
             >
-              STAGE 4D
+              STAGE 4E
             </span>
           </Link>
 
           {/* Nav Links */}
           <nav style={{ display: 'none', gap: 20 }} className="desktop-nav">
-            <a href="#features" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Features
-            </a>
+            <Link href="/products" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+              Inputs Catalog
+            </Link>
+            <Link href="/mandi" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+              Mandi Intelligence
+            </Link>
+            <Link href="/weather" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+              Weather Advisory
+            </Link>
+            <Link href="/community" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+              Community
+            </Link>
             <a href="#calculator" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              ROI Calculator
-            </a>
-            <a href="#architecture" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Dual-Platform Sync
-            </a>
-            <a href="#mandi" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              APMC Mandi
+              Savings ROI
             </a>
           </nav>
 

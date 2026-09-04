@@ -2,7 +2,9 @@ import 'dart:io' show Platform;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/wishlist/presentation/providers/wishlist_provider.dart';
 import '../design_system/app_colors.dart';
 import '../design_system/app_radius.dart';
 import '../design_system/app_spacing.dart';
@@ -43,10 +45,10 @@ class ProductCard extends StatelessWidget {
   final String title;
   final double price;
   final double? originalPrice;
-  final String? unit;
+  final String unit;
+  final String? imageUrl;
   final String? sellerName;
   final String? category;
-  final String? imageUrl;
   final double? rating;
   final int? reviewCount;
   final bool inStock;
@@ -74,7 +76,7 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image container with tags
+          // Image Container
           Stack(
             children: [
               ClipRRect(
@@ -82,28 +84,49 @@ class ProductCard extends StatelessWidget {
                   top: Radius.circular(AppRadius.lg),
                 ),
                 child: AspectRatio(
-                  aspectRatio: 1.15,
+                  aspectRatio: 1.2,
                   child: _buildImage(),
                 ),
               ),
-              // Category / Stock badge
-              if (category != null || !inStock)
+              // Out of stock overlay
+              if (!inStock)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.55),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(AppRadius.lg),
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'OUT OF STOCK',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 11,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              // Category tag
+              if (category != null)
                 Positioned(
-                  top: AppSpacing.sm,
-                  left: AppSpacing.sm,
+                  top: AppSpacing.xs,
+                  left: AppSpacing.xs,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.xs,
-                      vertical: 3,
+                      vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: inStock
-                          ? AppColors.stitchForestGreen.withValues(alpha: 0.85)
-                          : AppColors.error.withValues(alpha: 0.85),
+                      color: AppColors.stitchForestGreen.withValues(alpha: 0.85),
                       borderRadius: BorderRadius.circular(AppRadius.xs),
                     ),
                     child: Text(
-                      inStock ? category! : 'Out of Stock',
+                      category!,
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
@@ -116,35 +139,7 @@ class ProductCard extends StatelessWidget {
               Positioned(
                 top: AppSpacing.xs,
                 right: AppSpacing.xs,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: onToggleFavorite,
-                    borderRadius: BorderRadius.circular(AppRadius.full),
-                    child: Container(
-                      padding: const EdgeInsets.all(AppSpacing.xs),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        shape: BoxShape.circle,
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x14000000),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        isFavorite
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        size: 16,
-                        color: isFavorite
-                            ? AppColors.error
-                            : AppColors.textSecondary,
-                      ),
-                    ),
-                  ),
-                ),
+                child: _buildWishlistButton(context),
               ),
             ],
           ),
@@ -267,6 +262,53 @@ class ProductCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWishlistButton(BuildContext context) {
+    final hasScope = context.getElementForInheritedWidgetOfExactType<UncontrolledProviderScope>() != null;
+    if (!hasScope) {
+      return _buildWishlistIcon(
+        isSaved: isFavorite,
+        onTap: onToggleFavorite,
+      );
+    }
+    return Consumer(
+      builder: (context, ref, _) {
+        final isSaved = isFavorite || ref.watch(isProductSavedProvider(id));
+        return _buildWishlistIcon(
+          isSaved: isSaved,
+          onTap: onToggleFavorite ?? () => ref.read(wishlistProvider.notifier).toggle(id),
+        );
+      },
+    );
+  }
+
+  Widget _buildWishlistIcon({required bool isSaved, required VoidCallback? onTap}) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.full),
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.xs),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.9),
+            shape: BoxShape.circle,
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x14000000),
+                blurRadius: 6,
+              ),
+            ],
+          ),
+          child: Icon(
+            isSaved ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+            size: 16,
+            color: isSaved ? AppColors.error : AppColors.textSecondary,
+          ),
+        ),
       ),
     );
   }
