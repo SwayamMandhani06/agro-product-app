@@ -105,7 +105,7 @@ export function InsightDetailDrawer({ insight, onClose }: InsightDetailDrawerPro
                         <td className="p-2.5 font-sans font-medium text-[var(--color-text-primary)]">
                           {d.metric}
                         </td>
-                        <td className="p-2.5 font-semibold text-[#0B3D2E]">{d.value}</td>
+                        <td className="p-2.5 font-semibold text-[#145A43]">{d.value}</td>
                         <td className="p-2.5 text-stone-500">{d.benchmark || '—'}</td>
                       </tr>
                     ))}
@@ -119,7 +119,7 @@ export function InsightDetailDrawer({ insight, onClose }: InsightDetailDrawerPro
               <div className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-1.5">
                 Recommended Agronomic / Financial Consideration
               </div>
-              <div className="text-sm text-[var(--color-text-primary)] leading-relaxed border-l-2 border-[#0B3D2E] pl-3 py-1 bg-stone-50/50">
+              <div className="text-sm text-[var(--color-text-primary)] leading-relaxed border-l-2 border-[#145A43] pl-3 py-1 bg-stone-50/50">
                 {insight.detail.recommendedConsideration}
               </div>
             </div>
@@ -139,7 +139,7 @@ export function InsightDetailDrawer({ insight, onClose }: InsightDetailDrawerPro
               <Link
                 href={insight.detail.actionHref}
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-semibold text-white bg-[#0B3D2E] hover:bg-[#082a20] rounded transition-colors"
+                className="px-4 py-2 text-xs font-semibold text-white bg-[#145A43] hover:bg-[#0E4332] rounded transition-colors"
               >
                 {insight.detail.actionLabel || 'View Related Records'}
               </Link>
