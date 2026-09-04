@@ -71,6 +71,7 @@ abstract final class AppColors {
   static const Color surfaceTinted  = Color(0xFFFAF2EE);
   static const Color surfaceMuted   = Color(0xFFF4ECE8);
   static const Color surfaceSubtle  = Color(0xFFEEE7E3);
+  static const Color surfaceVariant = surfaceSubtle;
 
   // Dark premium surface (for showcases / dark cards)
   static const Color surfaceDark        = Color(0xFF012D1D);

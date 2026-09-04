@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/addresses/presentation/addresses_screen.dart';
 import '../../features/admin/presentation/admin_screen.dart';
+import '../../features/analytics/presentation/farm_insights_screen.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/presentation/sign_in_screen.dart';
 import '../../features/auth/presentation/sign_up_screen.dart';
@@ -289,6 +290,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.weather,
         builder: (context, state) => const WeatherScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.farmInsights,
+        builder: (context, state) => const FarmInsightsScreen(),
       ),
       GoRoute(
         path: AppRoutes.notifications,

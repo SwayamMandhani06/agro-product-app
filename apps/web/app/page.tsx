@@ -108,14 +108,17 @@ export default function SaaSMarketingHomePage() {
             <Link href="/products" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
               Inputs Catalog
             </Link>
+            <Link href="/insights" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+              Farm Insights
+            </Link>
             <Link href="/mandi" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
               Mandi Intelligence
             </Link>
+            <Link href="/shipments" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+              Logistics
+            </Link>
             <Link href="/weather" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
               Weather Advisory
-            </Link>
-            <Link href="/community" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Farmer Forum
             </Link>
             <a href="#calculator" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
               Savings ROI
@@ -1095,9 +1098,10 @@ export default function SaaSMarketingHomePage() {
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
                 <Link href="/home" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Command Center</Link>
+                <Link href="/insights" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Farm Insights</Link>
                 <Link href="/products" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Inputs Catalog</Link>
-                <Link href="/categories" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Category Directory</Link>
                 <Link href="/mandi" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Mandi Intelligence</Link>
+                <Link href="/shipments" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Logistics Operations</Link>
                 <Link href="/orders" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Order Tracking</Link>
               </div>
             </div>

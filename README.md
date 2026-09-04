@@ -49,7 +49,7 @@ agro-product-app/
 | **Primary Color** | Forest Green `#0B3D2E` | Forest Green `--color-forest: #0B3D2E` |
 | **Accent Color** | Amber `#D97706` | Amber `--color-amber: #D97706` |
 | **Canvas Color** | Warm Canvas `#F9F7F2` | Warm Canvas `--color-canvas: #F9F7F2` |
-| **Testing & Quality**| `flutter test` (115/115 passed), `flutter analyze` (0 issues) | `npm test` (17/17 passed), `npm run lint` (0 errors), `npm run build` (21 routes) |
+| **Testing & Quality**| `flutter test` (125/125 passed), `flutter analyze` (0 issues), `flutter build apk` (success) | `npm test` (24/24 passed), `npm run lint` (0 errors), `npm run build` (22 routes) |
 
 ---
 
@@ -261,10 +261,10 @@ Analyzing mobile...
 No issues found! (0 errors, 0 warnings)
 
 $ flutter test
-00:08 +107: All tests passed!
+00:07 +125: All tests passed!
 
 $ flutter build apk --debug
-Built build/app/outputs/flutter-apk/app-debug.apk
+Built build\app\outputs\flutter-apk\app-debug.apk
 ```
 
 ### Web Verification
@@ -273,7 +273,7 @@ cd apps/web
 
 $ npm test
 > node --test test/*.test.mjs
-# 12 tests passed (payment.test.mjs, realtime.test.mjs)
+# 24 tests passed (analytics.test.mjs, logistics.test.mjs, payment.test.mjs, realtime.test.mjs)
 
 $ npm run lint
 > eslint
@@ -282,7 +282,7 @@ $ npm run lint
 $ npm run build
 ▲ Next.js 16.3.4 (Turbopack)
 ✓ Compiled successfully
-✓ Generating static pages (20/20)
+✓ Generating static pages (22/22)
 Route (app)
 ┌ ○ /
 ├ ○ /_not-found
@@ -292,6 +292,7 @@ Route (app)
 ├ ○ /checkout/confirmed
 ├ ○ /community
 ├ ○ /home
+├ ○ /insights
 ├ ○ /login
 ├ ○ /mandi
 ├ ○ /notifications
@@ -302,6 +303,7 @@ Route (app)
 ├ ƒ /products/[id]
 ├ ○ /profile
 ├ ○ /saved
+├ ○ /shipments
 ├ ○ /signup
 ├ ○ /weather
 └ ○ /welcome
@@ -330,10 +332,11 @@ Stage 5  — Real Data Integration, Backend Hardening & Web Elevation ✅ Comple
 Stage 6  — Real-Time Intelligence & Live Operations       ✅ Complete (Commit: 459f670)
 Stage 7  — Payment Infrastructure, Secure Checkout & Transaction Experience ✅ Complete (Branch: stage-7-payment-infrastructure)
 Stage 8  — Logistics Operations, Rural Intelligence & Consignment Tracking ✅ Complete (Branch: stage-8-logistics-operations)
+Stage 9  — Advanced Analytics, Farm Insights & Decision Intelligence ✅ Complete (Branch: stage-9-analytics-intelligence)
 ─────────────────────────────────────────────────────────────────────────────
-Stage 9  — Seller & Cooperative Marketplace Portal          ⬜ Planned
-Stage 10 — Admin & Platform Operations Governance Portal    ⬜ Planned
-Stage 11 — Final Production Polish & Portfolio Deployment   ⬜ Planned
+Stage 10 — Seller & Cooperative Marketplace Portal          ⬜ Planned
+Stage 11 — Admin & Platform Operations Governance Portal    ⬜ Planned
+Stage 12 — Final Production Polish & Portfolio Deployment   ⬜ Planned
 ```
 
 ---
@@ -342,6 +345,8 @@ Stage 11 — Final Production Polish & Portfolio Deployment   ⬜ Planned
 
 Detailed architectural and design specifications are maintained in the [`docs/`](./docs) directory:
 
+- [**Analytics Architecture & Decision Intelligence**](./docs/analytics-architecture.md) — Pure deterministic aggregation pipeline, explainable rules-based FarmInsightEngine, Bloomberg-lite workspace, and zero paid API guarantee.
+- [**Stage 9 Visual Quality Audit**](./docs/stage-9-visual-qa.md) — Comprehensive visual QA audit across Web `/insights` and Flutter mobile `FarmInsightsScreen`.
 - [**Logistics Architecture & Rural Delivery Operations**](./docs/logistics-architecture.md) — Consignment tracking lifecycle, DemoLogisticsProvider simulation, topological SVG route corridor, delivery attempt exception management, and courier API boundaries.
 - [**Stage 8 Visual Quality Audit**](./docs/stage-8-visual-qa.md) — Comprehensive visual audit across 26 screens enforcing the "Modern Agrarian Fintech + Professional SaaS" aesthetic.
 - [**Payment Architecture**](./docs/payment-architecture.md) — Platform-neutral payment abstractions, Razorpay Test Mode, offline Demo sandbox, COD reconciliation, and printable tax invoices.
@@ -362,7 +367,7 @@ Detailed architectural and design specifications are maintained in the [`docs/`]
 ```text
 main                                    — Production releases (stable canonical release)
 develop                                 — Active integration base (all feature branches base off develop)
-stage-8-logistics-operations            — Active feature branch for Stage 8 Logistics & Delivery Operations
+stage-9-analytics-intelligence          — Active feature branch for Stage 9 Farm Analytics & Decision Intelligence
 ```
 
 ### Standardized Contribution Workflow:

@@ -38,6 +38,7 @@ class AppRoutes {
   static const wishlist = '/wishlist';
   static const recommendations = '/recommendations';
   static const weather = '/weather';
+  static const farmInsights = '/insights';
   static const mandiPrices = '/mandi-prices';
   static const cropPriceDetail = '/mandi-prices/:id';
 

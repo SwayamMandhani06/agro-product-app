@@ -336,3 +336,90 @@ This document establishes the canonical JSON data contracts shared by the **Flut
 - **`ShipmentStatus`**: `created`, `pickupScheduled`, `pickedUp`, `processing`, `inTransit`, `atRegionalHub`, `outForDelivery`, `delivered`, `deliveryAttempted`, `cancelled`, `returned`
 - **`DeliveryExceptionReason`**: `customer_unavailable`, `address_clarification_required`, `weather_delay`, `route_delay`, `security_gate_locked`
 - **`LogisticsProvider`**: `demo_logistics`, `delhivery_rural`, `shiprocket`
+
+---
+
+## 10. Stage 9 — Analytics & Decision Intelligence Contracts
+
+### 10.1 `FarmAnalyticsSnapshot`
+```json
+{
+  "timeRange": "30d",
+  "lastUpdated": "Today, 03:45 PM",
+  "spending": {
+    "totalSpend": 46200.0,
+    "previousPeriodSpend": 39800.0,
+    "percentageChange": 16.1,
+    "trendDirection": "up",
+    "orderCount": 12,
+    "averageOrderValue": 3850.0
+  },
+  "spendingTrend": [
+    { "date": "2026-08-08", "label": "08 Aug", "amount": 6200.0, "orderCount": 2 }
+  ],
+  "categories": [
+    {
+      "categoryId": "cat_fertilizers",
+      "categoryName": "Fertilizers",
+      "amount": 17200.0,
+      "percentage": 37.2,
+      "orderCount": 4,
+      "topItem": "IFFCO NPK 10:26:26 (50kg)",
+      "growthRate": 18.6
+    }
+  ],
+  "savings": {
+    "totalSavings": 8640.0,
+    "productDiscountSavings": 6840.0,
+    "deliverySavings": 1200.0,
+    "bulkSavings": 600.0,
+    "averageDiscountPercent": 15.7,
+    "traditionalRetailEstimate": 53820.0,
+    "netFarmerAdvantage": 16.5,
+    "savingsByCategory": {
+      "Fertilizers": 3450.0,
+      "Crop Protection": 2680.0
+    }
+  },
+  "deliveryPerformance": {
+    "totalOrders": 12,
+    "deliveredOrders": 11,
+    "activeShipments": 1,
+    "delayedDeliveries": 0,
+    "deliveryAttemptRate": 98.2,
+    "averageDeliveryHours": 41,
+    "onTimeRate": 100.0
+  }
+}
+```
+
+### 10.2 `DecisionInsight`
+```json
+{
+  "id": "ins_anomaly_cat_fertilizers_30d",
+  "type": "spending_anomaly",
+  "severity": "warning",
+  "category": "spending",
+  "badgeLabel": "Purchase Pattern",
+  "title": "Fertilizers spending is +18.6% above previous baseline",
+  "summary": "Capital allocation toward fertilizers reached ₹17,200 across 4 orders.",
+  "detectedAt": "Realtime Audit",
+  "supportingMetric": "+18.6% vs Baseline",
+  "detail": {
+    "whatHappened": "Your spending on Fertilizers increased from ₹14,500 to ₹17,200.",
+    "whyDetected": "Deterministic threshold flagged expenditure acceleration of 18.6%, exceeding 15.0% operating limit.",
+    "supportingData": [
+      { "metric": "Current Spend", "value": "₹17,200", "benchmark": "₹14,500 (Prior)" }
+    ],
+    "recommendedConsideration": "Audit field application rates with agronomist before reordering.",
+    "actionLabel": "Review Category Orders",
+    "actionHref": "/orders"
+  }
+}
+```
+
+### 10.3 Analytics Enums
+- **`TimeRange`**: `7d`, `30d`, `3m`, `6m`, `1y`
+- **`InsightType`**: `spending_anomaly`, `price_opportunity`, `delivery_performance`, `seasonal_reminder`
+- **`InsightSeverity`**: `info`, `positive`, `warning`, `alert`
+- **`InsightCategory`**: `spending`, `market`, `logistics`, `planning`
