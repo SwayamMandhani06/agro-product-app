@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/design_system/app_colors.dart';
+import '../../../core/design_system/app_radius.dart';
 import '../../../core/design_system/app_spacing.dart';
 import '../../../core/routing/routes.dart';
 import '../../../core/widgets/app_error_state.dart';
@@ -108,6 +109,67 @@ class HomeScreen extends ConsumerWidget {
                           message: 'Could not load mandi prices.',
                           onRetry: () =>
                               ref.invalidate(dashboardMandiPricesProvider),
+                        ),
+                      ),
+
+                      const SizedBox(height: AppSpacing.base),
+
+                      // 4.5. Farm Insights & Decision Intelligence Banner
+                      InkWell(
+                        onTap: () => context.push(AppRoutes.farmInsights),
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        child: Container(
+                          padding: const EdgeInsets.all(AppSpacing.base),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF0FDF4),
+                                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                                ),
+                                child: const Icon(
+                                  Icons.insights_rounded,
+                                  color: AppColors.stitchForestGreen,
+                                  size: 22,
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.sm),
+                              const Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Farm Insights & Decision Intelligence',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Audited spending, savings & APMC market signals',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: 14,
+                                color: AppColors.textTertiary,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 
