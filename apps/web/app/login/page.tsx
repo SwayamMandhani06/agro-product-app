@@ -49,7 +49,7 @@ const ROLE_PORTALS: RolePortalConfig[] = [
     demoEmail: 'farmer@agritrade.in',
     demoPass: 'farmer123',
     demoName: 'Rahul Sharma (Nashik)',
-    color: '#0B3D2E',
+    color: '#145A43',
     bgColor: '#EAF6EF',
     borderColor: '#9FD4B0',
     targetPath: '/home',

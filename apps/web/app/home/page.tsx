@@ -158,8 +158,8 @@ function InteractiveMarketChart() {
         >
           <defs>
             <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#0B3D2E" stopOpacity="0.28" />
-              <stop offset="100%" stopColor="#0B3D2E" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="#145A43" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#145A43" stopOpacity="0.0" />
             </linearGradient>
           </defs>
 
@@ -175,7 +175,7 @@ function InteractiveMarketChart() {
           <path
             d={pathD}
             fill="none"
-            stroke="#0B3D2E"
+            stroke="#145A43"
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -190,8 +190,8 @@ function InteractiveMarketChart() {
                   cx={p.x}
                   cy={p.y}
                   r={isHovered ? 6 : i === points.length - 1 ? 5 : 3.5}
-                  fill={isHovered ? '#D97706' : i === points.length - 1 ? '#0B3D2E' : '#ffffff'}
-                  stroke="#0B3D2E"
+                  fill={isHovered ? '#D97706' : i === points.length - 1 ? '#145A43' : '#ffffff'}
+                  stroke="#145A43"
                   strokeWidth={isHovered ? 3 : 2}
                   style={{ cursor: 'pointer', transition: 'all 0.15s ease' }}
                   onMouseEnter={() => setHoveredIndex(i)}
@@ -259,7 +259,7 @@ export default function HomePage() {
             ============================================================ */}
         <section
           style={{
-            background: 'linear-gradient(135deg, #0B3D2E 0%, #024A22 100%)',
+            background: 'linear-gradient(135deg, #145A43 0%, #0E4332 100%)',
             borderBottom: '1px solid rgba(255,255,255,0.08)',
             color: '#ffffff',
           }}
@@ -588,9 +588,9 @@ export default function HomePage() {
                   gap: 10,
                 }}
               >
-                <ShieldCheck size={18} color="#0B3D2E" style={{ flexShrink: 0, marginTop: 1 }} />
+                <ShieldCheck size={18} color="#145A43" style={{ flexShrink: 0, marginTop: 1 }} />
                 <div>
-                  <div style={{ fontSize: 12.5, fontWeight: 700, color: '#0B3D2E' }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 700, color: '#145A43' }}>
                     Certified Agro Inputs
                   </div>
                   <div style={{ fontSize: 11.5, color: '#166534', lineHeight: 1.4 }}>

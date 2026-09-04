@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { X, Printer, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
+import { X, Printer, ShieldCheck, CheckCircle2, ExternalLink } from 'lucide-react';
 import type { Order } from '@/types';
 import type { PaymentTransaction } from '@/features/payments/types';
 
@@ -21,6 +22,7 @@ export default function ReceiptModal({ order, transaction, onClose }: ReceiptMod
 
   return (
     <div
+      className="receipt-modal-backdrop"
       style={{
         position: 'fixed',
         inset: 0,
@@ -60,15 +62,37 @@ export default function ReceiptModal({ order, transaction, onClose }: ReceiptMod
             background: '#f8fafc',
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
+            flexWrap: 'wrap',
+            gap: 10,
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <ShieldCheck size={16} color="#0B3D2E" />
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#0B3D2E', letterSpacing: '0.3px' }}>
-              AGRITRADE OFFICIAL TRANSACTION RECEIPT
+            <ShieldCheck size={16} color="#145A43" />
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#145A43', letterSpacing: '0.3px' }}>
+              AGRITRADE TRANSACTION RECEIPT
             </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Link
+              href={`/orders/${order.id}/receipt`}
+              target="_blank"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                padding: '6px 12px',
+                borderRadius: 6,
+                background: '#F0FDF4',
+                color: '#145A43',
+                border: '1px solid #BBF7D0',
+                fontSize: 12,
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
+              <span>Full A4 Invoice</span>
+              <ExternalLink size={12} />
+            </Link>
             <button
               onClick={handlePrint}
               style={{
@@ -77,7 +101,7 @@ export default function ReceiptModal({ order, transaction, onClose }: ReceiptMod
                 gap: 6,
                 padding: '6px 14px',
                 borderRadius: 6,
-                background: '#0B3D2E',
+                background: '#145A43',
                 color: '#ffffff',
                 border: 'none',
                 fontSize: 12.5,
@@ -135,7 +159,7 @@ export default function ReceiptModal({ order, transaction, onClose }: ReceiptMod
           {/* Letterhead */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
             <div>
-              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#0B3D2E', letterSpacing: '-0.3px' }}>
+              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#145A43', letterSpacing: '-0.3px' }}>
                 AGRITRADE MARKETPLACE
               </h2>
               <p style={{ margin: '2px 0 0', fontSize: 12, color: '#64748b' }}>
@@ -232,7 +256,7 @@ export default function ReceiptModal({ order, transaction, onClose }: ReceiptMod
                 </div>
               )}
               <hr style={{ border: 'none', borderTop: '1px solid #cbd5e1', margin: '6px 0' }} />
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: 14, fontWeight: 800, color: '#0B3D2E' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: 14, fontWeight: 800, color: '#145A43' }}>
                 <span>Total Amount:</span>
                 <span>₹{order.totalAmount.toLocaleString('en-IN')}</span>
               </div>
@@ -262,21 +286,46 @@ export default function ReceiptModal({ order, transaction, onClose }: ReceiptMod
 
       <style>{`
         @media print {
-          body * {
-            visibility: hidden;
+          @page {
+            margin: 10mm 12mm;
+            size: A4 portrait;
           }
-          #printable-receipt, #printable-receipt * {
-            visibility: visible;
+          body > *:not(.receipt-modal-backdrop),
+          header, nav, footer, .no-print, button {
+            display: none !important;
+          }
+          .receipt-modal-backdrop {
+            position: static !important;
+            inset: auto !important;
+            display: block !important;
+            background: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
+          }
+          .print-receipt-card {
+            position: static !important;
+            inset: auto !important;
+            display: block !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            max-height: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            overflow: visible !important;
+            transform: none !important;
           }
           #printable-receipt {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            padding: 20px !important;
-          }
-          .no-print {
-            display: none !important;
+            position: static !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
           }
         }
       `}</style>

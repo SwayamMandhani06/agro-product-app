@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
@@ -15,6 +15,13 @@ export default function OrderReceiptPage() {
   const { getOrderById } = useOrdersStore();
   const order = getOrderById(orderId);
   const transaction = paymentService.getTransactionByOrderId(orderId);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('autoPrint=true')) {
+      const t = setTimeout(() => window.print(), 500);
+      return () => clearTimeout(t);
+    }
+  }, []);
 
   const handlePrint = () => {
     window.print();
@@ -126,7 +133,7 @@ export default function OrderReceiptPage() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'flex-start',
-              borderBottom: '2px solid #0B3D2E',
+              borderBottom: '2px solid #145A43',
               paddingBottom: 20,
               marginBottom: 24,
             }}
@@ -137,7 +144,7 @@ export default function OrderReceiptPage() {
                   width: 42,
                   height: 42,
                   borderRadius: 8,
-                  background: '#0B3D2E',
+                  background: '#145A43',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -147,7 +154,7 @@ export default function OrderReceiptPage() {
                 <Leaf size={22} strokeWidth={2.4} />
               </div>
               <div>
-                <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#0B3D2E', letterSpacing: '-0.3px' }}>
+                <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#145A43', letterSpacing: '-0.3px' }}>
                   AGRI TRADE
                 </h1>
                 <p style={{ margin: 0, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -319,10 +326,10 @@ export default function OrderReceiptPage() {
                   justifyContent: 'space-between',
                   padding: '8px 0 0',
                   marginTop: 6,
-                  borderTop: '2px solid #0B3D2E',
+                  borderTop: '2px solid #145A43',
                   fontSize: 15,
                   fontWeight: 900,
-                  color: '#0B3D2E',
+                  color: '#145A43',
                 }}
               >
                 <span>Total Amount Paid:</span>
@@ -354,7 +361,7 @@ export default function OrderReceiptPage() {
 
             <div style={{ textAlign: 'right' }}>
               <div style={{ height: 32, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', paddingBottom: 4 }}>
-                <span style={{ fontFamily: 'monospace', fontSize: 12, fontWeight: 700, color: '#0B3D2E' }}>
+                <span style={{ fontFamily: 'monospace', fontSize: 12, fontWeight: 700, color: '#145A43' }}>
                   AgriTrade Finance · Verified
                 </span>
               </div>
@@ -365,6 +372,25 @@ export default function OrderReceiptPage() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media print {
+          @page {
+            margin: 10mm 12mm;
+            size: A4 portrait;
+          }
+          .container-app {
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          .printable-invoice-page {
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+          }
+        }
+      `}</style>
     </AppShell>
   );
 }

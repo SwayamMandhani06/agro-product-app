@@ -45,7 +45,7 @@ const ROLES_LIST = [
     icon: Sprout,
     desc: 'Purchase inputs, monitor Mandi rates, and track shipments',
     path: '/login',
-    color: '#0B3D2E',
+    color: '#145A43',
     bgColor: '#EAF6EF',
   },
   {

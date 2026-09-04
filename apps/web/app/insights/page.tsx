@@ -79,7 +79,7 @@ export default function InsightsPage() {
                         onClick={() => setTimeRange(range)}
                         className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
                           isActive
-                            ? 'bg-[#0B3D2E] text-white shadow-xs font-semibold'
+                            ? 'bg-[#145A43] text-white shadow-xs font-semibold'
                             : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
                         }`}
                       >
@@ -105,7 +105,7 @@ export default function InsightsPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`pb-1 border-b-2 transition-colors ${
                     activeTab === tab.id
-                      ? 'border-[#0B3D2E] text-[#0B3D2E] font-semibold'
+                      ? 'border-[#145A43] text-[#145A43] font-semibold'
                       : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
                   }`}
                 >
@@ -180,7 +180,7 @@ export default function InsightsPage() {
                   <div className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
                     On-Time Delivery SLA
                   </div>
-                  <div className="text-2xl font-bold font-mono text-[#0B3D2E] mt-1.5">
+                  <div className="text-2xl font-bold font-mono text-[#145A43] mt-1.5">
                     {snapshot.deliveryPerformance.onTimeRate.toFixed(1)}%
                   </div>
                   <div className="text-xs text-[var(--color-text-secondary)] mt-1 flex items-center justify-between">

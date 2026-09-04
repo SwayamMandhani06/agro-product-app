@@ -74,8 +74,8 @@ export function SpendingTrendChart({ data, height = 240 }: SpendingTrendChartPro
       >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0B3D2E" stopOpacity="0.14" />
-            <stop offset="100%" stopColor="#0B3D2E" stopOpacity="0.0" />
+            <stop offset="0%" stopColor="#145A43" stopOpacity="0.14" />
+            <stop offset="100%" stopColor="#145A43" stopOpacity="0.0" />
           </linearGradient>
         </defs>
 
@@ -125,7 +125,7 @@ export function SpendingTrendChart({ data, height = 240 }: SpendingTrendChartPro
         <path
           d={linePath}
           fill="none"
-          stroke="#0B3D2E"
+          stroke="#145A43"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -154,8 +154,8 @@ export function SpendingTrendChart({ data, height = 240 }: SpendingTrendChartPro
                 cx={cx}
                 cy={cy}
                 r={isHovered ? 5.5 : 3.5}
-                fill={isHovered ? '#0B3D2E' : '#FFFFFF'}
-                stroke="#0B3D2E"
+                fill={isHovered ? '#145A43' : '#FFFFFF'}
+                stroke="#145A43"
                 strokeWidth={isHovered ? 2.5 : 2}
                 className="transition-all duration-150"
               />
@@ -171,12 +171,12 @@ export function SpendingTrendChart({ data, height = 240 }: SpendingTrendChartPro
               y1={padding.top}
               x2={activeX}
               y2={padding.top + chartHeight}
-              stroke="#0B3D2E"
+              stroke="#145A43"
               strokeWidth="1"
               strokeDasharray="2 2"
               strokeOpacity="0.5"
             />
-            <circle cx={activeX} cy={activeY} r="6" fill="#0B3D2E" stroke="#FFFFFF" strokeWidth="2" />
+            <circle cx={activeX} cy={activeY} r="6" fill="#145A43" stroke="#FFFFFF" strokeWidth="2" />
           </g>
         )}
 
@@ -235,7 +235,7 @@ export function SpendingTrendChart({ data, height = 240 }: SpendingTrendChartPro
       {/* Subtle Chart Legend */}
       <div className="flex items-center justify-end gap-5 mt-2 text-xs text-[var(--color-text-secondary)]">
         <div className="flex items-center gap-1.5">
-          <span className="w-3 h-0.5 bg-[#0B3D2E] inline-block rounded-full" />
+          <span className="w-3 h-0.5 bg-[#145A43] inline-block rounded-full" />
           <span>Active Period Spend</span>
         </div>
         <div className="flex items-center gap-1.5">

@@ -119,8 +119,8 @@ export function RevenueTrendChart() {
         >
           <defs>
             <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#0B3D2E" stopOpacity="0.18" />
-              <stop offset="100%" stopColor="#0B3D2E" stopOpacity="0.01" />
+              <stop offset="0%" stopColor="#145A43" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="#145A43" stopOpacity="0.01" />
             </linearGradient>
           </defs>
 
@@ -159,7 +159,7 @@ export function RevenueTrendChart() {
           <path
             d={pathD}
             fill="none"
-            stroke="#0B3D2E"
+            stroke="#145A43"
             strokeWidth="2.2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -172,7 +172,7 @@ export function RevenueTrendChart() {
                 cx={pt.x}
                 cy={pt.y}
                 r={hoveredIdx === i ? 5 : 3.5}
-                fill={hoveredIdx === i ? '#D97706' : '#0B3D2E'}
+                fill={hoveredIdx === i ? '#D97706' : '#145A43'}
                 stroke="#FFFFFF"
                 strokeWidth="1.5"
                 style={{ cursor: 'pointer', transition: 'r 150ms ease' }}

@@ -75,7 +75,7 @@ export default function CooperativeCampaignsPage() {
       <header style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-surface-tint)', marginBottom: '24px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '8px', background: '#0B3D2E', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '8px', background: '#145A43', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Users size={22} />
             </div>
             <div>
@@ -139,7 +139,7 @@ export default function CooperativeCampaignsPage() {
         {/* Collective Impact Summary */}
         <div
           style={{
-            background: '#0B3D2E',
+            background: '#145A43',
             color: '#FFFFFF',
             borderRadius: '8px',
             padding: '24px',

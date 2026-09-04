@@ -48,7 +48,7 @@ export function SavingsSummary({ savings }: SavingsSummaryProps) {
           <div className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">
             Average Realized Discount
           </div>
-          <div className="text-2xl font-bold font-mono text-[#0B3D2E] mt-1">
+          <div className="text-2xl font-bold font-mono text-[#145A43] mt-1">
             {savings.averageDiscountPercent.toFixed(1)}%
           </div>
           <div className="text-xs text-[var(--color-text-secondary)] mt-1.5">

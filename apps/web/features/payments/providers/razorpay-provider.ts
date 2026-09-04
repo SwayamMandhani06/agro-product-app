@@ -66,7 +66,7 @@ export class RazorpayTestProvider implements PaymentGatewayProvider {
           contact: request.customerPhone,
         },
         theme: {
-          color: '#0B3D2E', // AgriTrade forest green
+          color: '#145A43', // AgriTrade forest green
         },
         modal: {
           ondismiss: () => {
