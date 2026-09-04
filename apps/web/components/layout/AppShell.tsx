@@ -33,12 +33,15 @@ import { CheckCheck, CheckCircle2, WifiOff } from 'lucide-react';
 const emptySubscribe = () => () => {};
 const useMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => false);
 
+import { DemoPersonaSwitcher } from '@/components/common/DemoPersonaSwitcher';
+
 const NAV_LINKS = [
   { href: '/home',                  label: 'Dashboard' },
   { href: '/insights',              label: 'Analytics' },
   { href: '/products',              label: 'Products' },
   { href: '/cooperative/campaigns', label: 'Cooperative' },
   { href: '/seller/dashboard',      label: 'Seller Portal' },
+  { href: '/admin/dashboard',       label: 'Admin' },
   { href: '/mandi',                 label: 'Mandi Rates' },
   { href: '/weather',               label: 'Weather' },
   { href: '/community',             label: 'Community' },
@@ -212,6 +215,11 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
 
           {/* Right actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {/* Demo Persona Switcher */}
+            <div className="hidden md:block mr-1">
+              <DemoPersonaSwitcher />
+            </div>
+
             {/* Connection State Indicator */}
             <div
               style={{
@@ -580,9 +588,16 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                         background: 'var(--color-brand-50)',
                       }}
                     >
-                      <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: 'var(--color-forest)' }}>
-                        {user?.name}
-                      </p>
+                      <div className="flex items-center justify-between gap-2">
+                        <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: 'var(--color-forest)' }}>
+                          {user?.name}
+                        </p>
+                        {user?.role && (
+                          <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-800">
+                            {user.role.replace('_', ' ')}
+                          </span>
+                        )}
+                      </div>
                       <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--color-text-secondary)' }}>
                         {user?.email}
                       </p>

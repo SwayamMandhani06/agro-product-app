@@ -5,39 +5,59 @@ enum OrderStatus {
   placed,
   confirmed,
   processing,
+  packed,
   shipped,
   outForDelivery,
   delivered,
-  cancelled;
+  cancelled,
+  refundRequested,
+  refundProcessing,
+  refunded,
+  disputed;
 
   bool get isActive =>
       this == OrderStatus.placed ||
       this == OrderStatus.confirmed ||
       this == OrderStatus.processing ||
+      this == OrderStatus.packed ||
       this == OrderStatus.shipped ||
       this == OrderStatus.outForDelivery;
 
   bool get isDelivered => this == OrderStatus.delivered;
   bool get isCancelled => this == OrderStatus.cancelled;
+  bool get isTerminal =>
+      this == OrderStatus.delivered ||
+      this == OrderStatus.refunded ||
+      this == OrderStatus.cancelled;
 
   String get displayName => switch (this) {
         OrderStatus.placed => 'Order Placed',
         OrderStatus.confirmed => 'Confirmed',
         OrderStatus.processing => 'Processing',
+        OrderStatus.packed => 'Packed',
         OrderStatus.shipped => 'Shipped',
         OrderStatus.outForDelivery => 'Out for Delivery',
         OrderStatus.delivered => 'Delivered',
         OrderStatus.cancelled => 'Cancelled',
+        OrderStatus.refundRequested => 'Refund Requested',
+        OrderStatus.refundProcessing => 'Refund Processing',
+        OrderStatus.refunded => 'Refunded',
+        OrderStatus.disputed => 'Disputed',
       };
 
   int get stepIndex => switch (this) {
         OrderStatus.placed => 0,
         OrderStatus.confirmed => 1,
         OrderStatus.processing => 2,
+        OrderStatus.packed => 2,
         OrderStatus.shipped => 3,
         OrderStatus.outForDelivery => 4,
         OrderStatus.delivered => 5,
         OrderStatus.cancelled => -1,
+        OrderStatus.refundRequested => -1,
+        OrderStatus.refundProcessing => -1,
+        OrderStatus.refunded => -1,
+        OrderStatus.disputed => -1,
       };
 }
 
