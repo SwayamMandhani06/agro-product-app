@@ -65,7 +65,7 @@ export function CategoryBreakdown({ categories }: CategoryBreakdownProps) {
                 className="h-full rounded-full transition-all duration-300 ease-out"
                 style={{
                   width: `${widthPercent}%`,
-                  backgroundColor: hasSpend ? '#0B3D2E' : 'transparent',
+                  backgroundColor: hasSpend ? '#145A43' : 'transparent',
                 }}
               />
             </div>

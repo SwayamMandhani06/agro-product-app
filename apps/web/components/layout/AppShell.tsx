@@ -17,6 +17,8 @@ import {
   Bookmark,
   Activity,
   CloudRain,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useNotificationsStore } from '@/features/notifications/notifications-store';
 import { useWishlistStore } from '@/features/wishlist/wishlist-store';
@@ -88,6 +90,7 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
   const unreadCount = useNotificationsStore((s) => s.unreadCount());
   const savedCount = useWishlistStore((s) => s.savedProductIds.length);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileRoleMenuOpen, setMobileRoleMenuOpen] = useState(false);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
   const [connectionState, setConnectionState] = useState<ConnectionState>(connectionManager.getState());
   const [showRestoredBanner, setShowRestoredBanner] = useState(false);
@@ -675,8 +678,75 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                 </>
               )}
             </div>
+
+            {/* Mobile Role Navigation Toggle */}
+            <button
+              type="button"
+              onClick={() => setMobileRoleMenuOpen((prev) => !prev)}
+              className="md:hidden"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                background: 'rgba(255,255,255,0.12)',
+                color: '#fff',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+              title="Navigation Menu"
+            >
+              {mobileRoleMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Slide-down Role Navigation */}
+        {mobileRoleMenuOpen && (
+          <div
+            className="md:hidden slide-down"
+            style={{
+              background: 'var(--color-forest)',
+              borderBottom: '1px solid rgba(255,255,255,0.15)',
+              padding: '14px 18px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 8,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                {currentRole.replace('_', ' ')} Navigation
+              </span>
+              <DemoPersonaSwitcher />
+            </div>
+            {currentNavLinks.map((link) => {
+              const active = pathname === link.href || (pathname.startsWith(link.href + '/') && link.href !== '/home');
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileRoleMenuOpen(false)}
+                  style={{
+                    color: active ? '#fff' : 'rgba(255,255,255,0.85)',
+                    textDecoration: 'none',
+                    fontWeight: active ? 700 : 500,
+                    fontSize: 13.5,
+                    padding: '8px 12px',
+                    borderRadius: 6,
+                    background: active ? 'rgba(255,255,255,0.2)' : 'transparent',
+                    display: 'block',
+                  }}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </header>
 
       {/* Connection Notification Banners */}

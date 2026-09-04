@@ -101,12 +101,12 @@ export default function ProfilePage() {
         {/* Profile Header Card */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #0B3D2E 0%, #062319 100%)',
+            background: 'linear-gradient(135deg, #145A43 0%, #0E4332 100%)',
             borderRadius: 14,
             padding: '28px 24px',
             marginBottom: 20,
             color: '#fff',
-            boxShadow: '0 10px 25px -5px rgba(11, 61, 46, 0.3)',
+            boxShadow: '0 10px 25px -5px rgba(20, 90, 67, 0.25)',
             position: 'relative',
             overflow: 'hidden',
           }}

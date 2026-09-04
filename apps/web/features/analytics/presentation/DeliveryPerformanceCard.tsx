@@ -22,7 +22,7 @@ export function DeliveryPerformanceCard({ metrics }: DeliveryPerformanceCardProp
           <div className="text-[11px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
             On-Time Delivery
           </div>
-          <div className="text-xl font-bold font-mono text-[#0B3D2E] mt-1">
+          <div className="text-xl font-bold font-mono text-[#145A43] mt-1">
             {metrics.onTimeRate.toFixed(1)}%
           </div>
           <div className="text-[11px] text-stone-500 mt-0.5">SLA window compliance</div>
@@ -89,7 +89,7 @@ export function DeliveryPerformanceCard({ metrics }: DeliveryPerformanceCardProp
         <div className="p-3.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-variant)]">
           <div className="flex items-center justify-between text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-2">
             <span>On-Time Compliance Trend</span>
-            <span className="text-[#0B3D2E] font-mono">Stage 8 Verified</span>
+            <span className="text-[#145A43] font-mono">Stage 8 Verified</span>
           </div>
 
           <div className="flex items-center gap-2 pt-1">
@@ -98,7 +98,7 @@ export function DeliveryPerformanceCard({ metrics }: DeliveryPerformanceCardProp
                 <div className="text-[10px] text-stone-500 truncate mb-1">{item.period}</div>
                 <div className="w-full bg-[var(--color-surface)] h-2 rounded-full overflow-hidden border border-[var(--color-border-subtle)]">
                   <div
-                    className="bg-[#0B3D2E] h-full rounded-full"
+                    className="bg-[#145A43] h-full rounded-full"
                     style={{ width: `${item.onTimeRate}%` }}
                   />
                 </div>

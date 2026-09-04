@@ -68,7 +68,7 @@ export function MarketAnalyticsWorkspace({
               onClick={() => onSelectCommodity(item.commodity)}
               className={`px-3 py-1.5 text-xs font-medium rounded transition-colors shrink-0 ${
                 isSelected
-                  ? 'bg-[#0B3D2E] text-white'
+                  ? 'bg-[#145A43] text-white'
                   : 'bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-elevated)] border border-[var(--color-border)]'
               }`}
             >
@@ -190,7 +190,7 @@ export function MarketAnalyticsWorkspace({
             {/* Area Fill */}
             <path
               d={areaPoints}
-              fill="#0B3D2E"
+              fill="#145A43"
               fillOpacity="0.08"
             />
 
@@ -198,7 +198,7 @@ export function MarketAnalyticsWorkspace({
             <path
               d={`M ${linePoints}`}
               fill="none"
-              stroke="#0B3D2E"
+              stroke="#145A43"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -227,8 +227,8 @@ export function MarketAnalyticsWorkspace({
                     cx={cx}
                     cy={cy}
                     r={isHovered ? 5 : 3}
-                    fill={isHovered ? '#0B3D2E' : '#FFFFFF'}
-                    stroke="#0B3D2E"
+                    fill={isHovered ? '#145A43' : '#FFFFFF'}
+                    stroke="#145A43"
                     strokeWidth={isHovered ? 2.5 : 2}
                   />
                 </g>
@@ -243,7 +243,7 @@ export function MarketAnalyticsWorkspace({
                   y1={pad.top}
                   x2={activeX}
                   y2={pad.top + h}
-                  stroke="#0B3D2E"
+                  stroke="#145A43"
                   strokeWidth="1"
                   strokeDasharray="2 2"
                   strokeOpacity="0.5"

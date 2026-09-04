@@ -21,6 +21,8 @@ import {
   Sprout,
   BarChart3,
   ExternalLink,
+  Menu,
+  X,
 } from 'lucide-react';
 import { ProductImageResolver } from '@/lib/product-image-resolver';
 import { MOCK_MANDI_PRICES, MOCK_PRODUCTS } from '@/lib/mock-data';
@@ -35,7 +37,8 @@ const CROP_SAVINGS_METRICS: Record<string, { baselineInputCost: number; agritrad
 };
 
 export default function SaaSMarketingHomePage() {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [farmAcres, setFarmAcres] = useState<number>(5);
   const [selectedCrop, setSelectedCrop] = useState<string>('Soybean');
   const [activeHeroTab, setActiveHeroTab] = useState<'mandi' | 'logistics' | 'weather'>('mandi');
@@ -57,15 +60,15 @@ export default function SaaSMarketingHomePage() {
 
   const featuredProducts = MOCK_PRODUCTS.slice(0, 4);
 
-  // Theme-aware tokens
-  const bgCanvas = isDark ? '#062319' : '#FDFBF7';
-  const bgCard = isDark ? 'rgba(255, 255, 255, 0.05)' : '#FFFFFF';
-  const borderCard = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(11, 61, 46, 0.08)';
-  const textPrimary = isDark ? '#FFFFFF' : '#0B3D2E';
-  const textSecondary = isDark ? 'rgba(255, 255, 255, 0.75)' : '#463D35';
-  const textTertiary = isDark ? 'rgba(255, 255, 255, 0.5)' : '#7A6E63';
-  const headerBg = isDark ? 'rgba(6, 35, 25, 0.94)' : 'rgba(255, 255, 255, 0.94)';
-  const tickerBg = isDark ? '#041710' : '#F4ECE8';
+  // Theme-aware tokens: Light mode is primary, dark mode softened
+  const bgCanvas = isDark ? '#0F382B' : '#FDFBF7';
+  const bgCard = isDark ? 'rgba(255, 255, 255, 0.06)' : '#FFFFFF';
+  const borderCard = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(20, 90, 67, 0.10)';
+  const textPrimary = isDark ? '#FFFFFF' : '#14382D';
+  const textSecondary = isDark ? 'rgba(255, 255, 255, 0.80)' : '#463D35';
+  const textTertiary = isDark ? 'rgba(255, 255, 255, 0.55)' : '#7A6E63';
+  const headerBg = isDark ? 'rgba(15, 56, 43, 0.94)' : 'rgba(253, 251, 247, 0.94)';
+  const tickerBg = isDark ? '#0B2D22' : '#F4ECE8';
 
   return (
     <div
@@ -108,12 +111,12 @@ export default function SaaSMarketingHomePage() {
                 width: 36,
                 height: 36,
                 borderRadius: 10,
-                background: 'linear-gradient(135deg, #1A7A4A 0%, #0B3D2E 100%)',
+                background: 'linear-gradient(135deg, #1A7A4A 0%, #145A43 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#fff',
-                boxShadow: isDark ? '0 0 16px rgba(26, 122, 74, 0.4)' : '0 2px 8px rgba(11, 61, 46, 0.15)',
+                boxShadow: isDark ? '0 0 16px rgba(26, 122, 74, 0.4)' : '0 2px 8px rgba(20, 90, 67, 0.15)',
               }}
             >
               <Leaf size={20} strokeWidth={2.4} />
@@ -171,7 +174,7 @@ export default function SaaSMarketingHomePage() {
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = isDark ? '#34D399' : '#0B3D2E')}
+                onMouseEnter={(e) => (e.currentTarget.style.color = isDark ? '#34D399' : '#145A43')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = textSecondary)}
               >
                 {link.label}
@@ -192,7 +195,7 @@ export default function SaaSMarketingHomePage() {
                 gap: 6,
                 padding: '6px 12px',
                 borderRadius: 20,
-                background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(11, 61, 46, 0.08)',
+                background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(20, 90, 67, 0.08)',
                 border: `1px solid ${borderCard}`,
                 color: textPrimary,
                 fontSize: 12,
@@ -208,7 +211,7 @@ export default function SaaSMarketingHomePage() {
                 </>
               ) : (
                 <>
-                  <Moon size={14} color="#0B3D2E" />
+                  <Moon size={14} color="#145A43" />
                   <span style={{ fontSize: 11 }}>Forest Dark</span>
                 </>
               )}
@@ -250,8 +253,86 @@ export default function SaaSMarketingHomePage() {
               <span>Farmer Dashboard</span>
               <ArrowRight size={14} strokeWidth={2.5} />
             </Link>
+            {/* Mobile Menu Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((p) => !p)}
+              className="md:hidden"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(20, 90, 67, 0.08)',
+                border: `1px solid ${borderCard}`,
+                color: textPrimary,
+                cursor: 'pointer',
+              }}
+              aria-label="Toggle navigation"
+            >
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div
+            className="md:hidden slide-down"
+            style={{
+              background: headerBg,
+              borderBottom: `1px solid ${borderCard}`,
+              padding: '16px 20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+            }}
+          >
+            {[
+              { label: 'Inputs Catalog', href: '/products' },
+              { label: 'Mandi Intelligence', href: '/mandi' },
+              { label: 'Farm Insights', href: '/insights' },
+              { label: 'Rural Logistics', href: '/shipments' },
+              { label: 'Weather Advisory', href: '/weather' },
+            ].map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  color: textPrimary,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  padding: '8px 0',
+                  borderBottom: `1px solid ${borderCard}`,
+                }}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-secondary"
+                style={{ flex: 1, textAlign: 'center', padding: '10px' }}
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/home"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn btn-primary"
+                style={{ flex: 1, textAlign: 'center', padding: '10px' }}
+              >
+                Farmer Dashboard
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* ============================================================
@@ -311,7 +392,7 @@ export default function SaaSMarketingHomePage() {
         }}
       >
         <div
-          className="container-app"
+          className="container-app hero-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 0.85fr)',
@@ -383,7 +464,7 @@ export default function SaaSMarketingHomePage() {
               <Link
                 href="/products"
                 style={{
-                  background: 'linear-gradient(135deg, #0B3D2E 0%, #025A2A 100%)',
+                  background: 'linear-gradient(135deg, #145A43 0%, #0E4332 100%)',
                   color: '#ffffff',
                   padding: '13px 26px',
                   borderRadius: 10,
@@ -418,7 +499,7 @@ export default function SaaSMarketingHomePage() {
                   boxShadow: isDark ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.04)',
                 }}
               >
-                <Activity size={16} color={isDark ? '#34D399' : '#0B3D2E'} />
+                <Activity size={16} color={isDark ? '#34D399' : '#145A43'} />
                 <span>Inspect Mandi Terminal</span>
               </Link>
             </div>
@@ -674,7 +755,7 @@ export default function SaaSMarketingHomePage() {
                   </span>
                   <Link
                     href="/mandi"
-                    style={{ fontSize: 11.5, fontWeight: 700, color: isDark ? '#34D399' : '#0B3D2E', textDecoration: 'none' }}
+                    style={{ fontSize: 11.5, fontWeight: 700, color: isDark ? '#34D399' : '#145A43', textDecoration: 'none' }}
                   >
                     View All Mandis →
                   </Link>
@@ -723,7 +804,7 @@ export default function SaaSMarketingHomePage() {
             }}
           >
             {/* Controls */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, marginBottom: 32 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, marginBottom: 32 }} className="calculator-grid">
               {/* Crop Picker */}
               <div>
                 <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 8, color: textPrimary }}>
@@ -850,7 +931,7 @@ export default function SaaSMarketingHomePage() {
               style={{
                 fontSize: 13.5,
                 fontWeight: 700,
-                color: isDark ? '#34D399' : '#0B3D2E',
+                color: isDark ? '#34D399' : '#145A43',
                 textDecoration: 'none',
                 display: 'flex',
                 alignItems: 'center',

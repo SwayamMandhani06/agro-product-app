@@ -72,7 +72,7 @@ export function CampaignProgressBar({ campaign }: Props) {
             background: targetReached
               ? '#027A38'
               : minimumThresholdReached
-              ? '#0B3D2E'
+              ? '#145A43'
               : '#D97706',
             borderRadius: '5px',
             transition: 'width 300ms ease',

@@ -539,7 +539,7 @@ export default function CheckoutPage() {
                                   fontSize: 9.5,
                                   fontWeight: 700,
                                   color: '#fff',
-                                  background: opt.badgeColor || '#0B3D2E',
+                                  background: opt.badgeColor || '#145A43',
                                   padding: '1px 6px',
                                   borderRadius: 4,
                                   letterSpacing: '0.4px',
@@ -734,15 +734,16 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        {/* Animated Thermal Receipt Dispenser Modal */}
+        {/* Animated Thermal Receipt Dispenser Modal (Agrarian Theme) */}
         {txState === 'processing' && (
           <div
             style={{
               position: 'fixed',
               inset: 0,
               zIndex: 100,
-              background: 'rgba(5, 20, 15, 0.78)',
-              backdropFilter: 'blur(8px)',
+              background: 'rgba(15, 50, 38, 0.65)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -756,7 +757,7 @@ export default function CheckoutPage() {
                 width: '100%',
                 padding: '24px 20px 22px',
                 textAlign: 'center',
-                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15)',
+                boxShadow: '0 25px 50px -12px rgba(10, 40, 30, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
               }}
             >
               {/* POS Terminal Header */}
@@ -767,32 +768,35 @@ export default function CheckoutPage() {
                       width: 10,
                       height: 10,
                       borderRadius: '50%',
-                      background: '#22c55e',
+                      background: '#22C55E',
                       animation: 'ledPulse 1.4s infinite ease-in-out',
                     }}
                   />
-                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1px', color: '#94a3b8', fontFamily: 'monospace' }}>
-                    ESCROW TERMINAL #TR-808
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <Leaf size={13} color="#FCD34D" strokeWidth={2.4} />
+                    <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.8px', color: '#FCD34D', fontFamily: 'monospace' }}>
+                      KISAN ESCROW TERMINAL
+                    </span>
+                  </div>
                 </div>
                 <span
                   style={{
                     fontSize: 10,
                     fontWeight: 700,
-                    color: '#38bdf8',
-                    background: 'rgba(56, 189, 248, 0.12)',
-                    border: '1px solid rgba(56, 189, 248, 0.3)',
+                    color: '#86EFAC',
+                    background: 'rgba(34, 197, 94, 0.18)',
+                    border: '1px solid rgba(34, 197, 94, 0.4)',
                     padding: '2px 8px',
                     borderRadius: 4,
                     letterSpacing: '0.5px',
                   }}
                 >
-                  DISPENSING RECEIPT
+                  PRINTING OFFICIAL TICKET
                 </span>
               </div>
 
               {/* Terminal Printer Slit */}
-              <div className="receipt-slit" style={{ width: '92%', height: 6, margin: '0 auto', background: '#020617', borderRadius: 3 }} />
+              <div className="receipt-slit" style={{ width: '92%', height: 6, margin: '0 auto', background: '#08291F', borderRadius: 3 }} />
 
               {/* Animated Thermal Receipt Paper */}
               <div
@@ -800,53 +804,53 @@ export default function CheckoutPage() {
                 style={{
                   width: '90%',
                   margin: '0 auto',
-                  background: '#ffffff',
-                  color: '#0f172a',
+                  background: '#FFFDF9',
+                  color: '#14382D',
                   padding: '20px 20px 14px',
                   textAlign: 'left',
                   fontFamily: '"Courier New", Courier, monospace',
                   fontSize: 12,
-                  boxShadow: '0 12px 24px -6px rgba(0,0,0,0.3)',
-                  borderLeft: '1px solid #e2e8f0',
-                  borderRight: '1px solid #e2e8f0',
+                  boxShadow: '0 12px 28px -6px rgba(10, 45, 35, 0.3)',
+                  borderLeft: '1px solid #EFE8DD',
+                  borderRight: '1px solid #EFE8DD',
                 }}
               >
                 <div style={{ textAlign: 'center', marginBottom: 12 }}>
-                  <div style={{ fontWeight: 800, fontSize: 13, letterSpacing: '0.5px', color: '#0f172a' }}>
-                    AGRITRADE AGROCOMMERCE
+                  <div style={{ fontWeight: 800, fontSize: 13, letterSpacing: '0.5px', color: '#145A43' }}>
+                    AGRITRADE AGROCOMMERCE NETWORK
                   </div>
-                  <div style={{ fontSize: 10, color: '#64748b' }}>
+                  <div style={{ fontSize: 10, color: '#78716C', marginTop: 2 }}>
                     DIRECT FARM ESCROW TAX INVOICE
                   </div>
-                  <div style={{ color: '#cbd5e1', fontSize: 11, letterSpacing: '-1px', margin: '4px 0' }}>
+                  <div style={{ color: '#D6CEBE', fontSize: 11, letterSpacing: '-1px', margin: '4px 0' }}>
                     ----------------------------------------
                   </div>
                 </div>
 
-                <div style={{ fontSize: 11, lineHeight: 1.6, color: '#334155', marginBottom: 10 }}>
+                <div style={{ fontSize: 11, lineHeight: 1.6, color: '#44403C', marginBottom: 10 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748b' }}>ORDER REF:</span>
-                    <span style={{ fontWeight: 700, color: '#0f172a' }}>{currentOrderId || 'ORD-2026-ESCROW'}</span>
+                    <span style={{ color: '#78716C' }}>ORDER REF:</span>
+                    <span style={{ fontWeight: 700, color: '#14382D' }}>{currentOrderId || 'ORD-2026-ESCROW'}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748b' }}>DATE / TIME:</span>
+                    <span style={{ color: '#78716C' }}>DATE / TIME:</span>
                     <span>{new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })} {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748b' }}>DESTINATION:</span>
+                    <span style={{ color: '#78716C' }}>DESTINATION:</span>
                     <span style={{ fontWeight: 600 }}>{selectedAddress.recipientName}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748b' }}>FARM LOCATION:</span>
+                    <span style={{ color: '#78716C' }}>FARM LOCATION:</span>
                     <span>{selectedAddress.city}, {selectedAddress.state}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748b' }}>PAY METHOD:</span>
-                    <span style={{ fontWeight: 700, color: '#166534' }}>{activePaymentOption.title.split('/')[0].toUpperCase()}</span>
+                    <span style={{ color: '#78716C' }}>PAY METHOD:</span>
+                    <span style={{ fontWeight: 700, color: '#145A43' }}>{activePaymentOption.title.split('/')[0].toUpperCase()}</span>
                   </div>
                 </div>
 
-                <div style={{ color: '#cbd5e1', fontSize: 11, letterSpacing: '-1px', margin: '6px 0' }}>
+                <div style={{ color: '#D6CEBE', fontSize: 11, letterSpacing: '-1px', margin: '6px 0' }}>
                   ----------------------------------------
                 </div>
 
@@ -854,20 +858,20 @@ export default function CheckoutPage() {
                 <div style={{ marginBottom: 10 }}>
                   {items.slice(0, 3).map((item) => (
                     <div key={item.product.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, marginBottom: 4 }}>
-                      <span style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <span style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#1C1917' }}>
                         {item.product.title} ×{item.quantity}
                       </span>
-                      <span style={{ fontWeight: 600 }}>₹{(item.product.price * item.quantity).toLocaleString('en-IN')}</span>
+                      <span style={{ fontWeight: 600, color: '#145A43' }}>₹{(item.product.price * item.quantity).toLocaleString('en-IN')}</span>
                     </div>
                   ))}
                   {items.length > 3 && (
-                    <div style={{ fontSize: 10, color: '#64748b', fontStyle: 'italic', marginTop: 2 }}>
+                    <div style={{ fontSize: 10, color: '#78716C', fontStyle: 'italic', marginTop: 2 }}>
                       + {items.length - 3} additional input lots
                     </div>
                   )}
                 </div>
 
-                <div style={{ color: '#cbd5e1', fontSize: 11, letterSpacing: '-1px', margin: '6px 0' }}>
+                <div style={{ color: '#D6CEBE', fontSize: 11, letterSpacing: '-1px', margin: '6px 0' }}>
                   ----------------------------------------
                 </div>
 
@@ -877,27 +881,27 @@ export default function CheckoutPage() {
                     <span>Consignment Subtotal:</span>
                     <span>₹{sub.toLocaleString('en-IN')}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#166534' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#145A43' }}>
                     <span>Logistics Subsidy:</span>
-                    <span>{fee === 0 ? 'FREE' : `₹${fee}`}</span>
+                    <span>{fee === 0 ? 'FREE (SUBSIDIZED)' : `₹${fee}`}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 800, marginTop: 4, paddingTop: 4, borderTop: '1px dashed #94a3b8' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 800, marginTop: 4, paddingTop: 4, borderTop: '1px dashed #A8A29E' }}>
                     <span>TOTAL AUTHORIZED:</span>
-                    <span style={{ color: '#0f172a' }}>₹{total.toLocaleString('en-IN')}</span>
+                    <span style={{ color: '#14382D' }}>₹{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 
                 {/* Step badge */}
                 <div
                   style={{
-                    background: '#f0fdf4',
-                    border: '1px dashed #22c55e',
+                    background: '#F0FDF4',
+                    border: '1px dashed #22C55E',
                     borderRadius: 4,
                     padding: '8px 10px',
                     margin: '10px 0',
                     fontSize: 11,
                     textAlign: 'center',
-                    color: '#166534',
+                    color: '#145A43',
                     fontWeight: 700,
                   }}
                 >
@@ -909,14 +913,14 @@ export default function CheckoutPage() {
                   <div
                     style={{
                       height: 28,
-                      background: 'repeating-linear-gradient(90deg, #0f172a 0, #0f172a 2px, transparent 2px, transparent 4px, #0f172a 4px, #0f172a 7px, transparent 7px, transparent 9px, #0f172a 9px, #0f172a 12px, transparent 12px, transparent 15px)',
+                      background: 'repeating-linear-gradient(90deg, #14382D 0, #14382D 2px, transparent 2px, transparent 4px, #14382D 4px, #14382D 7px, transparent 7px, transparent 9px, #14382D 9px, #14382D 12px, transparent 12px, transparent 15px)',
                       width: '80%',
                       margin: '0 auto',
                       opacity: 0.85,
                     }}
                   />
-                  <div style={{ fontSize: 9, letterSpacing: '3px', color: '#64748b', marginTop: 3 }}>
-                    *AGRITRADE-ESCROW-SEAL*
+                  <div style={{ fontSize: 9, letterSpacing: '3px', color: '#78716C', marginTop: 3 }}>
+                    *AGRITRADE-KISAN-ESCROW-SEAL*
                   </div>
                 </div>
 
@@ -926,19 +930,19 @@ export default function CheckoutPage() {
 
               {/* Progress bar and helper text under printer */}
               <div style={{ marginTop: 20, padding: '0 12px' }}>
-                <div style={{ height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 2, overflow: 'hidden', marginBottom: 10 }}>
+                <div style={{ height: 4, background: 'rgba(255,255,255,0.15)', borderRadius: 2, overflow: 'hidden', marginBottom: 10 }}>
                   <div
                     style={{
                       height: '100%',
-                      background: 'linear-gradient(90deg, #22c55e, #10b981)',
+                      background: 'linear-gradient(90deg, #F59E0B, #10B981)',
                       width: '70%',
                       borderRadius: 2,
                       animation: 'indeterminate 1.5s infinite ease-in-out',
                     }}
                   />
                 </div>
-                <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>
-                  Please keep this window open while the transaction escrow lock is secured.
+                <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,0.85)' }}>
+                  Securing bank escrow lock. Please keep this browser window open.
                 </p>
               </div>
             </div>

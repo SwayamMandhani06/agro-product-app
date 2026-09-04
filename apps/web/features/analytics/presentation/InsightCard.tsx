@@ -41,7 +41,7 @@ export function InsightCard({ insight, onInspect }: InsightCardProps) {
         </div>
 
         {/* Headline */}
-        <h4 className="text-sm font-semibold text-[var(--color-text-primary)] group-hover:text-[#0B3D2E] transition-colors leading-snug">
+        <h4 className="text-sm font-semibold text-[var(--color-text-primary)] group-hover:text-[#145A43] transition-colors leading-snug">
           {insight.title}
         </h4>
 
@@ -56,7 +56,7 @@ export function InsightCard({ insight, onInspect }: InsightCardProps) {
         <span className="font-mono text-[11px] text-stone-500 font-medium">
           {insight.supportingMetric}
         </span>
-        <span className="text-[#0B3D2E] font-medium text-xs group-hover:underline flex items-center gap-1">
+        <span className="text-[#145A43] font-medium text-xs group-hover:underline flex items-center gap-1">
           Inspect Diagnosis →
         </span>
       </div>

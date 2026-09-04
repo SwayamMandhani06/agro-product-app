@@ -178,19 +178,40 @@ function ConfirmedContent() {
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            {order && (
+              <Link
+                href={`/orders/${order.id}/receipt`}
+                className="btn btn-secondary"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  fontSize: 13.5,
+                  padding: '10px 18px',
+                  borderRadius: 8,
+                  textDecoration: 'none',
+                }}
+              >
+                <Printer size={15} /> Official Tax Invoice (A4)
+              </Link>
+            )}
+
             <button
               onClick={() => setShowReceiptModal(true)}
-              className="btn btn-secondary"
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8,
-                fontSize: 13.5,
-                padding: '10px 18px',
+                gap: 6,
+                fontSize: 13,
+                padding: '10px 16px',
                 borderRadius: 8,
+                background: 'transparent',
+                border: '1px solid var(--color-border)',
+                color: 'var(--color-text-secondary)',
+                cursor: 'pointer',
               }}
             >
-              <Printer size={15} /> View / Print Tax Invoice
+              Quick Receipt Preview
             </button>
 
             {order && (
@@ -204,6 +225,7 @@ function ConfirmedContent() {
                   fontSize: 13.5,
                   padding: '10px 20px',
                   borderRadius: 8,
+                  textDecoration: 'none',
                 }}
               >
                 <Truck size={15} /> Track Consignment Live <ArrowRight size={15} />
