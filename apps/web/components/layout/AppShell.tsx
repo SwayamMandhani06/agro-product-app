@@ -35,6 +35,7 @@ const useMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => 
 
 const NAV_LINKS = [
   { href: '/home',        label: 'Dashboard' },
+  { href: '/insights',    label: 'Analytics' },
   { href: '/products',    label: 'Products' },
   { href: '/mandi',       label: 'Mandi Rates' },
   { href: '/weather',     label: 'Weather' },
