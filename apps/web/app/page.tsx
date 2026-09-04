@@ -1,26 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Leaf,
   ArrowRight,
   TrendingUp,
+  TrendingDown,
   ShieldCheck,
   Zap,
-  Smartphone,
-  Globe,
-  Database,
   CheckCircle,
-  ChevronRight,
-  Calculator,
   Truck,
+  Sun,
+  Moon,
+  Sparkles,
+  Layers,
+  Activity,
+  CloudRain,
+  ChevronRight,
+  Sprout,
   BarChart3,
   ExternalLink,
 } from 'lucide-react';
 import { ProductImageResolver } from '@/lib/product-image-resolver';
 import { MOCK_MANDI_PRICES, MOCK_PRODUCTS } from '@/lib/mock-data';
-
 
 // Input savings metric data by crop per acre
 const CROP_SAVINGS_METRICS: Record<string, { baselineInputCost: number; agritradeSavingsPct: number }> = {
@@ -32,1123 +35,982 @@ const CROP_SAVINGS_METRICS: Record<string, { baselineInputCost: number; agritrad
 };
 
 export default function SaaSMarketingHomePage() {
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [farmAcres, setFarmAcres] = useState<number>(5);
   const [selectedCrop, setSelectedCrop] = useState<string>('Soybean');
-  const [interactiveProductQty, setInteractiveProductQty] = useState<number>(2);
-  const [selectedMandiCrop, setSelectedMandiCrop] = useState<string>('All');
+  const [activeHeroTab, setActiveHeroTab] = useState<'mandi' | 'logistics' | 'weather'>('mandi');
+  const [tickSeconds, setTickSeconds] = useState<number>(4);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTickSeconds((prev) => (prev > 1 ? prev - 1 : 12));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const isDark = theme === 'dark';
 
   const cropMetric = CROP_SAVINGS_METRICS[selectedCrop] || CROP_SAVINGS_METRICS.Soybean;
   const totalStandardCost = cropMetric.baselineInputCost * farmAcres;
   const estimatedSavings = Math.round(totalStandardCost * cropMetric.agritradeSavingsPct);
   const agritradeCost = totalStandardCost - estimatedSavings;
 
-  const filteredMandiPrices =
-    selectedMandiCrop === 'All'
-      ? MOCK_MANDI_PRICES
-      : MOCK_MANDI_PRICES.filter((m) => m.crop === selectedMandiCrop);
-
   const featuredProducts = MOCK_PRODUCTS.slice(0, 4);
 
+  // Theme-aware tokens
+  const bgCanvas = isDark ? '#062319' : '#FDFBF7';
+  const bgCard = isDark ? 'rgba(255, 255, 255, 0.05)' : '#FFFFFF';
+  const borderCard = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(11, 61, 46, 0.08)';
+  const textPrimary = isDark ? '#FFFFFF' : '#0B3D2E';
+  const textSecondary = isDark ? 'rgba(255, 255, 255, 0.75)' : '#463D35';
+  const textTertiary = isDark ? 'rgba(255, 255, 255, 0.5)' : '#7A6E63';
+  const headerBg = isDark ? 'rgba(6, 35, 25, 0.94)' : 'rgba(255, 255, 255, 0.94)';
+  const tickerBg = isDark ? '#041710' : '#F4ECE8';
+
   return (
-    <div style={{ background: 'var(--color-bg)', minHeight: '100vh', color: 'var(--color-text-primary)' }}>
+    <div
+      style={{
+        background: bgCanvas,
+        minHeight: '100vh',
+        color: textPrimary,
+        transition: 'background 0.35s ease, color 0.35s ease',
+        fontFamily: 'inherit',
+      }}
+    >
       {/* ============================================================
-          1. TOP NAVIGATION BAR (High-End Minimalist Commerce)
+          1. MODERN SAAS TOP NAVIGATION BAR
           ============================================================ */}
       <header
-        className="glass-nav"
         style={{
           position: 'sticky',
           top: 0,
           zIndex: 50,
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          background: 'rgba(11, 61, 46, 0.96)',
-          backdropFilter: 'blur(12px)',
+          borderBottom: `1px solid ${borderCard}`,
+          background: headerBg,
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          transition: 'all 0.3s ease',
         }}
       >
         <div
           className="container-app"
-          style={{ display: 'flex', alignItems: 'center', height: 'var(--nav-height)', justifyContent: 'space-between' }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            height: 68,
+            justifyContent: 'space-between',
+          }}
         >
           {/* Brand Logo */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
             <div
               style={{
-                width: 32,
-                height: 32,
-                borderRadius: 6,
-                background: 'rgba(255,255,255,0.18)',
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                background: 'linear-gradient(135deg, #1A7A4A 0%, #0B3D2E 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#fff',
+                boxShadow: isDark ? '0 0 16px rgba(26, 122, 74, 0.4)' : '0 2px 8px rgba(11, 61, 46, 0.15)',
               }}
             >
-              <Leaf size={18} strokeWidth={2.4} />
+              <Leaf size={20} strokeWidth={2.4} />
             </div>
-            <span style={{ color: '#fff', fontSize: 18, fontWeight: 700, letterSpacing: '-0.3px' }}>
-              AGRI TRADE
-            </span>
-            <span
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                color: '#FCD34D',
-                background: 'rgba(217, 119, 6, 0.25)',
-                padding: '2px 7px',
-                borderRadius: 4,
-                letterSpacing: '0.4px',
-              }}
-            >
-              ENTERPRISE PLATFORM
-            </span>
+            <div>
+              <span
+                style={{
+                  color: textPrimary,
+                  fontSize: 18,
+                  fontWeight: 800,
+                  letterSpacing: '-0.4px',
+                  display: 'block',
+                  lineHeight: 1,
+                }}
+              >
+                AGRI TRADE
+              </span>
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 600,
+                  color: isDark ? '#34D399' : '#1A7A4A',
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Market Intelligence
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav style={{ display: 'none', gap: 24 }} className="desktop-nav">
-            <Link href="/products" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Inputs Catalog
-            </Link>
-            <Link href="/insights" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Farm Insights
-            </Link>
-            <Link href="/mandi" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Mandi Intelligence
-            </Link>
-            <Link href="/shipments" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Logistics
-            </Link>
-            <Link href="/weather" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Weather Advisory
-            </Link>
-            <a href="#calculator" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Savings ROI
-            </a>
+          <nav
+            style={{
+              display: 'none',
+              gap: 28,
+              alignItems: 'center',
+            }}
+            className="desktop-nav"
+          >
+            {[
+              { label: 'Catalog', href: '/products' },
+              { label: 'Mandi Intelligence', href: '/mandi' },
+              { label: 'Farm Insights', href: '/insights' },
+              { label: 'Rural Logistics', href: '/shipments' },
+              { label: 'Weather Advisory', href: '/weather' },
+            ].map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                style={{
+                  color: textSecondary,
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = isDark ? '#34D399' : '#0B3D2E')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = textSecondary)}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* Quick CTA Actions */}
+          {/* Quick Actions & Theme Switcher */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              title={`Switch to ${isDark ? 'Harvest Cream (Light)' : 'Forest Dark'} theme`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 12px',
+                borderRadius: 20,
+                background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(11, 61, 46, 0.08)',
+                border: `1px solid ${borderCard}`,
+                color: textPrimary,
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              {isDark ? (
+                <>
+                  <Sun size={14} color="#FCD34D" />
+                  <span style={{ fontSize: 11 }}>Harvest Cream</span>
+                </>
+              ) : (
+                <>
+                  <Moon size={14} color="#0B3D2E" />
+                  <span style={{ fontSize: 11 }}>Forest Dark</span>
+                </>
+              )}
+            </button>
+
             <Link
               href="/login"
               style={{
                 fontSize: 13,
                 fontWeight: 600,
-                color: 'rgba(255,255,255,0.9)',
+                color: textPrimary,
                 textDecoration: 'none',
-                padding: '6px 12px',
+                padding: '7px 14px',
+                borderRadius: 8,
+                transition: 'background 0.2s',
               }}
             >
               Sign In
             </Link>
+
             <Link
               href="/home"
-              className="btn btn-primary btn-sm"
               style={{
-                background: 'var(--color-amber)',
-                color: '#fff',
+                background: 'linear-gradient(135deg, #D97706 0%, #B86200 100%)',
+                color: '#ffffff',
                 border: 'none',
                 fontSize: 13,
-                gap: 6,
                 fontWeight: 700,
-                borderRadius: 6,
+                borderRadius: 8,
+                padding: '8px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                textDecoration: 'none',
+                boxShadow: '0 2px 10px rgba(217, 119, 6, 0.3)',
+                transition: 'transform 0.2s, box-shadow 0.2s',
               }}
             >
-              Farmer Dashboard <ArrowRight size={14} strokeWidth={2.5} />
+              <span>Farmer Dashboard</span>
+              <ArrowRight size={14} strokeWidth={2.5} />
             </Link>
           </div>
         </div>
       </header>
 
       {/* ============================================================
-          2. LIVE APMC MANDI TICKER
+          2. STREAMLINED LIVE APMC MANDI TICKER
           ============================================================ */}
       <div
         style={{
-          background: '#07241B',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          padding: '8px 0',
+          background: tickerBg,
+          borderBottom: `1px solid ${borderCard}`,
+          padding: '9px 0',
           overflow: 'hidden',
           whiteSpace: 'nowrap',
           fontSize: 12,
-          color: 'rgba(255,255,255,0.75)',
+          color: textSecondary,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28, overflowX: 'auto', padding: '0 24px' }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#34D399', fontWeight: 700, flexShrink: 0 }}>
-            <Zap size={13} strokeWidth={2.5} /> LIVE APMC BENCHMARK:
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24, overflowX: 'auto', padding: '0 24px' }}>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5,
+              color: isDark ? '#34D399' : '#027A38',
+              fontWeight: 700,
+              flexShrink: 0,
+            }}
+          >
+            <Zap size={13} strokeWidth={2.5} /> LIVE APMC RATES:
           </span>
           {MOCK_MANDI_PRICES.map((m) => (
             <span key={m.crop} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-              <span style={{ fontWeight: 600, color: '#fff' }}>{m.crop}</span>
-              <span style={{ color: 'rgba(255,255,255,0.85)' }}>{m.price}</span>
-              <span style={{ color: m.trend === 'up' ? '#34D399' : m.trend === 'down' ? '#F87171' : '#9CA3AF', fontWeight: 600 }}>
-                {m.change}
+              <span style={{ fontWeight: 600, color: textPrimary }}>{m.crop}</span>
+              <span style={{ fontWeight: 700, color: textPrimary }}>{m.price}</span>
+              <span
+                style={{
+                  fontWeight: 700,
+                  fontSize: 11,
+                  color: m.trend === 'up' ? '#34D399' : '#EF4444',
+                }}
+              >
+                {m.trend === 'up' ? '▲' : '▼'} {m.change}
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>({m.market})</span>
+              <span style={{ color: textTertiary, fontSize: 11 }}>({m.market})</span>
             </span>
           ))}
         </div>
       </div>
 
       {/* ============================================================
-          3. HERO SECTION (Asymmetric Editorial Agrarian Fintech)
+          3. HERO SECTION — HIGH IMPACT MODERN SAAS
           ============================================================ */}
       <section
         style={{
-          background: 'linear-gradient(180deg, var(--color-forest) 0%, #062118 100%)',
-          color: '#fff',
-          paddingTop: 48,
-          paddingBottom: 64,
+          padding: '64px 0 80px',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        <div className="container-app">
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: 40,
-              alignItems: 'center',
-            }}
-          >
-            {/* Left Column: Asymmetric Editorial Value Proposition */}
-            <div>
-              {/* Tag Pill */}
-              <div
-                className="fade-in"
+        <div
+          className="container-app"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 0.85fr)',
+            gap: 40,
+            alignItems: 'center',
+          }}
+        >
+          {/* Left Column: Headline, Description & CTAs */}
+          <div>
+            {/* Top Chip */}
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '6px 14px',
+                borderRadius: 20,
+                background: isDark ? 'rgba(34, 197, 94, 0.12)' : 'rgba(2, 122, 56, 0.08)',
+                border: isDark ? '1px solid rgba(34, 197, 94, 0.25)' : '1px solid rgba(2, 122, 56, 0.2)',
+                color: isDark ? '#34D399' : '#027A38',
+                fontSize: 12,
+                fontWeight: 700,
+                marginBottom: 20,
+              }}
+            >
+              <Sparkles size={14} />
+              <span>Direct Factory-to-Field Agricultural Infrastructure</span>
+            </div>
+
+            {/* Main Headline */}
+            <h1
+              style={{
+                fontSize: 'clamp(32px, 4.5vw, 54px)',
+                fontWeight: 900,
+                letterSpacing: '-1.2px',
+                lineHeight: 1.12,
+                margin: '0 0 20px',
+                color: textPrimary,
+              }}
+            >
+              Modern Agricultural Commerce{' '}
+              <span
                 style={{
+                  background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #10B981 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  display: 'inline-block',
+                }}
+              >
+                Built for India&apos;s Farmers
+              </span>
+            </h1>
+
+            {/* Subheading */}
+            <p
+              style={{
+                fontSize: 16.5,
+                lineHeight: 1.6,
+                color: textSecondary,
+                maxWidth: 540,
+                margin: '0 0 32px',
+              }}
+            >
+              Empowering progressive agriculturalists with factory-certified seed lots, direct bulk manufacturer pricing, live APMC mandi arbitration, and transparent rural consignment tracking.
+            </p>
+
+            {/* CTA Buttons */}
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 36 }}>
+              <Link
+                href="/products"
+                style={{
+                  background: 'linear-gradient(135deg, #0B3D2E 0%, #025A2A 100%)',
+                  color: '#ffffff',
+                  padding: '13px 26px',
+                  borderRadius: 10,
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  textDecoration: 'none',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
-                  padding: '5px 12px',
-                  borderRadius: 20,
-                  background: 'rgba(255,255,255,0.10)',
-                  border: '1px solid rgba(255,255,255,0.18)',
-                  fontSize: 11.5,
+                  boxShadow: isDark ? '0 4px 20px rgba(11, 61, 46, 0.6)' : '0 4px 14px rgba(11, 61, 46, 0.25)',
+                  transition: 'transform 0.2s ease',
+                }}
+              >
+                <span>Explore Inputs Catalog</span>
+                <ArrowRight size={16} strokeWidth={2.4} />
+              </Link>
+
+              <Link
+                href="/mandi"
+                style={{
+                  background: isDark ? 'rgba(255, 255, 255, 0.08)' : '#FFFFFF',
+                  color: textPrimary,
+                  border: `1px solid ${borderCard}`,
+                  padding: '13px 22px',
+                  borderRadius: 10,
+                  fontSize: 14.5,
                   fontWeight: 600,
-                  marginBottom: 18,
-                  color: 'rgba(255,255,255,0.92)',
-                  letterSpacing: '0.4px',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  boxShadow: isDark ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.04)',
                 }}
               >
-                <ShieldCheck size={14} color="#34D399" strokeWidth={2.4} />
-                <span>SYNCHRONIZED AGRICULTURAL COMMERCE &amp; MARKET INTELLIGENCE</span>
-              </div>
-
-              {/* Main Headline */}
-              <h1
-                className="slide-up"
-                style={{
-                  fontSize: 'clamp(28px, 3.8vw, 46px)',
-                  fontWeight: 800,
-                  lineHeight: 1.15,
-                  letterSpacing: '-0.8px',
-                  margin: '0 0 16px',
-                }}
-              >
-                Modern Agricultural Commerce &amp;{' '}
-                <span style={{ color: '#FCD34D' }}>Intelligence Infrastructure</span>
-              </h1>
-
-              {/* Subhead */}
-              <p
-                className="slide-up"
-                style={{
-                  fontSize: 'clamp(14px, 1.2vw, 16px)',
-                  lineHeight: 1.6,
-                  color: 'rgba(255,255,255,0.85)',
-                  margin: '0 0 28px',
-                  maxWidth: 540,
-                }}
-              >
-                Empowering progressive Indian agricultural enterprises and farmers with factory-direct agro-inputs, live multi-state mandi price benchmarking, and transparent consignment logistics without intermediary markups.
-              </p>
-
-              {/* Hero CTAs */}
-              <div
-                className="slide-up"
-                style={{
-                  display: 'flex',
-                  gap: 12,
-                  flexWrap: 'wrap',
-                  marginBottom: 32,
-                }}
-              >
-                <Link
-                  href="/home"
-                  className="btn btn-primary"
-                  style={{
-                    background: 'var(--color-amber)',
-                    color: '#fff',
-                    border: 'none',
-                    fontSize: 14.5,
-                    padding: '11px 22px',
-                    fontWeight: 700,
-                    gap: 8,
-                    borderRadius: 6,
-                  }}
-                >
-                  Launch Farmer Dashboard <ArrowRight size={15} strokeWidth={2.5} />
-                </Link>
-                <Link
-                  href="/mandi"
-                  className="btn btn-secondary"
-                  style={{
-                    background: 'rgba(255,255,255,0.12)',
-                    color: '#fff',
-                    borderColor: 'rgba(255,255,255,0.25)',
-                    fontSize: 14.5,
-                    padding: '11px 20px',
-                    gap: 8,
-                    borderRadius: 6,
-                  }}
-                >
-                  <BarChart3 size={15} strokeWidth={2} /> Inspect Mandi Terminal
-                </Link>
-              </div>
-
-              {/* Trust Information */}
-              <div
-                style={{
-                  display: 'flex',
-                  gap: 20,
-                  flexWrap: 'wrap',
-                  fontSize: 12,
-                  color: 'rgba(255,255,255,0.75)',
-                  paddingTop: 8,
-                  borderTop: '1px solid rgba(255,255,255,0.10)',
-                }}
-              >
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <ShieldCheck size={15} color="#34D399" strokeWidth={2.2} /> 100% Certified Seed Lots
-                </span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <TrendingUp size={15} color="#34D399" strokeWidth={2.2} /> 8 Direct APMC Benchmarks
-                </span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <CheckCircle size={15} color="#34D399" strokeWidth={2.2} /> Zero Middleman Markups
-                </span>
-              </div>
+                <Activity size={16} color={isDark ? '#34D399' : '#0B3D2E'} />
+                <span>Inspect Mandi Terminal</span>
+              </Link>
             </div>
 
-            {/* Right Column: Live Operational Terminal Preview */}
+            {/* Three Pillar Badges */}
+            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: textSecondary, fontWeight: 600 }}>
+                <CheckCircle size={15} color="#10B981" strokeWidth={2.5} />
+                <span>100% Certified Seed Lots</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: textSecondary, fontWeight: 600 }}>
+                <TrendingUp size={15} color="#F59E0B" strokeWidth={2.5} />
+                <span>Real-Time APMC Feeds</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: textSecondary, fontWeight: 600 }}>
+                <ShieldCheck size={15} color="#3B82F6" strokeWidth={2.5} />
+                <span>Zero Middleman Markups</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Sleek Interactive Command Terminal */}
+          <div
+            style={{
+              position: 'relative',
+            }}
+          >
+            {/* Ambient Background Glow in dark mode */}
+            {isDark && (
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: -20,
+                  background: 'radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(0,0,0,0) 70%)',
+                  borderRadius: 24,
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                }}
+              />
+            )}
+
+            {/* Main Terminal Card */}
             <div
-              className="fade-in"
+              className="glass-saas-card"
               style={{
-                background: 'rgba(11, 41, 32, 0.85)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: 10,
-                boxShadow: '0 24px 48px -12px rgba(0,0,0,0.5)',
-                backdropFilter: 'blur(16px)',
+                position: 'relative',
+                zIndex: 1,
+                borderRadius: 18,
                 overflow: 'hidden',
+                background: isDark ? 'rgba(15, 23, 42, 0.85)' : '#FFFFFF',
+                border: `1px solid ${borderCard}`,
+                boxShadow: isDark
+                  ? '0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(16, 185, 129, 0.1)'
+                  : '0 20px 45px -10px rgba(11, 61, 46, 0.12)',
               }}
             >
-              {/* Terminal Title Bar */}
+              {/* Header Bar */}
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '10px 16px',
-                  background: 'rgba(0,0,0,0.25)',
-                  borderBottom: '1px solid rgba(255,255,255,0.08)',
+                  padding: '12px 18px',
+                  background: isDark ? 'rgba(2, 6, 23, 0.7)' : '#F8FAFC',
+                  borderBottom: `1px solid ${borderCard}`,
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#EF4444' }} />
-                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#F59E0B' }} />
-                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#10B981' }} />
-                  <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.6)', marginLeft: 8 }}>
-                    agritrade-terminal: live-cluster-in-west-1
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444' }} />
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B' }} />
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981' }} />
+                  <span
+                    style={{
+                      marginLeft: 8,
+                      fontSize: 11.5,
+                      fontFamily: 'monospace',
+                      color: isDark ? '#94A3B8' : '#64748B',
+                    }}
+                  >
+                    agritrade-core: cluster-in-west-1
                   </span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 6px #22c55e' }} />
-                  <span style={{ fontSize: 10.5, fontWeight: 700, color: '#34D399', letterSpacing: '0.4px' }}>
+                  <span
+                    style={{
+                      width: 7,
+                      height: 7,
+                      borderRadius: '50%',
+                      background: '#22C55E',
+                      boxShadow: '0 0 8px #22C55E',
+                    }}
+                  />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#22C55E' }}>
                     WSS CONNECTED
                   </span>
                 </div>
               </div>
 
-              {/* Terminal Content */}
-              <div style={{ padding: '16px 18px' }}>
-                {/* Realtime APMC Snippet */}
-                <div style={{ marginBottom: 14 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Real-Time APMC Price Feeds
-                    </span>
-                    <span style={{ fontSize: 10.5, color: '#FCD34D' }}>● Tick updated 8s ago</span>
+              {/* Terminal Content Tabs */}
+              <div style={{ padding: '16px 20px 20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    {(['mandi', 'logistics', 'weather'] as const).map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setActiveHeroTab(t)}
+                        style={{
+                          padding: '5px 12px',
+                          borderRadius: 6,
+                          border: 'none',
+                          fontSize: 11.5,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          background: activeHeroTab === t ? (isDark ? '#1E293B' : '#E2E8F0') : 'transparent',
+                          color: activeHeroTab === t ? textPrimary : textTertiary,
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {t === 'mandi' ? 'Mandi Feeds' : t === 'logistics' ? 'Live Logistics' : 'Agro Weather'}
+                      </button>
+                    ))}
                   </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: 6, fontSize: 12.5 }}>
-                      <div>
-                        <span style={{ fontWeight: 600, color: '#fff' }}>Soybean (Yellow JS-335)</span>
-                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginLeft: 6 }}>Indore APMC</span>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontWeight: 700, color: '#fff' }}>₹4,320 / qtl</span>
-                        <span style={{ color: '#34D399', fontSize: 11, fontWeight: 600, marginLeft: 8 }}>▲ +₹45</span>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: 6, fontSize: 12.5 }}>
-                      <div>
-                        <span style={{ fontWeight: 600, color: '#fff' }}>Cotton (Medium Staple)</span>
-                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginLeft: 6 }}>Rajkot APMC</span>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontWeight: 700, color: '#fff' }}>₹7,100 / qtl</span>
-                        <span style={{ color: '#34D399', fontSize: 11, fontWeight: 600, marginLeft: 8 }}>▲ +₹80</span>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: 6, fontSize: 12.5 }}>
-                      <div>
-                        <span style={{ fontWeight: 600, color: '#fff' }}>Mustard (Bold Seed)</span>
-                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginLeft: 6 }}>Alwar APMC</span>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontWeight: 700, color: '#fff' }}>₹5,450 / qtl</span>
-                        <span style={{ color: '#F87171', fontSize: 11, fontWeight: 600, marginLeft: 8 }}>▼ -₹25</span>
-                      </div>
-                    </div>
-                  </div>
+                  <span style={{ fontSize: 11, color: textTertiary, fontFamily: 'monospace' }}>
+                    Tick in {tickSeconds}s
+                  </span>
                 </div>
 
-                {/* Active Consignment Stream */}
-                <div style={{ padding: '12px', background: 'rgba(217, 119, 6, 0.12)', border: '1px solid rgba(217, 119, 6, 0.3)', borderRadius: 8 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <Truck size={14} color="#FCD34D" />
-                      <span style={{ fontSize: 12, fontWeight: 700, color: '#FCD34D' }}>
-                        Live Consignment: #ORD-2024-001
-                      </span>
-                    </div>
-                    <span style={{ fontSize: 10.5, fontWeight: 700, background: '#FCD34D', color: '#78350F', padding: '2px 6px', borderRadius: 4 }}>
-                      OUT FOR DELIVERY
-                    </span>
+                {/* Tab: Mandi Feeds */}
+                {activeHeroTab === 'mandi' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {MOCK_MANDI_PRICES.slice(0, 3).map((item) => (
+                      <div
+                        key={item.crop}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '10px 14px',
+                          borderRadius: 8,
+                          background: isDark ? 'rgba(30, 41, 59, 0.6)' : '#F1F5F9',
+                          border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #E2E8F0',
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: textPrimary }}>
+                            {item.crop}
+                          </div>
+                          <div style={{ fontSize: 11, color: textTertiary }}>
+                            {item.market}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: 13.5, fontWeight: 700, color: textPrimary }}>
+                            {item.price} <span style={{ fontSize: 10, color: textTertiary }}>/ qtl</span>
+                          </div>
+                          <div
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 700,
+                              color: item.trend === 'up' ? '#22C55E' : '#EF4444',
+                            }}
+                          >
+                            {item.trend === 'up' ? '▲' : '▼'} {item.change}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <p style={{ margin: 0, fontSize: 11.5, color: 'rgba(255,255,255,0.8)' }}>
-                    Courier: Delhivery Cargo Express · Pune Central Distribution Hub · ETA Today 2:30 PM
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+                )}
 
-          {/* ============================================================
-              4. PRODUCT EXPERIENCE PREVIEW (Layered & Restrained)
-              ============================================================ */}
-          <div
-            className="slide-up"
-            style={{
-              marginTop: 48,
-              maxWidth: 900,
-              margin: '48px auto 0',
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.14)',
-              borderRadius: 10,
-              padding: '24px',
-              backdropFilter: 'blur(16px)',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-              <div>
-                <span className="badge badge-amber" style={{ background: 'rgba(217, 119, 6, 0.3)', color: '#FCD34D' }}>
-                  FEATURED CANONICAL COMMERCE INPUT
-                </span>
-                <h3 style={{ margin: '6px 0 0', fontSize: 18, fontWeight: 700, color: '#fff' }}>
-                  Premium Hybrid Soybean Seeds (JS-335)
-                </h3>
-              </div>
-
-              <div style={{ display: 'flex', gap: 8 }}>
-                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <ShieldCheck size={14} color="#34D399" /> Batch Tested &amp; Certified
-                </span>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20, alignItems: 'center' }}>
-              {/* Product Visual */}
-              <div style={{ borderRadius: 6, overflow: 'hidden', height: 180, position: 'relative' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={ProductImageResolver.resolve('prod_1', 'Seeds')}
-                  alt="Hybrid Soybean Seeds"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-                <span style={{ position: 'absolute', top: 8, left: 8, background: 'var(--color-amber)', color: '#fff', fontSize: 10, fontWeight: 700, padding: '3px 7px', borderRadius: 4 }}>
-                  14% SAVINGS
-                </span>
-              </div>
-
-              {/* Product Specifications & Interactive Order Preview */}
-              <div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginBottom: 14 }}>
-                  <div style={{ background: 'rgba(255,255,255,0.06)', padding: '8px 10px', borderRadius: 6 }}>
-                    <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>Germination</p>
-                    <p style={{ margin: '2px 0 0', fontSize: 13, fontWeight: 700, color: '#34D399' }}>&gt;90% Certified</p>
-                  </div>
-                  <div style={{ background: 'rgba(255,255,255,0.06)', padding: '8px 10px', borderRadius: 6 }}>
-                    <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>APMC Baseline</p>
-                    <p style={{ margin: '2px 0 0', fontSize: 13, fontWeight: 700, color: '#fff' }}>₹4,320 / qtl</p>
-                  </div>
-                  <div style={{ background: 'rgba(255,255,255,0.06)', padding: '8px 10px', borderRadius: 6 }}>
-                    <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>Farm-Gate Price</p>
-                    <p style={{ margin: '2px 0 0', fontSize: 13, fontWeight: 700, color: '#fff' }}>₹1,250 <span style={{ textDecoration: 'line-through', color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>₹1,450</span></p>
-                  </div>
-                  <div style={{ background: 'rgba(255,255,255,0.06)', padding: '8px 10px', borderRadius: 6 }}>
-                    <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>Delivery Window</p>
-                    <p style={{ margin: '2px 0 0', fontSize: 13, fontWeight: 700, color: '#FCD34D' }}>48 Hours Doorstep</p>
-                  </div>
-                </div>
-
-                {/* Interactive Qty Controls */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.08)', padding: '8px 14px', borderRadius: 6 }}>
-                  <div>
-                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>Quantity ({farmAcres} acres est.):</span>
-                    <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#fff' }}>
-                      ₹{(1250 * interactiveProductQty).toLocaleString('en-IN')}{' '}
-                      <span style={{ fontSize: 11, color: '#34D399', fontWeight: 600 }}>
-                        (Save ₹{(200 * interactiveProductQty).toLocaleString('en-IN')})
-                      </span>
-                    </p>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <button
-                      onClick={() => setInteractiveProductQty((q) => Math.max(1, q - 1))}
-                      style={{ width: 26, height: 26, borderRadius: 4, background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', cursor: 'pointer', fontWeight: 700 }}
-                    >
-                      -
-                    </button>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', minWidth: 20, textAlign: 'center' }}>
-                      {interactiveProductQty}
-                    </span>
-                    <button
-                      onClick={() => setInteractiveProductQty((q) => q + 1)}
-                      style={{ width: 26, height: 26, borderRadius: 4, background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', cursor: 'pointer', fontWeight: 700 }}
-                    >
-                      +
-                    </button>
-                    <Link
-                      href="/products/prod_1"
-                      className="btn btn-sm btn-primary"
-                      style={{ marginLeft: 6, fontSize: 12, padding: '5px 12px', borderRadius: 4 }}
-                    >
-                      Order Now
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          5. TRUST & PROOF METRICS (Backed by Real Project Data)
-          ============================================================ */}
-      <section style={{ padding: '36px 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-divider)' }}>
-        <div className="container-app">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, textAlign: 'center' }}>
-            <div style={{ padding: '12px' }}>
-              <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-forest)', letterSpacing: '-0.5px' }}>24+</div>
-              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: 'var(--color-text-primary)' }}>Verified Input Specifications</div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Batch-certified seeds &amp; nutrition</div>
-            </div>
-
-            <div style={{ padding: '12px', borderLeft: '1px solid var(--color-divider)' }}>
-              <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-forest)', letterSpacing: '-0.5px' }}>8 APMC</div>
-              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: 'var(--color-text-primary)' }}>Mandi Hubs Benchmarked</div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Indore, Rajkot, Lasalgaon, Pune</div>
-            </div>
-
-            <div style={{ padding: '12px', borderLeft: '1px solid var(--color-divider)' }}>
-              <div style={{ fontSize: 32, fontWeight: 800, color: '#059669', letterSpacing: '-0.5px' }}>&gt;90%</div>
-              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: 'var(--color-text-primary)' }}>Certified Germination Standard</div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Govt-approved testing protocols</div>
-            </div>
-
-            <div style={{ padding: '12px', borderLeft: '1px solid var(--color-divider)' }}>
-              <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-amber)', letterSpacing: '-0.5px' }}>0%</div>
-              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: 'var(--color-text-primary)' }}>Middleman Price Distortion</div>
-              <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Direct manufacturer-to-farm pricing</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          6. HOW AGRITRADE WORKS (4-Step Structured Workflow)
-          ============================================================ */}
-      <section style={{ padding: '64px 0', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-divider)' }}>
-        <div className="container-app">
-          <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 48px' }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Seamless Supply Chain
-            </span>
-            <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 800, margin: '6px 0 10px', letterSpacing: '-0.4px' }}>
-              How AgriTrade Powers Transparent Commerce
-            </h2>
-            <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: 0 }}>
-              From certified manufacturer lots to rural farm gate delivery, engineered with institutional rigor.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
-            {[
-              {
-                step: '01',
-                icon: ShieldCheck,
-                title: 'Laboratory Quality Verification',
-                desc: 'All seed batches, micronutrients, and crop protection inputs undergo chemical purity and germination rate testing prior to catalog listing.',
-              },
-              {
-                step: '02',
-                icon: BarChart3,
-                title: 'APMC Mandi Intelligence',
-                desc: 'Real-time commodity arrivals and modal pricing data across key terminal mandis guide procurement timing and crop revenue planning.',
-              },
-              {
-                step: '03',
-                icon: Zap,
-                title: 'Direct Farm-Gate Ordering',
-                desc: 'Farmers purchase directly from verified manufacturers at wholesale pricing, eliminating 15% to 28% in local retailer margins.',
-              },
-              {
-                step: '04',
-                icon: Truck,
-                title: '48-Hour Doorstep Logistics',
-                desc: 'Specialized agricultural distribution routes deliver sealed orders directly to interior taluka collection points or farm gates.',
-              },
-            ].map(({ step, icon: IconW, title, desc }) => (
-              <div key={step} className="card" style={{ padding: 24, position: 'relative', border: '1px solid var(--color-divider)', borderRadius: 8 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
-                    <IconW size={20} strokeWidth={2.2} />
-                  </div>
-                  <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--color-text-tertiary)', opacity: 0.5 }}>{step}</span>
-                </div>
-                <h3 style={{ margin: '0 0 8px', fontSize: 16, fontWeight: 700 }}>{title}</h3>
-                <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          7. MARKET INTELLIGENCE SECTION (Actual Mandi Data Visualization)
-          ============================================================ */}
-      <section style={{ padding: '64px 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-divider)' }}>
-        <div className="container-app">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}>
-            <div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Commodity Terminal
-              </span>
-              <h2 style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, margin: '4px 0 0', letterSpacing: '-0.3px' }}>
-                APMC Mandi Price Intelligence
-              </h2>
-            </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <div style={{ display: 'flex', gap: 6, overflowX: 'auto' }}>
-                {['All', 'Soybean', 'Cotton', 'Wheat', 'Mustard', 'Onion'].map((crop) => (
-                  <button
-                    key={crop}
-                    onClick={() => setSelectedMandiCrop(crop)}
+                {/* Tab: Live Logistics */}
+                {activeHeroTab === 'logistics' && (
+                  <div
                     style={{
-                      padding: '5px 12px',
-                      borderRadius: 4,
-                      border: '1px solid',
-                      borderColor: selectedMandiCrop === crop ? 'var(--color-forest)' : 'var(--color-divider)',
-                      background: selectedMandiCrop === crop ? 'var(--color-forest)' : '#fff',
-                      color: selectedMandiCrop === crop ? '#fff' : 'var(--color-text-secondary)',
-                      fontSize: 12.5,
-                      fontWeight: 600,
-                      cursor: 'pointer',
+                      padding: '14px',
+                      borderRadius: 10,
+                      background: isDark ? 'rgba(30, 41, 59, 0.6)' : '#F1F5F9',
+                      border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #E2E8F0',
                     }}
                   >
-                    {crop}
-                  </button>
-                ))}
-              </div>
-              <Link href="/mandi" className="btn btn-sm btn-secondary" style={{ fontSize: 12, gap: 4, padding: '6px 12px' }}>
-                Full Terminal <ExternalLink size={13} />
-              </Link>
-            </div>
-          </div>
-
-          <div className="card" style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--color-divider)', borderRadius: 8 }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table className="mandi-table" style={{ margin: 0, width: '100%' }}>
-                <thead>
-                  <tr>
-                    <th style={{ paddingLeft: 20 }}>Crop / Commodity</th>
-                    <th>Benchmark Market</th>
-                    <th>Modal Price</th>
-                    <th>24h Movement</th>
-                    <th>Trend</th>
-                    <th style={{ paddingRight: 20 }}>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredMandiPrices.map((row) => (
-                    <tr key={row.crop}>
-                      <td style={{ paddingLeft: 20, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-                        {row.crop}
-                      </td>
-                      <td style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
-                        {row.market}
-                      </td>
-                      <td style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-forest)' }}>
-                        {row.price}
-                      </td>
-                      <td style={{ fontSize: 13, fontWeight: 600, color: row.trend === 'up' ? '#059669' : row.trend === 'down' ? '#DC2626' : '#6B7280' }}>
-                        {row.change}
-                      </td>
-                      <td>
-                        <span
-                          className={`badge ${row.trend === 'up' ? 'badge-success' : row.trend === 'down' ? 'badge-error' : 'badge-neutral'}`}
-                          style={{ fontSize: 11, textTransform: 'capitalize' }}
-                        >
-                          {row.trend}
-                        </span>
-                      </td>
-                      <td style={{ paddingRight: 20 }}>
-                        <Link
-                          href={`/products?category=${row.crop === 'Cotton' || row.crop === 'Soybean' || row.crop === 'Wheat' ? 'Seeds' : 'Fertilizers'}`}
-                          style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-forest)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                        >
-                          View Inputs <ChevronRight size={13} />
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          8. FEATURED INPUTS SHOWCASE (High-End Minimalist Commerce Grid)
-          ============================================================ */}
-      <section style={{ padding: '64px 0', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-divider)' }}>
-        <div className="container-app">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
-            <div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Curated Catalog
-              </span>
-              <h2 style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, margin: '4px 0 0', letterSpacing: '-0.3px' }}>
-                Featured Agricultural Inputs
-              </h2>
-            </div>
-            <Link href="/products" style={{ fontSize: 13, color: 'var(--color-forest)', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
-              Explore All 24+ Inputs <ChevronRight size={15} />
-            </Link>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
-            {featuredProducts.map((p) => (
-              <div key={p.id} className="card card-hover" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', borderRadius: 8, border: '1px solid var(--color-divider)' }}>
-                <div style={{ height: 160, position: 'relative', overflow: 'hidden' }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={ProductImageResolver.resolve(p.id, p.category)}
-                    alt={p.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                  <span style={{ position: 'absolute', top: 10, left: 10, background: 'var(--color-forest)', color: '#fff', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>
-                    {p.category}
-                  </span>
-                  {p.originalPrice && p.originalPrice > p.price && (
-                    <span style={{ position: 'absolute', top: 10, right: 10, background: 'var(--color-amber)', color: '#fff', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>
-                      {Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100)}% OFF
-                    </span>
-                  )}
-                </div>
-
-                <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 500 }}>
-                    {p.sellerName}
-                  </span>
-                  <h4 style={{ margin: '4px 0 8px', fontSize: 15, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-                    {p.title}
-                  </h4>
-
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 'auto', paddingTop: 10 }}>
-                    <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--color-forest)' }}>
-                      ₹{p.price.toLocaleString('en-IN')}
-                    </span>
-                    {p.originalPrice && (
-                      <span style={{ fontSize: 12, textDecoration: 'line-through', color: 'var(--color-text-tertiary)' }}>
-                        ₹{p.originalPrice.toLocaleString('en-IN')}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: '#F59E0B' }}>
+                        🚚 Consignment: #ORD-2026-084
                       </span>
-                    )}
-                    <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', marginLeft: 'auto' }}>
-                      per {p.unit}
-                    </span>
+                      <span style={{ fontSize: 10, fontWeight: 700, background: '#F59E0B', color: '#000', padding: '2px 6px', borderRadius: 4 }}>
+                        OUT FOR DELIVERY
+                      </span>
+                    </div>
+                    <p style={{ margin: '0 0 8px', fontSize: 12, color: textSecondary }}>
+                      Courier: Delhivery Rural Express · Nashik District Distribution Center
+                    </p>
+                    <div style={{ height: 4, background: '#CBD5E1', borderRadius: 2, overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: '85%', background: '#22C55E' }} />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6, fontSize: 10.5, color: textTertiary }}>
+                      <span>Dispatched (08:30 AM)</span>
+                      <span>ETA Today, 3:00 PM</span>
+                    </div>
                   </div>
+                )}
 
-                  <Link
-                    href={`/products/${p.id}`}
-                    className="btn btn-sm btn-primary"
-                    style={{ marginTop: 14, width: '100%', borderRadius: 6, fontSize: 13, justifyContent: 'center' }}
+                {/* Tab: Weather */}
+                {activeHeroTab === 'weather' && (
+                  <div
+                    style={{
+                      padding: '14px',
+                      borderRadius: 10,
+                      background: isDark ? 'rgba(30, 41, 59, 0.6)' : '#F1F5F9',
+                      border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #E2E8F0',
+                    }}
                   >
-                    View Specifications
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: textPrimary, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <CloudRain size={16} color="#3B82F6" /> Pune &amp; Western Belt
+                      </span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#16A34A', background: '#DCFCE7', padding: '2px 8px', borderRadius: 12 }}>
+                        Safe to Spray
+                      </span>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, textAlign: 'center', marginTop: 10 }}>
+                      <div style={{ background: isDark ? '#0F172A' : '#FFFFFF', padding: '8px 4px', borderRadius: 6 }}>
+                        <div style={{ fontSize: 10, color: textTertiary }}>Rain Prob</div>
+                        <div style={{ fontSize: 13, fontWeight: 700 }}>15%</div>
+                      </div>
+                      <div style={{ background: isDark ? '#0F172A' : '#FFFFFF', padding: '8px 4px', borderRadius: 6 }}>
+                        <div style={{ fontSize: 10, color: textTertiary }}>Wind Speed</div>
+                        <div style={{ fontSize: 13, fontWeight: 700 }}>8 km/h</div>
+                      </div>
+                      <div style={{ background: isDark ? '#0F172A' : '#FFFFFF', padding: '8px 4px', borderRadius: 6 }}>
+                        <div style={{ fontSize: 10, color: textTertiary }}>Humidity</div>
+                        <div style={{ fontSize: 13, fontWeight: 700 }}>58%</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Bottom Callout */}
+                <div
+                  style={{
+                    marginTop: 14,
+                    padding: '10px 14px',
+                    borderRadius: 8,
+                    background: isDark ? 'rgba(16, 185, 129, 0.1)' : '#F0FDF4',
+                    border: isDark ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid #BBF7D0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <span style={{ fontSize: 12, color: isDark ? '#6EE7B7' : '#166534', fontWeight: 600 }}>
+                    ⚡ Next Mandi price benchmark sync in {tickSeconds} seconds
+                  </span>
+                  <Link
+                    href="/mandi"
+                    style={{ fontSize: 11.5, fontWeight: 700, color: isDark ? '#34D399' : '#0B3D2E', textDecoration: 'none' }}
+                  >
+                    View All Mandis →
                   </Link>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ============================================================
-          9. INTERACTIVE SAVINGS CALCULATOR SECTION
+          4. FARMER SAVINGS ROI CALCULATOR
           ============================================================ */}
-      <section id="calculator" style={{ padding: '64px 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-divider)' }}>
+      <section
+        id="calculator"
+        style={{
+          padding: '60px 0',
+          background: isDark ? 'rgba(255, 255, 255, 0.02)' : '#F7F4EC',
+          borderTop: `1px solid ${borderCard}`,
+          borderBottom: `1px solid ${borderCard}`,
+        }}
+      >
         <div className="container-app">
           <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 40px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--color-forest)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>
-              <Calculator size={14} strokeWidth={2.5} /> Transparent Economics
-            </div>
-            <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 800, margin: '0 0 10px', letterSpacing: '-0.4px' }}>
-              Interactive Farm Input Savings Calculator
+            <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.6px', color: '#D97706' }}>
+              Direct Savings Estimator
+            </span>
+            <h2 style={{ fontSize: 30, fontWeight: 800, margin: '8px 0 10px', color: textPrimary, letterSpacing: '-0.5px' }}>
+              How Much Do You Save With AgriTrade?
             </h2>
-            <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: 0 }}>
-              Calculate seasonal savings achieved by ordering certified inputs directly from verified manufacturers on AgriTrade.
+            <p style={{ fontSize: 15, color: textSecondary, margin: 0 }}>
+              Based on audited factory-direct prices vs. typical rural distributor markups.
             </p>
           </div>
 
           <div
-            className="card"
+            className="glass-saas-card"
             style={{
-              maxWidth: 840,
+              maxWidth: 820,
               margin: '0 auto',
-              padding: '28px 32px',
-              border: '1px solid var(--color-divider)',
-              boxShadow: 'var(--shadow-md)',
-              borderRadius: 10,
+              borderRadius: 16,
+              padding: '36px 32px',
+              background: bgCard,
+              border: `1px solid ${borderCard}`,
+              boxShadow: isDark ? '0 20px 40px rgba(0, 0, 0, 0.3)' : '0 10px 30px rgba(11, 61, 46, 0.06)',
             }}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32, alignItems: 'center' }}>
-              {/* Inputs */}
+            {/* Controls */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, marginBottom: 32 }}>
+              {/* Crop Picker */}
               <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--color-text-primary)' }}>
-                  Select Primary Crop:
+                <label style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 8, color: textPrimary }}>
+                  1. Select Primary Crop
                 </label>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
-                  {Object.keys(CROP_SAVINGS_METRICS).map((crop) => (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {Object.keys(CROP_SAVINGS_METRICS).map((c) => (
                     <button
-                      key={crop}
-                      onClick={() => setSelectedCrop(crop)}
+                      key={c}
+                      type="button"
+                      onClick={() => setSelectedCrop(c)}
                       style={{
-                        padding: '6px 13px',
-                        borderRadius: 6,
-                        border: '1px solid',
-                        borderColor: selectedCrop === crop ? 'var(--color-forest)' : 'var(--color-divider)',
-                        background: selectedCrop === crop ? 'var(--color-brand-50)' : '#fff',
-                        color: selectedCrop === crop ? 'var(--color-forest)' : 'var(--color-text-secondary)',
-                        fontSize: 13,
-                        fontWeight: 600,
+                        padding: '7px 14px',
+                        borderRadius: 20,
+                        border: selectedCrop === c ? '1.5px solid #D97706' : `1px solid ${borderCard}`,
+                        background: selectedCrop === c ? '#D97706' : 'transparent',
+                        color: selectedCrop === c ? '#ffffff' : textSecondary,
+                        fontWeight: selectedCrop === c ? 700 : 500,
+                        fontSize: 12.5,
                         cursor: 'pointer',
-                        transition: 'all 150ms ease',
+                        transition: 'all 0.2s ease',
                       }}
                     >
-                      {crop}
+                      {c}
                     </button>
                   ))}
                 </div>
+              </div>
 
-                <div style={{ marginBottom: 12 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
-                    <label style={{ fontSize: 13, fontWeight: 700 }}>Farm Land Parcel Size:</label>
-                    <span style={{ fontSize: 16, fontWeight: 800, color: 'var(--color-forest)' }}>{farmAcres} Acres</span>
-                  </div>
-                  <input
-                    type="range"
-                    min={1}
-                    max={50}
-                    step={1}
-                    value={farmAcres}
-                    onChange={(e) => setFarmAcres(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: 'var(--color-forest)', cursor: 'pointer' }}
-                  />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--color-text-tertiary)', marginTop: 4 }}>
-                    <span>1 Acre</span>
-                    <span>25 Acres</span>
-                    <span>50 Acres</span>
-                  </div>
+              {/* Acreage Slider */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: textPrimary }}>
+                    2. Farm Size (Acres)
+                  </label>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: '#D97706' }}>
+                    {farmAcres} Acres
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={50}
+                  value={farmAcres}
+                  onChange={(e) => setFarmAcres(Number(e.target.value))}
+                  style={{ width: '100%', accentColor: '#D97706', cursor: 'pointer' }}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: textTertiary, marginTop: 4 }}>
+                  <span>1 Acre</span>
+                  <span>25 Acres</span>
+                  <span>50+ Acres</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Metric Comparison Cards */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: 16,
+                padding: '24px',
+                borderRadius: 12,
+                background: isDark ? 'rgba(0, 0, 0, 0.3)' : '#F8FAFC',
+                border: `1px solid ${borderCard}`,
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 12, color: textTertiary, marginBottom: 4 }}>
+                  Standard Retail Cost
+                </div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: textSecondary, textDecoration: 'line-through' }}>
+                  ₹{totalStandardCost.toLocaleString('en-IN')}
+                </div>
+                <div style={{ fontSize: 11, color: textTertiary, marginTop: 2 }}>
+                  With distributor markups
                 </div>
               </div>
 
-              {/* Calculated Outputs */}
-              <div style={{ background: 'var(--color-neutral-50)', padding: 22, borderRadius: 8, border: '1px solid var(--color-divider)' }}>
-                <p style={{ margin: '0 0 14px', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', color: 'var(--color-text-tertiary)' }}>
-                  Estimated Seasonal Outcome ({farmAcres} Acres {selectedCrop})
-                </p>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, fontSize: 13 }}>
-                  <span style={{ color: 'var(--color-text-secondary)' }}>Traditional Retailer Input Cost:</span>
-                  <span style={{ fontWeight: 600, textDecoration: 'line-through', color: 'var(--color-text-tertiary)' }}>
-                    ₹{totalStandardCost.toLocaleString('en-IN')}
-                  </span>
+              <div>
+                <div style={{ fontSize: 12, color: textTertiary, marginBottom: 4 }}>
+                  AgriTrade Direct Cost
                 </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, fontSize: 13 }}>
-                  <span style={{ color: 'var(--color-text-secondary)' }}>AgriTrade Direct Farm-Gate Cost:</span>
-                  <span style={{ fontWeight: 700, color: 'var(--color-forest)' }}>
-                    ₹{agritradeCost.toLocaleString('en-IN')}
-                  </span>
+                <div style={{ fontSize: 24, fontWeight: 900, color: textPrimary }}>
+                  ₹{agritradeCost.toLocaleString('en-IN')}
                 </div>
+                <div style={{ fontSize: 11, color: '#10B981', fontWeight: 600, marginTop: 2 }}>
+                  Factory-direct price
+                </div>
+              </div>
 
+              <div style={{ borderLeft: `1px solid ${borderCard}`, paddingLeft: 16 }}>
+                <div style={{ fontSize: 12, color: '#D97706', fontWeight: 700, marginBottom: 4 }}>
+                  Your Net Estimated Savings
+                </div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: '#10B981' }}>
+                  ₹{estimatedSavings.toLocaleString('en-IN')}
+                </div>
+                <div style={{ fontSize: 11, color: '#10B981', fontWeight: 700, marginTop: 2 }}>
+                  ~{Math.round(cropMetric.agritradeSavingsPct * 100)}% Direct ROI
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          5. FEATURED CANONICAL INPUTS
+          ============================================================ */}
+      <section style={{ padding: '70px 0' }}>
+        <div className="container-app">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
+            <div>
+              <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.6px', color: '#10B981' }}>
+                Batch Tested &amp; Certified
+              </span>
+              <h2 style={{ fontSize: 28, fontWeight: 800, color: textPrimary, margin: '6px 0 0', letterSpacing: '-0.5px' }}>
+                Featured Agricultural Inputs
+              </h2>
+            </div>
+            <Link
+              href="/products"
+              style={{
+                fontSize: 13.5,
+                fontWeight: 700,
+                color: isDark ? '#34D399' : '#0B3D2E',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+              }}
+            >
+              <span>Explore All {MOCK_PRODUCTS.length}+ Inputs</span>
+              <ArrowRight size={15} />
+            </Link>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+              gap: 20,
+            }}
+          >
+            {featuredProducts.map((p) => {
+              const imageSrc = ProductImageResolver.resolve(p.id, p.category);
+              return (
                 <div
+                  key={p.id}
+                  className="glass-card-hover"
                   style={{
-                    paddingTop: 12,
-                    borderTop: '1px solid var(--color-divider)',
+                    background: bgCard,
+                    borderRadius: 14,
+                    overflow: 'hidden',
+                    border: `1px solid ${borderCard}`,
+                    boxShadow: isDark ? '0 4px 20px rgba(0, 0, 0, 0.2)' : '0 4px 14px rgba(11, 61, 46, 0.05)',
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'baseline',
+                    flexDirection: 'column',
                   }}
                 >
-                  <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-primary)' }}>Your Estimated Savings:</span>
-                  <span style={{ fontSize: 22, fontWeight: 800, color: '#059669' }}>
-                    +₹{estimatedSavings.toLocaleString('en-IN')}
-                  </span>
+                  <div style={{ position: 'relative', height: 180, background: '#f8fafc', overflow: 'hidden' }}>
+                    <img
+                      src={imageSrc}
+                      alt={p.title}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: 10,
+                        left: 10,
+                        background: '#10B981',
+                        color: '#fff',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        padding: '3px 8px',
+                        borderRadius: 4,
+                      }}
+                    >
+                      Certified Lot
+                    </span>
+                  </div>
+                  <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ fontSize: 11.5, color: textTertiary, textTransform: 'uppercase', fontWeight: 600, marginBottom: 4 }}>
+                      {p.category}
+                    </div>
+                    <h3 style={{ margin: '0 0 8px', fontSize: 15, fontWeight: 700, color: textPrimary, lineHeight: 1.3 }}>
+                      {p.title}
+                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 'auto', paddingTop: 10 }}>
+                      <span style={{ fontSize: 18, fontWeight: 800, color: textPrimary }}>
+                        ₹{p.price.toLocaleString('en-IN')}
+                      </span>
+                      {p.originalPrice && (
+                        <span style={{ fontSize: 13, color: textTertiary, textDecoration: 'line-through' }}>
+                          ₹{p.originalPrice.toLocaleString('en-IN')}
+                        </span>
+                      )}
+                      <span style={{ marginLeft: 'auto', fontSize: 12, color: textTertiary }}>
+                        per {p.unit}
+                      </span>
+                    </div>
+                    <Link
+                      href={`/products/${p.id}`}
+                      style={{
+                        marginTop: 14,
+                        width: '100%',
+                        padding: '9px 12px',
+                        borderRadius: 8,
+                        background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'var(--color-forest)',
+                        color: '#ffffff',
+                        textDecoration: 'none',
+                        fontSize: 13,
+                        fontWeight: 700,
+                        textAlign: 'center',
+                        display: 'block',
+                      }}
+                    >
+                      View Specifications
+                    </Link>
+                  </div>
                 </div>
-
-                <Link
-                  href={`/products?category=${selectedCrop === 'Cotton' || selectedCrop === 'Soybean' || selectedCrop === 'Wheat' ? 'Seeds' : 'Fertilizers'}`}
-                  className="btn btn-primary btn-full"
-                  style={{ marginTop: 18, fontSize: 13, gap: 6, borderRadius: 6 }}
-                >
-                  Explore {selectedCrop} Inputs on AgriTrade <ArrowRight size={14} strokeWidth={2.5} />
-                </Link>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* ============================================================
-          10. PLATFORM ECOSYSTEM STORY (Dual-Platform + PostgreSQL)
+          6. FOOTER
           ============================================================ */}
-      <section style={{ padding: '64px 0', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-divider)' }}>
-        <div className="container-app">
-          <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 48px' }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Production Architecture
-            </span>
-            <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 800, margin: '6px 0 10px', letterSpacing: '-0.4px' }}>
-              Engineered Cross-Platform Ecosystem
-            </h2>
-            <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: 0 }}>
-              A synchronized software ecosystem delivering field mobility and desktop-grade market intelligence.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
-            <div className="card" style={{ padding: 24, border: '1px solid var(--color-divider)', borderRadius: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
-                  <Globe size={22} />
-                </div>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Next.js 16 Web Platform</h3>
-                  <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>apps/web · Desktop-First Commerce</p>
-                </div>
-              </div>
-              <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
-                <li>React 19 with App Router and Turbopack</li>
-                <li>Zustand 5 client-side state architecture</li>
-                <li>Lucide vector iconography (zero emojis)</li>
-                <li>20 static and dynamic routes compiled</li>
-                <li>Command center dashboard with APMC charts</li>
-              </ul>
-            </div>
-
-            <div className="card" style={{ padding: 24, border: '1px solid var(--color-divider)', borderRadius: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
-                  <Smartphone size={22} />
-                </div>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Flutter 3.24 Mobile App</h3>
-                  <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>apps/mobile · Field-Ready Companion</p>
-                </div>
-              </div>
-              <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
-                <li>Clean Architecture with Riverpod 2.x</li>
-                <li>GoRouter with deep linking &amp; route guards</li>
-                <li>Offline local caching via Hive</li>
-                <li>Stitch-aligned Material 3 design tokens</li>
-                <li>94/94 unit and widget tests passing (100%)</li>
-              </ul>
-            </div>
-
-            <div className="card" style={{ padding: 24, border: '1px solid var(--color-divider)', borderRadius: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
-                  <Database size={22} />
-                </div>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>PostgreSQL 16 Backend</h3>
-                  <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>Supabase PostgREST &amp; Hardened RLS</p>
-                </div>
-              </div>
-              <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
-                <li>10 canonical tables with check constraints</li>
-                <li>Strict Row Level Security user isolation</li>
-                <li>Environment-aware resilient repositories</li>
-                <li>Zero hardcoded credentials or committed secrets</li>
-                <li>Idempotent seed data for reproducible staging</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          11. CALL TO ACTION
-          ============================================================ */}
-      <section
+      <footer
         style={{
-          background: 'var(--color-forest)',
-          color: '#fff',
-          padding: '64px 0',
-          textAlign: 'center',
+          borderTop: `1px solid ${borderCard}`,
+          background: isDark ? '#041710' : '#EDE8DF',
+          padding: '48px 0 32px',
+          fontSize: 13,
+          color: textSecondary,
         }}
       >
-        <div className="container-app" style={{ maxWidth: 680 }}>
-          <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 800, margin: '0 0 14px', letterSpacing: '-0.5px' }}>
-            Empowering Indian Agriculture with Verifiable Transparency
-          </h2>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, margin: '0 auto 28px' }}>
-            Join thousands of progressive farmers and agricultural cooperatives procuring certified inputs at verified farm-gate pricing.
-          </p>
-
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <Link
-              href="/home"
-              className="btn btn-primary"
-              style={{
-                background: 'var(--color-amber)',
-                color: '#fff',
-                border: 'none',
-                fontSize: 15,
-                padding: '12px 26px',
-                fontWeight: 700,
-                gap: 8,
-                borderRadius: 6,
-              }}
-            >
-              Open Farmer Dashboard <ArrowRight size={16} strokeWidth={2.5} />
-            </Link>
-            <Link
-              href="/signup"
-              className="btn btn-secondary"
-              style={{
-                background: 'rgba(255,255,255,0.12)',
-                color: '#fff',
-                borderColor: 'rgba(255,255,255,0.25)',
-                fontSize: 15,
-                padding: '12px 22px',
-                borderRadius: 6,
-              }}
-            >
-              Register Farmer Account
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          12. PROFESSIONAL SAAS FOOTER
-          ============================================================ */}
-      <footer style={{ background: '#07241B', color: 'rgba(255,255,255,0.75)', padding: '48px 0 28px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <div className="container-app">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32, marginBottom: 40 }}>
-            {/* Column 1: Brand */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-                  <Leaf size={16} strokeWidth={2.2} />
-                </div>
-                <span style={{ color: '#fff', fontSize: 16, fontWeight: 700 }}>AGRI TRADE</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20, marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 6,
+                  background: 'var(--color-forest)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                }}
+              >
+                <Leaf size={16} strokeWidth={2.2} />
               </div>
-              <p style={{ fontSize: 12.5, lineHeight: 1.6, color: 'rgba(255,255,255,0.65)', margin: 0 }}>
-                A synchronized agricultural marketplace platform connecting Indian farmers directly with certified manufacturers.
-              </p>
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 12 }}>
-                Community Engagement Project (CEP) · PCCOE
-              </p>
+              <span style={{ fontSize: 16, fontWeight: 800, color: textPrimary }}>
+                AGRI TRADE
+              </span>
             </div>
-
-            {/* Column 2: Platform Routes */}
-            <div>
-              <h4 style={{ color: '#fff', fontSize: 13, fontWeight: 700, margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-                Application
-              </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
-                <Link href="/home" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Command Center</Link>
-                <Link href="/insights" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Farm Insights</Link>
-                <Link href="/products" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Inputs Catalog</Link>
-                <Link href="/mandi" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Mandi Intelligence</Link>
-                <Link href="/shipments" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Logistics Operations</Link>
-                <Link href="/orders" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Order Tracking</Link>
-              </div>
-            </div>
-
-            {/* Column 3: Tech & Architecture */}
-            <div>
-              <h4 style={{ color: '#fff', fontSize: 13, fontWeight: 700, margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-                Architecture
-              </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
-                <span style={{ color: 'rgba(255,255,255,0.75)' }}>Flutter 3.24+ Mobile Target</span>
-                <span style={{ color: 'rgba(255,255,255,0.75)' }}>Next.js 16.3.4 App Router</span>
-                <span style={{ color: 'rgba(255,255,255,0.75)' }}>PostgreSQL 16 Relational Core</span>
-                <span style={{ color: 'rgba(255,255,255,0.75)' }}>Row Level Security (RLS)</span>
-              </div>
-            </div>
-
-            {/* Column 4: System Status */}
-            <div>
-              <h4 style={{ color: '#fff', fontSize: 13, fontWeight: 700, margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-                Backend Status
-              </h4>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: '#34D399', marginBottom: 8 }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#34D399', display: 'inline-block' }} />
-                <span>All Systems Operational</span>
-              </div>
-              <p style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.5 }}>
-                PostgreSQL schema active. Resilient fallback active when offline or unconfigured.
-              </p>
+            <div style={{ display: 'flex', gap: 24 }}>
+              <Link href="/products" style={{ color: textSecondary, textDecoration: 'none' }}>
+                Products
+              </Link>
+              <Link href="/mandi" style={{ color: textSecondary, textDecoration: 'none' }}>
+                Mandi Rates
+              </Link>
+              <Link href="/weather" style={{ color: textSecondary, textDecoration: 'none' }}>
+                Weather
+              </Link>
+              <Link href="/login" style={{ color: textSecondary, textDecoration: 'none' }}>
+                Sign In
+              </Link>
             </div>
           </div>
-
-          <div style={{ paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: 'rgba(255,255,255,0.4)', flexWrap: 'wrap', gap: 10 }}>
-            <span>© 2026 AgriTrade. All rights reserved.</span>
-            <span>Developed with Modern Agrarian Fintech &amp; Clean Architecture.</span>
+          <div style={{ borderTop: `1px solid ${borderCard}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, fontSize: 12, color: textTertiary }}>
+            <p style={{ margin: 0 }}>
+              © 2026 AgriTrade Agricultural Commerce Systems. All rights reserved.
+            </p>
+            <p style={{ margin: 0 }}>
+              Zero Middleman Markups · CIB&amp;RC Registered Suppliers
+            </p>
           </div>
         </div>
       </footer>
-
-      <style>{`
-        @media (min-width: 768px) {
-          .desktop-nav {
-            display: flex !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

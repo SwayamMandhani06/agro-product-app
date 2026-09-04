@@ -831,3 +831,151 @@ img {
   border-radius: var(--radius-full);
 }
 
+/* ============================================================
+   THERMAL RECEIPT PRINTER ANIMATION (Stage 12 Polish)
+   ============================================================ */
+
+@keyframes receiptFeed {
+  0% {
+    transform: translateY(-80%) scaleY(0.4);
+    opacity: 0;
+  }
+  40% {
+    transform: translateY(-30%) scaleY(0.85);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ledPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+}
+
+.receipt-dispenser-casing {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.receipt-slit {
+  height: 6px;
+  background: #020617;
+  border-radius: 3px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+  margin: 0 auto;
+}
+
+.animated-thermal-receipt {
+  animation: receiptFeed 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top center;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+}
+
+.perforated-bottom {
+  background-image: radial-gradient(circle at 10px -5px, transparent 12px, #ffffff 13px);
+  background-size: 20px 20px;
+  background-repeat: repeat-x;
+  height: 14px;
+}
+
+/* ============================================================
+   GLASSMORPHISM & MODERN SAAS UTILITIES
+   ============================================================ */
+
+.glass-saas-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px 0 rgba(11, 61, 46, 0.06);
+}
+
+.dark .glass-saas-card,
+[data-theme="dark"] .glass-saas-card {
+  background: rgba(11, 61, 46, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+}
+
+.glass-card-hover {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px -8px rgba(11, 61, 46, 0.15);
+  border-color: rgba(217, 119, 6, 0.4);
+}
+
+/* ============================================================
+   PRINT STYLES (@media print)
+   Guarantees pristine, complete tax invoices without blank pages
+   ============================================================ */
+
+@media print {
+  /* Hide all interactive shell components */
+  header,
+  nav,
+  footer,
+  aside,
+  .no-print,
+  .btn,
+  .demo-persona-switcher,
+  button {
+    display: none !important;
+  }
+
+  /* Reset body and canvas for printing */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  /* Unclip any scroll wrappers */
+  #__next,
+  main,
+  div {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Container for invoice */
+  .printable-invoice-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    box-shadow: none !important;
+    border: none !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Force background colors and borders in print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
