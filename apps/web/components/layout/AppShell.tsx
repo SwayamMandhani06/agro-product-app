@@ -34,15 +34,17 @@ const emptySubscribe = () => () => {};
 const useMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => false);
 
 const NAV_LINKS = [
-  { href: '/home',        label: 'Dashboard' },
-  { href: '/insights',    label: 'Analytics' },
-  { href: '/products',    label: 'Products' },
-  { href: '/mandi',       label: 'Mandi Rates' },
-  { href: '/weather',     label: 'Weather' },
-  { href: '/community',   label: 'Community' },
-  { href: '/saved',       label: 'Saved' },
-  { href: '/orders',      label: 'Orders' },
-  { href: '/shipments',   label: 'Logistics' },
+  { href: '/home',                  label: 'Dashboard' },
+  { href: '/insights',              label: 'Analytics' },
+  { href: '/products',              label: 'Products' },
+  { href: '/cooperative/campaigns', label: 'Cooperative' },
+  { href: '/seller/dashboard',      label: 'Seller Portal' },
+  { href: '/mandi',                 label: 'Mandi Rates' },
+  { href: '/weather',               label: 'Weather' },
+  { href: '/community',             label: 'Community' },
+  { href: '/saved',                 label: 'Saved' },
+  { href: '/orders',                label: 'Orders' },
+  { href: '/shipments',             label: 'Logistics' },
 ];
 
 const BOTTOM_NAV = [
