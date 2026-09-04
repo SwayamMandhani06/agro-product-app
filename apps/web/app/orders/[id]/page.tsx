@@ -1,49 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import { useOrdersStore } from '@/features/orders/store';
 import { ProductImageResolver } from '@/lib/product-image-resolver';
 import { useCartStore } from '@/features/cart/store';
-import { useNotificationsStore } from '@/features/notifications/notifications-store';
-
+import { useLogisticsStore } from '@/features/logistics/logistics-store';
+import { RouteCorridorVisualizer } from '@/features/logistics/presentation/RouteCorridorVisualizer';
+import {
+  SHIPMENT_STATUS_LABELS,
+  SHIPMENT_STATUS_COLORS,
+} from '@/features/logistics/domain/shipment';
 import {
   ORDER_STATUS_LABELS,
-  ORDER_TIMELINE_STEPS,
-  orderStatusStep,
   type OrderStatus,
 } from '@/types';
-
-const STAGE_CONTEXT: Record<OrderStatus, string> = {
-  placed: 'Consignment registered with AgriTrade digital procurement desk.',
-  confirmed: 'Seller inventory allocated and certified for dispatch.',
-  processing: 'Quality inspection passed. Lot sealed at Pune Central Fulfillment Hub.',
-  shipped: 'In transit via Delhivery Rural Express. Consignment in regional distribution.',
-  outForDelivery: 'Dispatched for last-mile doorstep transit to your farm gate.',
-  delivered: 'Handed over to farm recipient at registered delivery address.',
-  cancelled: 'Order has been cancelled.',
-};
-
 
 import {
   ArrowLeft,
   Package,
   CreditCard,
   Truck,
-  Calendar,
   AlertCircle,
   MapPin,
   Phone,
   Receipt,
   RotateCcw,
   Check,
-  ClipboardList,
-  CheckCircle,
-  Bike,
-  Home,
-  type LucideProps,
+  ShieldCheck,
+  Sliders,
+  ChevronRight,
 } from 'lucide-react';
 
 function formatPrice(n: number) {
@@ -52,7 +40,11 @@ function formatPrice(n: number) {
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString('en-IN', {
-    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -66,28 +58,34 @@ const STATUS_COLORS: Record<OrderStatus, { bg: string; color: string }> = {
   cancelled: { bg: 'var(--color-error-light)', color: 'var(--color-error)' },
 };
 
-function TimelineIcon({ step, size = 13 }: { step: string; size?: number }) {
-  const props: LucideProps = { size, strokeWidth: 2.2 };
-  switch (step) {
-    case 'placed': return <ClipboardList {...props} />;
-    case 'confirmed': return <CheckCircle {...props} />;
-    case 'processing': return <Package {...props} />;
-    case 'shipped': return <Truck {...props} />;
-    case 'outForDelivery': return <Bike {...props} />;
-    case 'delivered': return <Home {...props} />;
-    default: return <Check {...props} />;
-  }
-}
-
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { getOrderById, cancelOrder } = useOrdersStore();
+  const {
+    getShipmentByOrderId,
+    createShipmentForOrder,
+    advanceMilestone,
+    simulateException,
+    recordDeliveryAttempt,
+    completeDelivery,
+  } = useLogisticsStore();
   const { addItem } = useCartStore();
   const router = useRouter();
+
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [showDemoControls, setShowDemoControls] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const order = getOrderById(id);
+  const shipment = order ? getShipmentByOrderId(order.id) : undefined;
+
+  // Automatically initialize shipment if not yet created for this order
+  useEffect(() => {
+    if (order && !shipment) {
+      createShipmentForOrder(order);
+    }
+  }, [order, shipment, createShipmentForOrder]);
 
   if (!order) {
     return (
@@ -104,9 +102,8 @@ export default function OrderDetailPage() {
   }
 
   const statusStyle = STATUS_COLORS[order.status];
-  const stepIndex = orderStatusStep(order.status);
-  const isActive = ['placed', 'confirmed', 'processing', 'shipped', 'outForDelivery'].includes(order.status);
   const isCancelled = order.status === 'cancelled';
+  const isActive = ['placed', 'confirmed', 'processing', 'shipped', 'outForDelivery'].includes(order.status);
 
   const handleReorder = () => {
     order.items.forEach((item) => addItem(item.product, item.quantity));
@@ -121,198 +118,424 @@ export default function OrderDetailPage() {
     setCancelling(false);
   };
 
+  // Demo actions
+  const handleAdvance = async () => {
+    if (!shipment) return;
+    setActionLoading(true);
+    await advanceMilestone(shipment.id);
+    setActionLoading(false);
+  };
+
+  const handleSimulateDelay = async () => {
+    if (!shipment) return;
+    setActionLoading(true);
+    await simulateException(shipment.id, 'weather_delay');
+    setActionLoading(false);
+  };
+
+  const handleRecordAttempt = async () => {
+    if (!shipment) return;
+    setActionLoading(true);
+    await recordDeliveryAttempt(shipment.id, 'customer_unavailable');
+    setActionLoading(false);
+  };
+
+  const handleCompleteDelivery = async () => {
+    if (!shipment) return;
+    setActionLoading(true);
+    await completeDelivery(shipment.id);
+    setActionLoading(false);
+  };
+
   return (
     <AppShell>
       <div className="container-app" style={{ paddingTop: 24, paddingBottom: 40 }}>
-        {/* Breadcrumb */}
+        {/* Breadcrumb navigation */}
         <div style={{ marginBottom: 16, fontSize: 13, color: 'var(--color-text-tertiary)', display: 'flex', alignItems: 'center', gap: 6 }}>
           <Link href="/orders" style={{ color: 'var(--color-text-tertiary)', textDecoration: 'none' }}>My Orders</Link>
           <span>/</span>
           <span style={{ color: 'var(--color-text-primary)', fontWeight: 600 }}>{order.id}</span>
+          {shipment && (
+            <>
+              <span>·</span>
+              <Link href="/shipments" style={{ color: 'var(--color-forest)', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                Logistics Operations <ChevronRight size={13} />
+              </Link>
+            </>
+          )}
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }} className="order-detail-layout">
           <div>
-            {/* Order header */}
+            {/* 1. OPERATIONAL ORDER & SHIPMENT HEADER */}
             <div className="card" style={{ padding: '20px', marginBottom: 16 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
                 <div>
-                  <h1 style={{ margin: '0 0 4px', fontSize: 18, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-                    {order.id}
-                  </h1>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                    <h1 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--color-text-primary)' }}>
+                      Order #{order.id}
+                    </h1>
+                    {shipment && (
+                      <span
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: 'var(--color-forest)',
+                          background: 'var(--color-brand-50)',
+                          padding: '2px 8px',
+                          borderRadius: 4,
+                          border: '1px solid var(--color-brand-200)',
+                        }}
+                      >
+                        Shipment #{shipment.id}
+                      </span>
+                    )}
+                  </div>
                   <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-tertiary)' }}>
-                    Placed on {formatDate(order.createdAt)}
+                    Booked on {formatDate(order.createdAt)} · Carrier: {shipment?.provider === 'delhivery_rural' ? 'Delhivery Rural Express' : 'AgriTrade Rural Express'}
                   </p>
                 </div>
-                <span
-                  style={{
-                    padding: '3px 10px',
-                    borderRadius: 4,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    letterSpacing: '0.2px',
-                    background: statusStyle.bg,
-                    color: statusStyle.color,
-                  }}
-                >
-                  {ORDER_STATUS_LABELS[order.status]}
-                </span>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span
+                    style={{
+                      padding: '4px 12px',
+                      borderRadius: 6,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      letterSpacing: '0.2px',
+                      background: shipment ? SHIPMENT_STATUS_COLORS[shipment.status]?.bg || statusStyle.bg : statusStyle.bg,
+                      color: shipment ? SHIPMENT_STATUS_COLORS[shipment.status]?.color || statusStyle.color : statusStyle.color,
+                    }}
+                  >
+                    {shipment ? SHIPMENT_STATUS_LABELS[shipment.status] : ORDER_STATUS_LABELS[order.status]}
+                  </span>
+                </div>
               </div>
 
-              <div style={{ display: 'flex', gap: 20, fontSize: 13, color: 'var(--color-text-secondary)', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 20, fontSize: 13, color: 'var(--color-text-secondary)', alignItems: 'center', flexWrap: 'wrap', borderTop: '1px solid var(--color-divider)', paddingTop: 12 }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <CreditCard size={14} strokeWidth={2} />
                   {order.paymentMethod}
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Package size={14} strokeWidth={2} />
-                  {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                  {order.items.length} product item{order.items.length !== 1 ? 's' : ''}
                 </span>
-                <span style={{ color: 'var(--color-text-primary)', fontWeight: 700, marginLeft: 'auto' }}>
+                {shipment && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'monospace', fontWeight: 600, color: 'var(--color-forest)' }}>
+                    <Truck size={14} strokeWidth={2} />
+                    Waybill: {shipment.trackingNumber}
+                  </span>
+                )}
+                <span style={{ color: 'var(--color-text-primary)', fontWeight: 800, marginLeft: 'auto', fontSize: 15 }}>
                   {formatPrice(order.totalAmount)}
                 </span>
               </div>
             </div>
 
-            {/* Tracking timeline (not cancelled) */}
-            {!isCancelled && (
+            {/* 2. STRUCTURED SPLIT-PANEL SHIPMENT TRACKING & INTELLIGENCE */}
+            {!isCancelled && shipment && (
               <div className="card" style={{ padding: '20px', marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, flexWrap: 'wrap', gap: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <Truck size={18} strokeWidth={2} color="var(--color-forest)" />
-                    <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Operational Logistics Tracking</h2>
+                    <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Logistics & Rural Shipment Operations</h2>
                   </div>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-forest)', background: 'var(--color-brand-50)', padding: '3px 8px', borderRadius: 4 }}>
-                    AWB #DL-{order.id.replace('ORD-', '')}
-                  </span>
+
+                  {/* Dev/Demo Controls Toggle */}
+                  <button
+                    onClick={() => setShowDemoControls(!showDemoControls)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 5,
+                      padding: '4px 10px',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      background: showDemoControls ? 'var(--color-forest)' : 'var(--color-canvas)',
+                      color: showDemoControls ? '#fff' : 'var(--color-forest)',
+                      border: '1px solid var(--color-border)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Sliders size={13} />
+                    {showDemoControls ? 'Hide Demo Controls' : 'Demo Operations'}
+                  </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                  {ORDER_TIMELINE_STEPS.map((step, i) => {
-                    const done = i < stepIndex;
-                    const active = i === stepIndex;
+                {/* Demo Logistics Operations Toolbar */}
+                {showDemoControls && (
+                  <div
+                    style={{
+                      background: 'var(--color-brand-50)',
+                      border: '1px dashed var(--color-forest)',
+                      borderRadius: 8,
+                      padding: '12px 14px',
+                      marginBottom: 20,
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)' }}>
+                        Interactive Demo Logistics Controls (Free Tier / No Courier API Required)
+                      </span>
+                      <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>Updates sync to real-time</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <button
+                        onClick={handleAdvance}
+                        disabled={actionLoading || shipment.status === 'delivered'}
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 600,
+                          padding: '5px 10px',
+                          borderRadius: 4,
+                          background: '#fff',
+                          border: '1px solid var(--color-border)',
+                          cursor: 'pointer',
+                          color: 'var(--color-forest)',
+                        }}
+                      >
+                        Advance Milestone →
+                      </button>
+                      <button
+                        onClick={handleSimulateDelay}
+                        disabled={actionLoading || shipment.status === 'delivered'}
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 600,
+                          padding: '5px 10px',
+                          borderRadius: 4,
+                          background: '#fff',
+                          border: '1px solid var(--color-border)',
+                          cursor: 'pointer',
+                          color: 'var(--color-warning)',
+                        }}
+                      >
+                        Simulate Weather Delay
+                      </button>
+                      <button
+                        onClick={handleRecordAttempt}
+                        disabled={actionLoading || shipment.status === 'delivered'}
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 600,
+                          padding: '5px 10px',
+                          borderRadius: 4,
+                          background: '#fff',
+                          border: '1px solid var(--color-border)',
+                          cursor: 'pointer',
+                          color: 'var(--color-amber-600)',
+                        }}
+                      >
+                        Simulate Delivery Attempt
+                      </button>
+                      <button
+                        onClick={handleCompleteDelivery}
+                        disabled={actionLoading || shipment.status === 'delivered'}
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 600,
+                          padding: '5px 10px',
+                          borderRadius: 4,
+                          background: 'var(--color-forest)',
+                          border: '1px solid var(--color-forest)',
+                          cursor: 'pointer',
+                          color: '#fff',
+                        }}
+                      >
+                        Mark Delivered ✓
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-                    return (
-                      <div key={step} style={{ display: 'flex', gap: 16, paddingBottom: i < ORDER_TIMELINE_STEPS.length - 1 ? 20 : 0 }}>
-                        {/* Left: dot + line */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 28 }}>
-                          <div
-                            style={{
-                              width: 28,
-                              height: 28,
-                              borderRadius: '50%',
-                              background: done ? 'var(--color-forest)' : active ? 'var(--color-amber)' : 'var(--color-neutral-100)',
-                              border: `2px solid ${done ? 'var(--color-forest)' : active ? 'var(--color-amber)' : 'var(--color-neutral-200)'}`,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexShrink: 0,
-                              color: done || active ? '#fff' : 'var(--color-text-tertiary)',
-                            }}
-                          >
-                            {done ? <Check size={14} strokeWidth={2.5} /> : active ? <TimelineIcon step={step} size={14} /> : <span style={{ fontSize: 10 }}>●</span>}
-                          </div>
-                          {i < ORDER_TIMELINE_STEPS.length - 1 && (
-                            <div style={{ width: 2, flex: 1, background: done ? 'var(--color-forest)' : 'var(--color-neutral-200)', marginTop: 2 }} />
-                          )}
-                        </div>
+                {/* Split Panel: Left = Shipment Timeline, Right = Delivery Intelligence */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }} className="shipment-split-panel">
+                  {/* LEFT: Granular Shipment Timeline */}
+                  <div>
+                    <h3 style={{ margin: '0 0 14px', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--color-text-tertiary)' }}>
+                      Shipment Milestones
+                    </h3>
 
-                        {/* Right: label & context */}
-                        <div style={{ paddingBottom: 4, flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                            <p
-                              style={{
-                                margin: '2px 0 2px',
-                                fontSize: 14,
-                                fontWeight: active ? 700 : done ? 600 : 500,
-                                color: active ? 'var(--color-amber-600)' : done ? 'var(--color-forest)' : 'var(--color-text-tertiary)',
-                              }}
-                            >
-                              {ORDER_STATUS_LABELS[step]}
-                            </p>
-                            {done && (
-                              <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>Completed</span>
-                            )}
-                            {active && (
-                              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-amber-600)', background: 'var(--color-amber-50)', padding: '1px 6px', borderRadius: 3 }}>
-                                Current Stage
-                              </span>
-                            )}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                      {shipment.events.map((evt, idx) => {
+                        const isLatest = idx === shipment.events.length - 1;
+                        return (
+                          <div key={evt.id} style={{ display: 'flex', gap: 14, paddingBottom: isLatest ? 0 : 20 }}>
+                            {/* Node & vertical track line */}
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 24 }}>
+                              <div
+                                style={{
+                                  width: 24,
+                                  height: 24,
+                                  borderRadius: '50%',
+                                  background: isLatest ? 'var(--color-amber)' : 'var(--color-forest)',
+                                  border: `2px solid ${isLatest ? 'var(--color-amber-600)' : 'var(--color-forest)'}`,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexShrink: 0,
+                                  color: '#fff',
+                                  boxShadow: isLatest ? '0 0 0 4px rgba(217, 119, 6, 0.2)' : 'none',
+                                }}
+                              >
+                                {isLatest ? (
+                                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff' }} />
+                                ) : (
+                                  <Check size={12} strokeWidth={3} />
+                                )}
+                              </div>
+                              {!isLatest && (
+                                <div style={{ width: 2, flex: 1, background: 'var(--color-forest)', marginTop: 2 }} />
+                              )}
+                            </div>
+
+                            {/* Event details */}
+                            <div style={{ flex: 1, paddingBottom: 2 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 4 }}>
+                                <span style={{ fontSize: 13.5, fontWeight: isLatest ? 700 : 600, color: isLatest ? 'var(--color-amber-700)' : 'var(--color-text-primary)' }}>
+                                  {SHIPMENT_STATUS_LABELS[evt.status] || evt.status}
+                                </span>
+                                <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+                                  {formatDate(evt.eventTime)}
+                                </span>
+                              </div>
+                              <p style={{ margin: '2px 0 0', fontSize: 12, fontWeight: 500, color: 'var(--color-forest)' }}>
+                                {evt.location}
+                              </p>
+                              <p style={{ margin: '4px 0 0', fontSize: 12.5, color: 'var(--color-text-secondary)', lineHeight: 1.45 }}>
+                                {evt.description}
+                              </p>
+                            </div>
                           </div>
-                          <p style={{ margin: '3px 0 0', fontSize: 12.5, color: active ? 'var(--color-text-primary)' : 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                            {STAGE_CONTEXT[step]}
-                          </p>
-                          {active && step === 'shipped' && (
-                            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--color-text-secondary)', fontWeight: 500 }}>
-                              Carrier: Delhivery Rural Express · Logistics Hub: Pune Central
-                            </p>
-                          )}
-                          {active && step === 'outForDelivery' && (
-                            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--color-text-secondary)', fontWeight: 500 }}>
-                              Delivery Agent: {order.deliveryAgentName || 'Ramesh Shinde'} ({order.deliveryAgentPhone || '+91 98220 44120'})
-                            </p>
-                          )}
-                        </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* RIGHT: Rural Delivery Intelligence */}
+                  <div
+                    style={{
+                      background: 'var(--color-canvas)',
+                      borderRadius: 10,
+                      padding: '16px',
+                      border: '1px solid var(--color-border)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 14,
+                    }}
+                  >
+                    <h3 style={{ margin: 0, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--color-text-tertiary)' }}>
+                      Delivery Intelligence
+                    </h3>
+
+                    {/* ETA Window */}
+                    <div>
+                      <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', fontWeight: 600 }}>
+                        Estimated Delivery Window
+                      </span>
+                      <p style={{ margin: '2px 0 0', fontSize: 15, fontWeight: 800, color: 'var(--color-forest)' }}>
+                        {new Date(shipment.estimatedDeliveryStart).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })} –{' '}
+                        {new Date(shipment.estimatedDeliveryEnd).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                    </div>
+
+                    {/* Service Zone & Distance */}
+                    <div>
+                      <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', fontWeight: 600 }}>
+                        Service Zone & Line-haul
+                      </span>
+                      <p style={{ margin: '2px 0 0', fontSize: 13, fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                        {shipment.serviceZone} ({shipment.distanceBand})
+                      </p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                        <ShieldCheck size={14} color="var(--color-forest)" />
+                        <span style={{ fontSize: 11.5, color: 'var(--color-forest)', fontWeight: 600 }}>
+                          96% Rural First-Attempt Dispatch Reliability
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
+                    </div>
 
-                <div
-                  style={{
-                    marginTop: 20,
-                    padding: '12px 14px',
-                    background: 'var(--color-canvas)',
-                    borderRadius: 8,
-                    fontSize: 13,
-                    color: 'var(--color-text-secondary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: 12,
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Calendar size={15} strokeWidth={2} color="var(--color-forest)" />
-                    <span>Estimated delivery: <strong>{order.estimatedDelivery}</strong></span>
+                    {/* Current Hub */}
+                    <div>
+                      <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', fontWeight: 600 }}>
+                        Current Sorting Location
+                      </span>
+                      <p style={{ margin: '2px 0 0', fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                        {shipment.currentLocation}
+                      </p>
+                    </div>
+
+                    {/* Delivery Agent Card */}
+                    {shipment.deliveryAgent && (
+                      <div
+                        style={{
+                          background: '#fff',
+                          border: '1px solid var(--color-border)',
+                          borderRadius: 8,
+                          padding: '12px',
+                          marginTop: 'auto',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-tertiary)', textTransform: 'uppercase' }}>
+                            Designated Courier Agent
+                          </span>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-forest)' }}>
+                            ★ {shipment.deliveryAgent.rating}
+                          </span>
+                        </div>
+                        <p style={{ margin: '0 0 2px', fontSize: 13.5, fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                          {shipment.deliveryAgent.name}
+                        </p>
+                        <p style={{ margin: '0 0 6px', fontSize: 12, color: 'var(--color-text-secondary)' }}>
+                          {shipment.deliveryAgent.vehicleType} · {shipment.deliveryAgent.vehicleNumber}
+                        </p>
+                        <a
+                          href={`tel:${shipment.deliveryAgent.phone}`}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 5,
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: 'var(--color-forest)',
+                            textDecoration: 'none',
+                          }}
+                        >
+                          <Phone size={12} /> Call Agent ({shipment.deliveryAgent.phone})
+                        </a>
+                      </div>
+                    )}
+
+                    {/* Delivery Attempt Notification Alert */}
+                    {shipment.status === 'deliveryAttempted' && shipment.attempts.length > 0 && (
+                      <div
+                        style={{
+                          background: 'var(--color-warning-light)',
+                          border: '1px solid var(--color-warning)',
+                          borderRadius: 8,
+                          padding: '10px 12px',
+                          fontSize: 12,
+                          color: 'var(--color-warning)',
+                        }}
+                      >
+                        <strong>Delivery Issue:</strong> {shipment.attempts[shipment.attempts.length - 1].notes || 'Address verification pending. Carrier re-attempt scheduled for next morning.'}
+                      </div>
+                    )}
                   </div>
-
-                  {/* Interactive Simulation Controls */}
-                  {order.status !== 'delivered' && (
-                    <button
-                      onClick={() => {
-                        const { advanceOrderStatus } = useOrdersStore.getState();
-                        const next = advanceOrderStatus(order.id);
-                        if (next) {
-                          useNotificationsStore.getState().addNotification({
-                            userId: 'usr_default',
-                            title: `Order Update: ${ORDER_STATUS_LABELS[next]}`,
-                            body: `Order #${order.id} has progressed to stage: ${ORDER_STATUS_LABELS[next]}.`,
-                            type: 'orders',
-                            actionRoute: `/orders/${order.id}`,
-                          });
-                        }
-                      }}
-                      style={{
-                        fontSize: 11.5,
-                        fontWeight: 600,
-                        padding: '4px 10px',
-                        borderRadius: 4,
-                        background: '#fff',
-                        border: '1px solid var(--color-border)',
-                        color: 'var(--color-forest)',
-                        cursor: 'pointer',
-                      }}
-                      title="Advance order stage to simulate live real-time logistics events"
-                    >
-                      Simulate Next Stage →
-                    </button>
-                  )}
                 </div>
               </div>
             )}
 
+            {/* 3. TOPOLOGICAL ROUTE CORRIDOR VISUALIZATION */}
+            {!isCancelled && shipment && (
+              <div style={{ marginBottom: 16 }}>
+                <RouteCorridorVisualizer shipment={shipment} />
+              </div>
+            )}
 
             {/* Cancelled notice */}
             {isCancelled && (
@@ -336,11 +559,11 @@ export default function OrderDetailPage() {
               </div>
             )}
 
-            {/* Order items */}
+            {/* 4. SHIPMENT ITEMS */}
             <div className="card" style={{ padding: '20px', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
                 <Package size={18} strokeWidth={2} color="var(--color-forest)" />
-                <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Items Ordered</h2>
+                <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Items Ordered & Consignment Lots</h2>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 {order.items.map((item) => (
@@ -378,11 +601,11 @@ export default function OrderDetailPage() {
               </div>
             </div>
 
-            {/* Delivery address */}
+            {/* 5. DELIVERY ADDRESS */}
             <div className="card" style={{ padding: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                 <MapPin size={18} strokeWidth={2} color="var(--color-forest)" />
-                <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Delivery Address</h2>
+                <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Registered Farm Delivery Address</h2>
               </div>
               <p style={{ margin: '0 0 2px', fontWeight: 700, fontSize: 14 }}>{order.address.recipientName}</p>
               <p style={{ margin: '0 0 4px', fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.45 }}>
@@ -394,7 +617,7 @@ export default function OrderDetailPage() {
             </div>
           </div>
 
-          {/* Right: Bill + Actions */}
+          {/* RIGHT COLUMN: BILL SUMMARY & ACTIONS */}
           <div>
             {/* Bill summary */}
             <div className="card" style={{ padding: '20px', marginBottom: 16 }}>
@@ -525,6 +748,9 @@ export default function OrderDetailPage() {
         @media (min-width: 768px) {
           .order-detail-layout {
             grid-template-columns: 1fr 300px !important;
+          }
+          .shipment-split-panel {
+            grid-template-columns: 1.4fr 1fr !important;
           }
         }
       `}</style>
