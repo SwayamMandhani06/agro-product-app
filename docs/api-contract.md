@@ -271,3 +271,68 @@ This document establishes the canonical JSON data contracts shared by the **Flut
 - **`PaymentMethod`**: `upi`, `card`, `cod`, `demo`
 - **`PaymentStatus`**: `created`, `pending`, `processing`, `authorized`, `paid`, `failed`, `cancelled`, `refunded`
 - **`PaymentProvider`**: `razorpay_test`, `cod`, `demo`
+
+---
+
+## 9. Logistics & Rural Delivery Operations
+
+### 9.1 `Shipment`
+```json
+{
+  "id": "SHP-1001",
+  "orderId": "ORD-1001",
+  "userId": "usr_default",
+  "provider": "delhivery_rural",
+  "trackingNumber": "AGRI-EXP-88921-IN",
+  "status": "inTransit",
+  "originLocation": "AgriTrade Central Warehouse, Pune, MH",
+  "destinationLocation": "Survey No. 42, Farm House, Haveli Road, Pune 412207",
+  "currentLocation": "Hadapsar Regional Sorting Hub (Bay 4)",
+  "estimatedDeliveryStart": "2026-09-08T00:00:00.000Z",
+  "estimatedDeliveryEnd": "2026-09-10T18:00:00.000Z",
+  "serviceZone": "Rural Priority Route",
+  "distanceBand": "45 km (Intra-District)",
+  "deliveryAgent": {
+    "id": "agt_pune_01",
+    "name": "Rahul Shinde",
+    "phone": "+91 98230 11234",
+    "carrier": "Delhivery Rural Express",
+    "vehicleType": "Three-Wheeler Cargo EV",
+    "vehicleNumber": "MH-12-TR-4921",
+    "rating": 4.9
+  },
+  "createdAt": "2026-09-04T08:00:00.000Z",
+  "updatedAt": "2026-09-04T12:00:00.000Z"
+}
+```
+
+### 9.2 `TrackingEvent`
+```json
+{
+  "id": "evt_101",
+  "shipmentId": "SHP-1001",
+  "status": "inTransit",
+  "location": "Hadapsar Regional Sorting Hub",
+  "description": "Consignment sorted into line-haul corridor dispatch bay.",
+  "eventTime": "2026-09-04T12:00:00.000Z"
+}
+```
+
+### 9.3 `DeliveryAttempt`
+```json
+{
+  "id": "att_101",
+  "shipmentId": "SHP-1001",
+  "attemptNumber": 1,
+  "status": "rescheduled",
+  "reason": "customer_unavailable",
+  "notes": "Farm gate locked; delivery rescheduled for next morning.",
+  "attemptedAt": "2026-09-04T13:30:00.000Z",
+  "nextAttemptDate": "2026-09-05T09:00:00.000Z"
+}
+```
+
+### 9.4 Logistics Enums
+- **`ShipmentStatus`**: `created`, `pickupScheduled`, `pickedUp`, `processing`, `inTransit`, `atRegionalHub`, `outForDelivery`, `delivered`, `deliveryAttempted`, `cancelled`, `returned`
+- **`DeliveryExceptionReason`**: `customer_unavailable`, `address_clarification_required`, `weather_delay`, `route_delay`, `security_gate_locked`
+- **`LogisticsProvider`**: `demo_logistics`, `delhivery_rural`, `shiprocket`

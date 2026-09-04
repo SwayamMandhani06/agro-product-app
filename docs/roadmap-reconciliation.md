@@ -34,9 +34,10 @@
 | **Stage 5**: Backend Hardening & Data Integrity | Real PostgREST wiring, RLS audit, seam completion | **COMPLETE** | PostgREST repositories, hardened stores | Supabase conditional repositories | Strict RLS & foreign keys | ✅ 100% Complete |
 | **Stage 6**: Real-Time Intelligence & Live Operations | Supabase Realtime WSS, APMC mandi terminal, order tracking | **COMPLETE** | Realtime client, live Mandi terminal, operational order timeline, popover alerts | `RealtimeService`, `LiveMandiPricesNotifier`, stream providers | `REPLICA IDENTITY FULL`, `supabase_realtime` pub | ✅ 100% Complete |
 | **Stage 7**: Payment Infrastructure & Secure Checkout | Razorpay Test Mode, Demo fallback, COD, secure transactions | **COMPLETE** | Payment abstraction, Razorpay Test SDK, Demo provider, 2-column checkout, receipt | Native payment sheet, Demo provider, Riverpod checkout state, receipt sheet | `payments`, `payment_events`, strict RLS | ✅ 100% Complete |
-| **Stage 8**: Logistics & Rural Delivery Integration | Pincode serviceability, tracking partner API, hub milestones | **PLANNED** | Delivery estimate calculator | Pincode availability chip | Address validation table | ⬜ Planned |
+| **Stage 8**: Logistics & Rural Delivery Integration | Consignment tracking, line-haul corridors, demo logistics simulator, SVG corridor visualizer | **COMPLETE** | `/shipments` operational dashboard, split-panel `/orders/[id]`, SVG corridor visualizer | `Shipment` domain, `DemoLogisticsProvider`, `DeliveryAttemptSheet`, breathing active node timeline | `shipments`, `tracking_events`, `delivery_agents`, `delivery_attempts`, Realtime pub | ✅ 100% Complete |
 | **Stage 9**: Seller & Cooperative Marketplace | Multi-vendor inventory CRUD, fulfillment, payout tracking | **PLANNED** | `/seller/dashboard`, inventory table | Seller navigation shell | Seller role RLS | ⬜ Planned |
-| **Stage 10**: Admin / Operations Governance | Platform moderation, dispute resolution, price controls | **PLANNED** | `/admin/dashboard`, verification queue | Admin monitoring views | Admin role RLS | ⬜ Planned |
+| **Stage 10**: Admin & Platform Operations | Platform moderation, dispute resolution, price controls | **PLANNED** | `/admin/dashboard`, verification queue | Admin monitoring views | Admin role RLS | ⬜ Planned |
+| **Stage 11**: Final Production Polish & Deployment | End-to-end portfolio polish, performance optimization, release automation | **PLANNED** | Production showcase deployment | Final mobile packaging | Production hardening | ⬜ Planned |
 
 ---
 
@@ -78,53 +79,46 @@
 
 ---
 
-## 4. Completed: STAGE 5 — Backend Hardening, Data Integrity & Premium Web Experience Polish
+## 4. Completed: STAGE 8 — Logistics, Delivery Operations & Shipment Intelligence
 
-**Status**: ✅ COMPLETED (Branch: `stage-5-backend-hardening`)
+**Status**: ✅ COMPLETED (Branch: `stage-8-logistics-operations`)
 
-### Deliverables Achieved in Stage 5:
-1. **Canonical PostgreSQL Migration (`20260904120000_stage_5_backend_hardening.sql`)**:
-   - Hardened Row Level Security policies across `wishlists`, `notifications`, `reviews`, `community_posts`, and `community_comments`.
-   - Strict authenticated user isolation (`auth.uid()::text = user_id`) with graceful anonymous read/demo support.
-   - Added production performance indexes: `idx_reviews_user_id`, `idx_notifications_user_unread`, `idx_community_posts_created`, `idx_community_comments_post_created`.
-2. **Web Data Integration & PostgREST Layer**:
-   - Created [`apps/web/features/wishlist/data/wishlist-repository.ts`](file:///d:/Projects/agro-product-app/apps/web/features/wishlist/data/wishlist-repository.ts) and connected [`apps/web/features/wishlist/wishlist-store.ts`](file:///d:/Projects/agro-product-app/apps/web/features/wishlist/wishlist-store.ts).
-   - Created [`apps/web/features/notifications/data/notification-repository.ts`](file:///d:/Projects/agro-product-app/apps/web/features/notifications/data/notification-repository.ts) and connected [`apps/web/features/notifications/notifications-store.ts`](file:///d:/Projects/agro-product-app/apps/web/features/notifications/notifications-store.ts).
-   - Implemented `SupabaseCommunityRepository` in [`apps/web/features/community/data/community-repository.ts`](file:///d:/Projects/agro-product-app/apps/web/features/community/data/community-repository.ts).
-   - Added review input validation (1.0–5.0 star bounds, non-empty title and comment) in [`apps/web/features/reviews/data/review-repository.ts`](file:///d:/Projects/agro-product-app/apps/web/features/reviews/data/review-repository.ts).
-3. **Data Integrity & State Transitions**:
-   - Cart inventory bounding: prevented cart item quantity from exceeding product stock in [`apps/web/features/cart/store.ts`](file:///d:/Projects/agro-product-app/apps/web/features/cart/store.ts).
-   - Order cancellation status safeguard: restricted cancellations to `['placed', 'confirmed', 'processing']` in [`apps/web/features/orders/store.ts`](file:///d:/Projects/agro-product-app/apps/web/features/orders/store.ts).
-4. **Web Marketing Homepage Elevation (`apps/web/app/page.tsx`)**:
-   - Strictly aligned with Part 8 ("Modern Agrarian Fintech + High-End Minimalist Commerce").
-   - 0 emojis, 100% Lucide icons.
-   - Live APMC Mandi commodity data visualization table with multi-crop filters.
-   - 4-step transparent supply chain workflow (Quality Verification -> Mandi Intelligence -> Farm-Gate Ordering -> 48h Doorstep Logistics).
-   - Backed trust metrics (24+ verified inputs, 8 APMC mandis, >90% germination standard, 0% middleman markups).
-   - Dual-platform architecture showcase with Next.js 16 (20 routes), Flutter 3.24 (94 tests), and PostgreSQL 16.
-5. **Full Dual-Platform Verification**:
-   - Mobile: `flutter analyze` (0 issues), `flutter test` (94/94 passed, 100%).
-   - Web: `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), `npm run build` (20/20 routes compiled).
+### Deliverables Achieved in Stage 8:
+1. **Canonical PostgreSQL Migration (`20260904220000_stage_8_logistics_operations.sql`)**:
+   - Schema tables: `delivery_agents`, `shipments`, `tracking_events`, `delivery_attempts`.
+   - Strict Row Level Security policies with user isolation.
+   - Production performance indexes and `supabase_realtime` publication.
+2. **Provider Abstraction & Free-Tier Deterministic Simulation**:
+   - `LogisticsProvider` contract with `DemoLogisticsProvider` simulator.
+   - `LogisticsApiAdapter` boundary for future Shiprocket / Delhivery Rural live connections.
+   - Zero paid map or SMS subscriptions required.
+3. **Web Operational Command Experience (`apps/web`)**:
+   - `/orders/[id]`: Upgraded into a split-panel view (Left: Granular milestone tracking; Right: Delivery Intelligence card with ETA, carrier, location, agent card, and demo simulation controls).
+   - `/shipments`: Brand new desktop-first logistics operations dashboard with 4 metric cards, topological SVG route corridor visualizer, search, status filters, and interactive slide-over detail drawer.
+   - Navigation: Added `/shipments` ("Logistics") to `NAV_LINKS`.
+4. **Mobile Native Material 3 Tracking Experience (`apps/mobile`)**:
+   - Enhanced `OrderTrackingScreen` with shipment header, waybill code, delivery agent card with direct contact button, and delivery issue notice.
+   - `OrderTrackingTimeline` upgraded with gentle `_BreathingNode` scale animation on the active milestone.
+   - `DeliveryAttemptSheet` supporting realistic rural exceptions (monsoon showers, tractor diversions, locked farm gates, survey number clarification).
+5. **Real-time Synchronization**:
+   - Supabase Realtime channel listening for `shipments` updates and `tracking_events` inserts across Web and Mobile.
 
 ---
 
-## 5. Active & Reconciled Roadmap
-
-### Current Roadmap Status
+## 5. Active & Reconciled Canonical Roadmap
 
 - **Completed Stages:**
   - Stage 1–4E: Core infrastructure, design system, catalog, cart, auth, motion, and farmer intelligence.
   - Stage 5: Backend hardening, PostgREST direct integration, and RLS data integrity.
   - Stage 6: Real-time intelligence, live Mandi terminal, operational order tracking, and notification synchronization.
-- **Current Stage (Active):**
-  - **Stage 7: Payment Infrastructure, Secure Checkout & Transaction Experience**
-- **Next Stages:**
-  - Stage 8: Logistics & Rural Delivery Integration (Hub telemetry, pincode serviceability).
-  - Stage 9: Seller & Cooperative Marketplace Portal (Inventory CRUD, batch certificates, payouts).
-  - Stage 10: Admin / Operations Governance (Disputes, price moderation, platform audit).
+  - Stage 7: Payment infrastructure, Razorpay test mode, COD, and transaction receipts.
+  - Stage 8: Logistics partner integration, rural delivery operations, and shipment intelligence.
+- **Upcoming Stages:**
+  - **Stage 9: Seller & Cooperative Marketplace** (Multi-vendor inventory CRUD, lot certificates, consignment dispatch, payouts).
+  - **Stage 10: Admin & Platform Operations** (Dispute resolution, input certification verification, platform audit).
+  - **Stage 11: Final Production Polish & Portfolio Deployment** (Performance optimization, release automation, end-to-end showcase).
 
 ### Architecture Alignment Rules
 - The canonical backend is **Supabase / PostgreSQL 16**. Firebase/Firestore are deprecated and not used.
-- Web (`apps/web`) and Mobile (`apps/mobile`) share identical domain entities, payment states, and API contracts, but maintain platform-native UI layouts.
-- Payment systems strictly utilize **Razorpay Test Mode** or deterministic **Demo Payment** fallbacks. Real financial transactions or paid cloud services are prohibited.
-- Cash on Delivery (COD) remains a first-class supported payment option.
+- Web (`apps/web`) and Mobile (`apps/mobile`) share identical domain entities, shipment states, and API contracts, but maintain platform-native UI layouts.
+- Logistics systems strictly operate via `DemoLogisticsProvider` in free-tier demo mode, with clean adapter boundaries for future courier APIs. Real paid logistics or maps APIs are prohibited.

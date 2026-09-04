@@ -1,30 +1,35 @@
 # AgriTrade — Modern Agricultural Marketplace
 
-> A synchronized, production-grade agricultural e-commerce platform connecting Indian farmers directly with verified agri-input suppliers and manufacturers — eliminating middlemen for transparent market access, certified inputs, and fair pricing.
+> A synchronized, production-grade agricultural e-commerce and rural intelligence platform connecting Indian farmers directly with verified agri-input suppliers and manufacturers — eliminating middlemen for transparent market access, certified inputs, and fair pricing.
 
 Originally conceptualized as a Community Engagement Project (CEP) at PCCOE, built from the ground up following Clean Architecture, domain-driven design, and the **Google Stitch** visual design system.
 
 ---
 
-## Monorepo Architecture
+## Monorepo Architecture & Platform Strategy
 
-AgriTrade is developed as a synchronized product across both mobile and responsive web platforms:
+AgriTrade is architected as a synchronized dual-platform agricultural ecosystem:
+
+- **Next.js Web Application (`apps/web`)**: The **primary deployable demonstration platform** and SaaS-grade operational marketplace showcase. Optimized for desktop-first workflows, split-panel shipment tracking, and operational intelligence dashboards.
+- **Flutter Mobile Application (`apps/mobile`)**: A native mobile companion and high-fidelity prototype tailored for outdoor agricultural field use, featuring touch-optimized Material 3 components, compact cards, and haptic-friendly interactions. *(Note: Mobile APK distribution and app-store deployment workflows will be finalized in later stages).*
+- **Centralized Supabase Backend (`supabase/`)**: PostgreSQL 16 schema, Row Level Security policies, database triggers, and WebSocket Realtime publications.
 
 ```text
 agro-product-app/
 ├── apps/
-│   ├── mobile/             # Flutter mobile application (Android & iOS)
+│   ├── mobile/             # Flutter native application (Android companion prototype)
 │   │   ├── lib/
-│   │   │   ├── core/       # Design system, routing, network, errors
-│   │   │   └── features/   # auth, home, products, cart_checkout, orders
-│   │   └── test/           # 94 automated unit & widget tests
-│   └── web/                # Responsive web application (Next.js App Router)
-│       ├── app/            # App Router pages (/home, /products, /cart, etc.)
-│       ├── components/     # AppShell, responsive navigation, cards
-│       ├── features/       # Zustand stores: auth, cart, orders
-│       ├── lib/            # Shared mock data & repository helpers
+│   │   │   ├── core/       # Design system, routing, network, realtime, errors
+│   │   │   └── features/   # auth, home, products, cart_checkout, orders, payments, logistics
+│   │   └── test/           # 115 automated unit & widget tests (100% pass)
+│   └── web/                # Next.js 16 App Router platform (Primary deployment demo)
+│       ├── app/            # 21 routes (/home, /products, /orders, /shipments, etc.)
+│       ├── components/     # AppShell, responsive navigation, cards, RouteCorridor
+│       ├── features/       # Zustand stores: auth, cart, orders, payments, logistics
+│       ├── lib/            # Realtime subscriptions, Supabase client, mock data
 │       └── types/          # TypeScript domain models mirroring mobile
-└── README.md
+├── supabase/               # PostgreSQL 16 migrations & RLS security rules
+└── docs/                   # Full architectural, payment, and logistics specs
 ```
 
 ---
@@ -33,6 +38,7 @@ agro-product-app/
 
 | Capability | Mobile Target (`apps/mobile`) | Web Target (`apps/web`) |
 | :--- | :--- | :--- |
+| **Role** | Native Field Companion / Prototype | Primary Deployment Showcase / SaaS Web |
 | **Framework** | Flutter 3.44.8 / Dart 3.10+ | Next.js 16.3.4 (Turbopack, App Router) |
 | **Language** | Dart | TypeScript 5.x |
 | **Styling** | Flutter Material 3 + Custom Stitch Tokens | Tailwind CSS 4 + CSS Custom Properties |
@@ -43,8 +49,7 @@ agro-product-app/
 | **Primary Color** | Forest Green `#0B3D2E` | Forest Green `--color-forest: #0B3D2E` |
 | **Accent Color** | Amber `#D97706` | Amber `--color-amber: #D97706` |
 | **Canvas Color** | Warm Canvas `#F9F7F2` | Warm Canvas `--color-canvas: #F9F7F2` |
-| **Testing** | `flutter test` (107/107 passed, 100%) | `npm test` (12/12 passed), `npm run lint` (0 errors), `npm run build` (20 routes) |
-
+| **Testing & Quality**| `flutter test` (115/115 passed), `flutter analyze` (0 issues) | `npm test` (17/17 passed), `npm run lint` (0 errors), `npm run build` (21 routes) |
 
 ---
 
@@ -324,10 +329,11 @@ Stage 4E — Farmer Intelligence, Engagement & Community    ✅ Complete (Branch
 Stage 5  — Real Data Integration, Backend Hardening & Web Elevation ✅ Complete (Branch: stage-5-backend-hardening)
 Stage 6  — Real-Time Intelligence & Live Operations       ✅ Complete (Commit: 459f670)
 Stage 7  — Payment Infrastructure, Secure Checkout & Transaction Experience ✅ Complete (Branch: stage-7-payment-infrastructure)
+Stage 8  — Logistics Operations, Rural Intelligence & Consignment Tracking ✅ Complete (Branch: stage-8-logistics-operations)
 ─────────────────────────────────────────────────────────────────────────────
-Stage 8  — Logistics Partner API Integration & Rural Telemetry ⬜ Planned / Next
-Stage 9  — Seller & Manufacturer Marketplace Portal          ⬜ Planned
-Stage 10 — Admin & Operations Governance Portal              ⬜ Planned
+Stage 9  — Seller & Cooperative Marketplace Portal          ⬜ Planned
+Stage 10 — Admin & Platform Operations Governance Portal    ⬜ Planned
+Stage 11 — Final Production Polish & Portfolio Deployment   ⬜ Planned
 ```
 
 ---
@@ -336,9 +342,11 @@ Stage 10 — Admin & Operations Governance Portal              ⬜ Planned
 
 Detailed architectural and design specifications are maintained in the [`docs/`](./docs) directory:
 
+- [**Logistics Architecture & Rural Delivery Operations**](./docs/logistics-architecture.md) — Consignment tracking lifecycle, DemoLogisticsProvider simulation, topological SVG route corridor, delivery attempt exception management, and courier API boundaries.
+- [**Stage 8 Visual Quality Audit**](./docs/stage-8-visual-qa.md) — Comprehensive visual audit across 26 screens enforcing the "Modern Agrarian Fintech + Professional SaaS" aesthetic.
 - [**Payment Architecture**](./docs/payment-architecture.md) — Platform-neutral payment abstractions, Razorpay Test Mode, offline Demo sandbox, COD reconciliation, and printable tax invoices.
 - [**Repository Integration Audit**](./docs/repository-integration.md) — Git recovery audit, canonical integration strategy, commit lineage, verification logs, and manual PR procedures.
-- [**Roadmap Reconciliation**](./docs/roadmap-reconciliation.md) — Reconciliation of 17-stage roadmap vs. actual dual-platform implementation state.
+- [**Roadmap Reconciliation**](./docs/roadmap-reconciliation.md) — Canonical reconciliation of roadmap stages vs. actual dual-platform implementation state.
 - [**Backend Setup Guide**](./docs/backend-setup.md) — Comprehensive guide for Supabase project setup, PostgreSQL 16 migrations, seed scripts, RLS policies, and dual-platform environment variables.
 - [**Motion System Specification**](./docs/motion-system.md) — 6-tier duration tokens, cubic-bezier easing curves, reduced-motion accessibility, Web CSS keyframes, and Flutter `AppMotion` presets.
 - [**Platform Design Parity Specification**](./docs/platform-design-parity.md) — 1-to-1 token translation table across Web CSS and Flutter Material 3.
@@ -354,8 +362,7 @@ Detailed architectural and design specifications are maintained in the [`docs/`]
 ```text
 main                                    — Production releases (stable canonical release)
 develop                                 — Active integration base (all feature branches base off develop)
-integration/stage-4-complete            — Canonical integration branch for Stage 4A → 4E work targeting main
-stage-5-backend-hardening               — Stage 5 Backend Hardening & Data Integration feature branch targeting develop
+stage-8-logistics-operations            — Active feature branch for Stage 8 Logistics & Delivery Operations
 ```
 
 ### Standardized Contribution Workflow:
