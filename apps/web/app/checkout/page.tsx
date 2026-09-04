@@ -9,6 +9,8 @@ import { useOrdersStore } from '@/features/orders/store';
 import { useNotificationsStore } from '@/features/notifications/notifications-store';
 import { paymentService } from '@/features/payments/payment-service';
 import type { PaymentMethod, PaymentProvider } from '@/features/payments/types';
+import { useAddressStore } from '@/features/address/address-store';
+import AddAddressModal from '@/components/checkout/AddAddressModal';
 import { MOCK_ADDRESSES } from '@/lib/mock-data';
 import {
   ArrowLeft,
@@ -23,6 +25,9 @@ import {
   RefreshCw,
   Lock,
   Zap,
+  Plus,
+  Leaf,
+  CheckCircle2,
 } from 'lucide-react';
 
 function formatPrice(n: number) {
@@ -82,9 +87,11 @@ export default function CheckoutPage() {
   const { addNotification } = useNotificationsStore();
   const router = useRouter();
 
-  const [selectedAddressId, setSelectedAddressId] = useState(MOCK_ADDRESSES[0].id);
+  const { addresses, selectedAddressId, selectAddress } = useAddressStore();
+  const [isAddAddressOpen, setIsAddAddressOpen] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>('upi');
   const [simulateFailure, setSimulateFailure] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState<string>('');
 
   // Transaction States: 'idle' | 'processing' | 'failed' | 'cancelled'
   const [txState, setTxState] = useState<'idle' | 'processing' | 'failed' | 'cancelled'>('idle');
@@ -94,7 +101,7 @@ export default function CheckoutPage() {
   const sub = subtotal();
   const fee = deliveryFee();
   const total = totalAmount();
-  const selectedAddress = MOCK_ADDRESSES.find((a) => a.id === selectedAddressId) ?? MOCK_ADDRESSES[0];
+  const selectedAddress = addresses.find((a) => a.id === selectedAddressId) ?? addresses[0] ?? MOCK_ADDRESSES[0];
   const activePaymentOption = PAYMENT_OPTIONS.find((p) => p.id === selectedPaymentMethod) ?? PAYMENT_OPTIONS[0];
 
   if (items.length === 0 && txState === 'idle') {
@@ -138,6 +145,7 @@ export default function CheckoutPage() {
     setProcessingStep('Validating consignment inventory & farm gate address...');
 
     const tempOrderId = `ORD-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    setCurrentOrderId(tempOrderId);
 
     try {
       await new Promise((r) => setTimeout(r, 600));
@@ -371,18 +379,35 @@ export default function CheckoutPage() {
                   </div>
                   <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Farm Gate Delivery Destination</h2>
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-forest)', background: 'var(--color-brand-50, #f0fdf4)', padding: '2px 8px', borderRadius: 12 }}>
-                  Verified PIN
-                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsAddAddressOpen(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '5px 12px',
+                    borderRadius: 6,
+                    background: 'var(--color-brand-50, #f0fdf4)',
+                    color: 'var(--color-forest)',
+                    border: '1px solid #bbf7d0',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all var(--motion-fast)',
+                  }}
+                >
+                  <Plus size={13} strokeWidth={2.5} /> Add Address
+                </button>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {MOCK_ADDRESSES.map((addr) => {
+                {addresses.map((addr) => {
                   const isSelected = addr.id === selectedAddressId;
                   return (
                     <div
                       key={addr.id}
-                      onClick={() => setSelectedAddressId(addr.id)}
+                      onClick={() => selectAddress(addr.id)}
                       style={{
                         padding: '14px 16px',
                         borderRadius: 8,
@@ -398,6 +423,11 @@ export default function CheckoutPage() {
                           <span style={{ fontSize: 10, fontWeight: 700, background: 'rgba(0,0,0,0.06)', padding: '1px 6px', borderRadius: 4, textTransform: 'uppercase' }}>
                             {addr.tag}
                           </span>
+                          {addr.isDefault && (
+                            <span style={{ fontSize: 10, fontWeight: 700, background: '#e0e7ff', color: '#3730a3', padding: '1px 6px', borderRadius: 4 }}>
+                              DEFAULT
+                            </span>
+                          )}
                         </div>
                         <div
                           style={{
@@ -704,15 +734,15 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        {/* Processing Modal Dialog */}
+        {/* Animated Thermal Receipt Dispenser Modal */}
         {txState === 'processing' && (
           <div
             style={{
               position: 'fixed',
               inset: 0,
-              zIndex: 90,
-              background: 'rgba(0, 0, 0, 0.6)',
-              backdropFilter: 'blur(4px)',
+              zIndex: 100,
+              background: 'rgba(5, 20, 15, 0.78)',
+              backdropFilter: 'blur(8px)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -720,52 +750,207 @@ export default function CheckoutPage() {
             }}
           >
             <div
-              className="slide-up"
+              className="receipt-dispenser-casing slide-up"
               style={{
-                background: '#fff',
-                borderRadius: 12,
-                padding: '32px 28px',
-                maxWidth: 420,
+                maxWidth: 440,
                 width: '100%',
+                padding: '24px 20px 22px',
                 textAlign: 'center',
-                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15)',
               }}
             >
+              {/* POS Terminal Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, padding: '0 8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      background: '#22c55e',
+                      animation: 'ledPulse 1.4s infinite ease-in-out',
+                    }}
+                  />
+                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '1px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                    ESCROW TERMINAL #TR-808
+                  </span>
+                </div>
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: '#38bdf8',
+                    background: 'rgba(56, 189, 248, 0.12)',
+                    border: '1px solid rgba(56, 189, 248, 0.3)',
+                    padding: '2px 8px',
+                    borderRadius: 4,
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  DISPENSING RECEIPT
+                </span>
+              </div>
+
+              {/* Terminal Printer Slit */}
+              <div className="receipt-slit" style={{ width: '92%', height: 6, margin: '0 auto', background: '#020617', borderRadius: 3 }} />
+
+              {/* Animated Thermal Receipt Paper */}
               <div
+                className="animated-thermal-receipt"
                 style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: '50%',
-                  background: 'var(--color-brand-50, #f0fdf4)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 16px',
-                  color: 'var(--color-forest)',
+                  width: '90%',
+                  margin: '0 auto',
+                  background: '#ffffff',
+                  color: '#0f172a',
+                  padding: '20px 20px 14px',
+                  textAlign: 'left',
+                  fontFamily: '"Courier New", Courier, monospace',
+                  fontSize: 12,
+                  boxShadow: '0 12px 24px -6px rgba(0,0,0,0.3)',
+                  borderLeft: '1px solid #e2e8f0',
+                  borderRight: '1px solid #e2e8f0',
                 }}
               >
-                <RefreshCw size={24} className="spin" strokeWidth={2.2} />
-              </div>
-              <h3 style={{ margin: '0 0 8px', fontSize: 17, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-                Securing Transaction
-              </h3>
-              <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                {processingStep}
-              </p>
-              <div style={{ height: 4, background: '#f1f5f9', borderRadius: 2, overflow: 'hidden' }}>
+                <div style={{ textAlign: 'center', marginBottom: 12 }}>
+                  <div style={{ fontWeight: 800, fontSize: 13, letterSpacing: '0.5px', color: '#0f172a' }}>
+                    AGRITRADE AGROCOMMERCE
+                  </div>
+                  <div style={{ fontSize: 10, color: '#64748b' }}>
+                    DIRECT FARM ESCROW TAX INVOICE
+                  </div>
+                  <div style={{ color: '#cbd5e1', fontSize: 11, letterSpacing: '-1px', margin: '4px 0' }}>
+                    ----------------------------------------
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 11, lineHeight: 1.6, color: '#334155', marginBottom: 10 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>ORDER REF:</span>
+                    <span style={{ fontWeight: 700, color: '#0f172a' }}>{currentOrderId || 'ORD-2026-ESCROW'}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>DATE / TIME:</span>
+                    <span>{new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })} {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>DESTINATION:</span>
+                    <span style={{ fontWeight: 600 }}>{selectedAddress.recipientName}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>FARM LOCATION:</span>
+                    <span>{selectedAddress.city}, {selectedAddress.state}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#64748b' }}>PAY METHOD:</span>
+                    <span style={{ fontWeight: 700, color: '#166534' }}>{activePaymentOption.title.split('/')[0].toUpperCase()}</span>
+                  </div>
+                </div>
+
+                <div style={{ color: '#cbd5e1', fontSize: 11, letterSpacing: '-1px', margin: '6px 0' }}>
+                  ----------------------------------------
+                </div>
+
+                {/* Items breakdown */}
+                <div style={{ marginBottom: 10 }}>
+                  {items.slice(0, 3).map((item) => (
+                    <div key={item.product.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, marginBottom: 4 }}>
+                      <span style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {item.product.title} ×{item.quantity}
+                      </span>
+                      <span style={{ fontWeight: 600 }}>₹{(item.product.price * item.quantity).toLocaleString('en-IN')}</span>
+                    </div>
+                  ))}
+                  {items.length > 3 && (
+                    <div style={{ fontSize: 10, color: '#64748b', fontStyle: 'italic', marginTop: 2 }}>
+                      + {items.length - 3} additional input lots
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ color: '#cbd5e1', fontSize: 11, letterSpacing: '-1px', margin: '6px 0' }}>
+                  ----------------------------------------
+                </div>
+
+                {/* Totals */}
+                <div style={{ fontSize: 11.5, lineHeight: 1.6, marginBottom: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Consignment Subtotal:</span>
+                    <span>₹{sub.toLocaleString('en-IN')}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#166534' }}>
+                    <span>Logistics Subsidy:</span>
+                    <span>{fee === 0 ? 'FREE' : `₹${fee}`}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 800, marginTop: 4, paddingTop: 4, borderTop: '1px dashed #94a3b8' }}>
+                    <span>TOTAL AUTHORIZED:</span>
+                    <span style={{ color: '#0f172a' }}>₹{total.toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+
+                {/* Step badge */}
                 <div
                   style={{
-                    height: '100%',
-                    background: 'var(--color-forest)',
-                    width: '70%',
-                    borderRadius: 2,
-                    animation: 'indeterminate 1.4s infinite ease-in-out',
+                    background: '#f0fdf4',
+                    border: '1px dashed #22c55e',
+                    borderRadius: 4,
+                    padding: '8px 10px',
+                    margin: '10px 0',
+                    fontSize: 11,
+                    textAlign: 'center',
+                    color: '#166534',
+                    fontWeight: 700,
                   }}
-                />
+                >
+                  ● {processingStep}
+                </div>
+
+                {/* Simulated Barcode */}
+                <div style={{ textAlign: 'center', marginTop: 12, marginBottom: 4 }}>
+                  <div
+                    style={{
+                      height: 28,
+                      background: 'repeating-linear-gradient(90deg, #0f172a 0, #0f172a 2px, transparent 2px, transparent 4px, #0f172a 4px, #0f172a 7px, transparent 7px, transparent 9px, #0f172a 9px, #0f172a 12px, transparent 12px, transparent 15px)',
+                      width: '80%',
+                      margin: '0 auto',
+                      opacity: 0.85,
+                    }}
+                  />
+                  <div style={{ fontSize: 9, letterSpacing: '3px', color: '#64748b', marginTop: 3 }}>
+                    *AGRITRADE-ESCROW-SEAL*
+                  </div>
+                </div>
+
+                {/* Perforated edge at bottom */}
+                <div className="perforated-bottom" style={{ margin: '12px -20px -14px -20px' }} />
+              </div>
+
+              {/* Progress bar and helper text under printer */}
+              <div style={{ marginTop: 20, padding: '0 12px' }}>
+                <div style={{ height: 4, background: 'rgba(255,255,255,0.1)', borderRadius: 2, overflow: 'hidden', marginBottom: 10 }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      background: 'linear-gradient(90deg, #22c55e, #10b981)',
+                      width: '70%',
+                      borderRadius: 2,
+                      animation: 'indeterminate 1.5s infinite ease-in-out',
+                    }}
+                  />
+                </div>
+                <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>
+                  Please keep this window open while the transaction escrow lock is secured.
+                </p>
               </div>
             </div>
           </div>
         )}
+
+        {/* Add Address Modal Component */}
+        <AddAddressModal
+          isOpen={isAddAddressOpen}
+          onClose={() => setIsAddAddressOpen(false)}
+          onSuccess={(newAddr) => selectAddress(newAddr.id)}
+        />
       </div>
 
       <style>{`

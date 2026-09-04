@@ -4,219 +4,426 @@ import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/features/auth/store';
-import { Leaf, Sprout, TrendingDown, Truck, ChevronRight } from 'lucide-react';
+import {
+  Leaf,
+  Sprout,
+  Store,
+  Users,
+  ShieldCheck,
+  TrendingDown,
+  Truck,
+  ArrowRight,
+  Zap,
+  CheckCircle2,
+  Lock,
+} from 'lucide-react';
 
 const VALUE_PROPS = [
   {
     Icon: Sprout,
     title: 'Certified Seeds & Inputs',
-    desc: 'Sourced directly from verified agri-companies and government-approved suppliers.',
+    desc: 'Direct dispatch from verified seed manufacturers and bio-fertilizer enterprises with batch testing certificates.',
+    stat: '100% Verified',
   },
   {
     Icon: TrendingDown,
-    title: 'Farm-Gate Pricing',
-    desc: 'Best prices updated daily with live mandi rate tracking for your region.',
+    title: 'Direct Farm-Gate Pricing',
+    desc: 'Eliminates commission agents and local distributor markups, saving farmers an average of 18–25% per acre.',
+    stat: '₹1,240 Avg. Savings',
   },
   {
     Icon: Truck,
-    title: 'Doorstep Delivery',
-    desc: 'Free delivery on orders above ₹1,000. Same-day dispatch from local hubs.',
+    title: 'Rural Hub Logistics',
+    desc: 'Specialized agricultural delivery network servicing village hubs and farm gates with OTP confirmation.',
+    stat: '24–48 Hr Dispatch',
+  },
+];
+
+const ROLES_LIST = [
+  {
+    role: 'Farmer / Grower',
+    icon: Sprout,
+    desc: 'Purchase inputs, monitor Mandi rates, and track shipments',
+    path: '/login',
+    color: '#0B3D2E',
+    bgColor: '#EAF6EF',
+  },
+  {
+    role: 'Commercial Seller',
+    icon: Store,
+    desc: 'Manage inventory, process orders, and reconcile bank payouts',
+    path: '/login',
+    color: '#D97706',
+    bgColor: '#FFF3E0',
+  },
+  {
+    role: 'Cooperative FPO',
+    icon: Users,
+    desc: 'Run collective buying campaigns with tiered volume discounts',
+    path: '/login',
+    color: '#1B6BAA',
+    bgColor: '#DCEEFD',
+  },
+  {
+    role: 'Platform Admin',
+    icon: ShieldCheck,
+    desc: 'License verification, dispute mediation, and audit governance',
+    path: '/login',
+    color: '#991B1B',
+    bgColor: '#FEE2E2',
   },
 ];
 
 export default function WelcomePage() {
-  const { status } = useAuthStore();
+  const { status, user } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'authenticated') router.replace('/home');
-  }, [status, router]);
+    if (status === 'authenticated' && user) {
+      if (user.role === 'seller') router.replace('/seller/dashboard');
+      else if (user.role === 'admin') router.replace('/admin/dashboard');
+      else if (user.role === 'cooperative_manager') router.replace('/cooperative/campaigns');
+      else router.replace('/home');
+    }
+  }, [status, user, router]);
 
   return (
     <div
       style={{
         minHeight: '100vh',
-        background: 'var(--color-canvas)',
+        background: 'linear-gradient(180deg, #F9F7F2 0%, #EDE8DF 100%)',
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      {/* Top bar */}
+      {/* Top Header */}
       <header
         style={{
-          padding: '20px 24px',
+          padding: '18px 32px',
           display: 'flex',
           alignItems: 'center',
-          gap: 9,
-          borderBottom: '1px solid var(--color-divider)',
-          background: '#fff',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid rgba(11, 61, 46, 0.08)',
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(12px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 40,
         }}
       >
-        <div
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 6,
-            background: 'var(--color-forest)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-          }}
-        >
-          <Leaf size={16} strokeWidth={2.2} />
-        </div>
-        <span
-          style={{
-            fontSize: 16,
-            fontWeight: 700,
-            color: 'var(--color-forest)',
-            letterSpacing: '-0.2px',
-          }}
-        >
-          AGRI TRADE
-        </span>
-      </header>
-
-      {/* Content */}
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '40px 24px',
-          maxWidth: 560,
-          margin: '0 auto',
-          width: '100%',
-        }}
-      >
-        {/* Hero */}
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
           <div
             style={{
-              width: 64,
-              height: 64,
-              borderRadius: 12,
+              width: 34,
+              height: 34,
+              borderRadius: 8,
               background: 'var(--color-forest)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 20px',
               color: '#fff',
-              boxShadow: 'var(--shadow-lg)',
+              boxShadow: '0 2px 8px rgba(11, 61, 46, 0.25)',
             }}
           >
-            <Leaf size={32} strokeWidth={1.8} />
+            <Leaf size={18} strokeWidth={2.4} />
           </div>
-          <h1
+          <div>
+            <span style={{ fontSize: 17, fontWeight: 800, color: 'var(--color-forest)', letterSpacing: '-0.3px', display: 'block', lineHeight: 1 }}>
+              AGRI TRADE
+            </span>
+            <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--color-text-tertiary)', letterSpacing: '0.4px', textTransform: 'uppercase' }}>
+              Agricultural Commerce
+            </span>
+          </div>
+        </Link>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Link
+            href="/products"
             style={{
-              margin: '0 0 10px',
-              fontSize: 32,
-              fontWeight: 800,
-              color: 'var(--color-forest)',
-              letterSpacing: '-0.5px',
+              fontSize: 13,
+              fontWeight: 600,
+              color: 'var(--color-text-secondary)',
+              textDecoration: 'none',
+              padding: '7px 14px',
             }}
           >
-            AGRI TRADE
-          </h1>
-          <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 16, lineHeight: 1.5 }}>
-            India&apos;s Farmer-First Agricultural Marketplace
-          </p>
+            Browse Catalog
+          </Link>
+          <Link
+            href="/login"
+            style={{
+              fontSize: 13,
+              fontWeight: 700,
+              color: '#ffffff',
+              background: 'var(--color-forest)',
+              textDecoration: 'none',
+              padding: '7px 16px',
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              boxShadow: '0 2px 8px rgba(11, 61, 46, 0.2)',
+            }}
+          >
+            <Lock size={13} /> Sign In
+          </Link>
         </div>
+      </header>
 
-        {/* Value propositions */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 10,
-            width: '100%',
-            marginBottom: 36,
-          }}
-        >
-          {VALUE_PROPS.map(({ Icon, title, desc }) => (
-            <div
-              key={title}
+      {/* Main Content Area */}
+      <main
+        style={{
+          flex: 1,
+          maxWidth: 1160,
+          margin: '0 auto',
+          padding: '40px 24px 60px',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 0.85fr)', gap: 36, alignItems: 'center' }}>
+
+          {/* Left Column: Hero Mission & Value Propositions */}
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#EAF6EF', color: 'var(--color-forest)', padding: '5px 12px', borderRadius: 20, border: '1px solid #9FD4B0', fontSize: 12, fontWeight: 700, marginBottom: 16 }}>
+              <Zap size={13} strokeWidth={2.5} /> INDIA&apos;S FARMER-FIRST PLATFORM
+            </div>
+
+            <h1
               style={{
-                display: 'flex',
-                gap: 14,
-                background: '#fff',
-                borderRadius: 10,
-                padding: '14px 16px',
-                border: '1px solid var(--color-divider)',
-                alignItems: 'flex-start',
+                fontSize: 38,
+                fontWeight: 800,
+                color: 'var(--color-forest)',
+                letterSpacing: '-0.8px',
+                lineHeight: 1.2,
+                margin: '0 0 16px',
               }}
             >
+              Direct Agricultural Commerce &amp; Rural Market Intelligence
+            </h1>
+
+            <p style={{ fontSize: 16, color: 'var(--color-text-secondary)', lineHeight: 1.55, margin: '0 0 28px' }}>
+              AgriTrade eliminates intermediate commission layers, bringing factory-certified seeds, bio-nutrients, and crop protection directly to farm gates with daily APMC mandi price tracking.
+            </p>
+
+            {/* Value Proposition Cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32 }}>
+              {VALUE_PROPS.map(({ Icon, title, desc, stat }) => (
+                <div
+                  key={title}
+                  className="glass-card-hover"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 14,
+                    background: '#ffffff',
+                    padding: '14px 18px',
+                    borderRadius: 12,
+                    border: '1px solid rgba(11, 61, 46, 0.09)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.02)',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 10,
+                      background: 'rgba(11, 61, 46, 0.08)',
+                      color: 'var(--color-forest)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Icon size={20} strokeWidth={2} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+                      <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                        {title}
+                      </h4>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-forest)', background: '#EAF6EF', padding: '2px 8px', borderRadius: 12 }}>
+                        {stat}
+                      </span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: 12.5, color: 'var(--color-text-secondary)', lineHeight: 1.45 }}>
+                      {desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Quick Metrics */}
+            <div style={{ display: 'flex', gap: 24, paddingTop: 8, borderTop: '1px solid rgba(11, 61, 46, 0.1)' }}>
+              <div>
+                <span style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-forest)', display: 'block', lineHeight: 1 }}>
+                  50,000+
+                </span>
+                <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
+                  Active Farmers
+                </span>
+              </div>
+              <div style={{ width: 1, height: 32, background: 'rgba(11, 61, 46, 0.1)' }} />
+              <div>
+                <span style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-amber)', display: 'block', lineHeight: 1 }}>
+                  ₹2.4 Cr+
+                </span>
+                <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
+                  Direct Cost Saved
+                </span>
+              </div>
+              <div style={{ width: 1, height: 32, background: 'rgba(11, 61, 46, 0.1)' }} />
+              <div>
+                <span style={{ fontSize: 22, fontWeight: 800, color: '#1A7A4A', display: 'block', lineHeight: 1 }}>
+                  100%
+                </span>
+                <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
+                  CIB&amp;RC Certified
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Portal Gateway Selector */}
+          <div
+            className="glass-saas-card"
+            style={{
+              background: '#ffffff',
+              borderRadius: 20,
+              padding: '32px 28px',
+              border: '1px solid rgba(11, 61, 46, 0.1)',
+              boxShadow: '0 20px 50px -10px rgba(11, 61, 46, 0.12)',
+            }}
+          >
+            <div style={{ marginBottom: 20, textAlign: 'center' }}>
               <div
                 style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 8,
-                  background: 'var(--color-brand-50)',
+                  width: 48,
+                  height: 48,
+                  borderRadius: 12,
+                  background: 'var(--color-forest)',
+                  color: '#ffffff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0,
-                  color: 'var(--color-forest)',
+                  margin: '0 auto 12px',
+                  boxShadow: '0 4px 12px rgba(11, 61, 46, 0.25)',
                 }}
               >
-                <Icon size={18} strokeWidth={2} />
+                <Leaf size={24} strokeWidth={2} />
               </div>
-              <div>
-                <p
-                  style={{
-                    margin: '0 0 3px',
-                    fontWeight: 700,
-                    fontSize: 14,
-                    color: 'var(--color-text-primary)',
-                  }}
-                >
-                  {title}
-                </p>
-                <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.45 }}>
-                  {desc}
-                </p>
-              </div>
+              <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--color-text-primary)', margin: '0 0 6px' }}>
+                Select Your Access Portal
+              </h2>
+              <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', margin: 0 }}>
+                Choose your role to launch the dedicated environment
+              </p>
             </div>
-          ))}
-        </div>
 
-        {/* CTAs */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
-          <Link
-            href="/login"
-            id="welcome-signin-btn"
-            className="btn btn-primary btn-full"
-            style={{ justifyContent: 'space-between', padding: '13px 20px' }}
-          >
-            <span>Sign In</span>
-            <ChevronRight size={18} strokeWidth={2.5} />
-          </Link>
-          <Link
-            href="/signup"
-            id="welcome-signup-btn"
-            className="btn btn-secondary btn-full"
-            style={{ justifyContent: 'space-between', padding: '12px 20px' }}
-          >
-            <span>Create Account</span>
-            <ChevronRight size={18} strokeWidth={2.5} />
-          </Link>
-        </div>
+            {/* Role Gateway Cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+              {ROLES_LIST.map((r) => {
+                const Icon = r.icon;
+                return (
+                  <Link
+                    key={r.role}
+                    href={r.path}
+                    className="glass-card-hover"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 14,
+                      padding: '12px 16px',
+                      borderRadius: 12,
+                      background: 'var(--color-neutral-50)',
+                      border: '1px solid var(--color-divider)',
+                      textDecoration: 'none',
+                      color: 'var(--color-text-primary)',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 8,
+                        background: r.bgColor,
+                        color: r.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Icon size={18} strokeWidth={2.2} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                        {r.role}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: 'var(--color-text-tertiary)' }}>
+                        {r.desc}
+                      </div>
+                    </div>
+                    <ArrowRight size={16} strokeWidth={2} color="var(--color-text-tertiary)" />
+                  </Link>
+                );
+              })}
+            </div>
 
-        {/* Demo note */}
-        <p
-          style={{
-            marginTop: 24,
-            fontSize: 12,
-            color: 'var(--color-text-tertiary)',
-            textAlign: 'center',
-          }}
-        >
-          Demo credentials available on the Sign In screen
-        </p>
-      </div>
+            {/* Primary Action Buttons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <Link
+                href="/login"
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: 10,
+                  background: 'var(--color-forest)',
+                  color: '#ffffff',
+                  textDecoration: 'none',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  boxShadow: '0 4px 14px rgba(11, 61, 46, 0.2)',
+                }}
+              >
+                <span>Sign In with Demo Account</span>
+                <ArrowRight size={15} strokeWidth={2.5} />
+              </Link>
+              <Link
+                href="/signup"
+                style={{
+                  width: '100%',
+                  padding: '11px 16px',
+                  borderRadius: 10,
+                  background: '#ffffff',
+                  color: 'var(--color-forest)',
+                  border: '1.5px solid var(--color-forest)',
+                  textDecoration: 'none',
+                  fontSize: 13.5,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+              >
+                <span>Create New Farmer Account</span>
+              </Link>
+            </div>
+          </div>
+
+        </div>
+      </main>
     </div>
   );
 }
