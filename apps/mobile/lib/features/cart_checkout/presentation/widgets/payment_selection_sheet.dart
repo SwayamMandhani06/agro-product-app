@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/app_colors.dart';
 import '../../../../core/design_system/app_radius.dart';
 import '../../../../core/design_system/app_spacing.dart';
+import '../../../payments/domain/payment_transaction.dart';
+import '../../../payments/presentation/providers/payment_providers.dart';
 import '../providers/cart_providers.dart';
 
 /// Modal sheet for choosing payment method matching Stitch AgriTrade screens.
@@ -22,27 +24,35 @@ class PaymentSelectionSheet extends ConsumerWidget {
   static const _methods = [
     (
       id: 'Cash on Delivery',
+      enumMethod: PaymentMethod.cod,
       title: 'Cash on Delivery',
-      subtitle: 'Pay with cash or UPI upon delivery',
+      subtitle: 'Pay with cash or UPI upon consignment arrival',
+      badge: 'COD',
       icon: Icons.payments_outlined,
     ),
     (
       id: 'UPI',
-      title: 'UPI',
-      subtitle: 'Google Pay, PhonePe, Paytm, BHIM',
+      enumMethod: PaymentMethod.upi,
+      title: 'UPI / QR Payment',
+      subtitle: 'Google Pay, PhonePe, Paytm, BHIM (Test Mode)',
+      badge: 'TEST',
       icon: Icons.qr_code_2_rounded,
     ),
     (
       id: 'Credit / Debit Card',
+      enumMethod: PaymentMethod.card,
       title: 'Credit / Debit Card',
-      subtitle: 'Visa, Mastercard, RuPay',
+      subtitle: 'Visa, Mastercard, RuPay (Razorpay Test Mode)',
+      badge: 'TEST',
       icon: Icons.credit_card_rounded,
     ),
     (
-      id: 'Net Banking',
-      title: 'Net Banking',
-      subtitle: 'SBI, HDFC, ICICI, Bank of Baroda & more',
-      icon: Icons.account_balance_rounded,
+      id: 'Demo Payment',
+      enumMethod: PaymentMethod.demo,
+      title: 'Demo Payment Sandbox',
+      subtitle: 'Simulated educational transaction flow (zero charges)',
+      badge: 'DEMO',
+      icon: Icons.science_outlined,
     ),
   ];
 
@@ -92,14 +102,22 @@ class PaymentSelectionSheet extends ConsumerWidget {
                   ),
                   SizedBox(width: AppSpacing.xs),
                   Text(
-                    'Select Payment Method',
+                    'Select Payment Instrument',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              const Text(
+                'Student/Community non-production sandbox environment.',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textTertiary,
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               const Divider(height: 1, color: AppColors.neutral200),
@@ -107,7 +125,13 @@ class PaymentSelectionSheet extends ConsumerWidget {
 
               // Payment Method Options
               ..._methods.map((method) {
-                final isSelected = selectedMethod == method.id;
+                final isSelected = selectedMethod == method.id ||
+                    (method.id == 'UPI' && selectedMethod.startsWith('UPI')) ||
+                    (method.id == 'Credit / Debit Card' &&
+                        selectedMethod.contains('Card')) ||
+                    (method.id == 'Demo Payment' &&
+                        selectedMethod.contains('Demo'));
+
                 return Container(
                   margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                   decoration: BoxDecoration(
@@ -126,6 +150,9 @@ class PaymentSelectionSheet extends ConsumerWidget {
                     onTap: () {
                       ref.read(selectedPaymentMethodProvider.notifier).state =
                           method.id;
+                      ref
+                          .read(paymentStateProvider.notifier)
+                          .selectMethod(method.enumMethod);
                       Navigator.of(context).pop();
                     },
                     borderRadius: BorderRadius.circular(AppRadius.md),
@@ -155,13 +182,46 @@ class PaymentSelectionSheet extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  method.title,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textPrimary,
-                                  ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      method.title,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 5,
+                                        vertical: 1,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: method.badge == 'DEMO'
+                                            ? const Color(0xFFEFF6FF)
+                                            : method.badge == 'TEST'
+                                                ? const Color(0xFFF3E8FF)
+                                                : const Color(0xFFDCFCE7),
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadius.xs,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        method.badge,
+                                        style: TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w800,
+                                          color: method.badge == 'DEMO'
+                                              ? const Color(0xFF1E40AF)
+                                              : method.badge == 'TEST'
+                                                  ? const Color(0xFF6B21A8)
+                                                  : const Color(0xFF166534),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
@@ -189,6 +249,38 @@ class PaymentSelectionSheet extends ConsumerWidget {
                   ),
                 );
               }),
+
+              // Security Guarantee Footer
+              const SizedBox(height: AppSpacing.xs),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.neutral100,
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.lock_outline_rounded,
+                      size: 14,
+                      color: AppColors.textTertiary,
+                    ),
+                    SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Zero-cost student sandbox. No real currency is ever transferred.',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
