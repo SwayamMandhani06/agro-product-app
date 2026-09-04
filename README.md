@@ -49,7 +49,7 @@ agro-product-app/
 | **Primary Color** | Forest Green `#0B3D2E` | Forest Green `--color-forest: #0B3D2E` |
 | **Accent Color** | Amber `#D97706` | Amber `--color-amber: #D97706` |
 | **Canvas Color** | Warm Canvas `#F9F7F2` | Warm Canvas `--color-canvas: #F9F7F2` |
-| **Testing & Quality**| `flutter test` (125/125 passed), `flutter analyze` (0 issues), `flutter build apk` (success) | `npm test` (24/24 passed), `npm run lint` (0 errors), `npm run build` (22 routes) |
+| **Testing & Quality**| `flutter test` (136/136 passed), `flutter analyze` (0 issues), `flutter build apk` (success) | `npm test` (38/38 passed), `npm run lint` (0 errors), `npm run build` (40 routes) |
 
 ---
 
@@ -334,8 +334,9 @@ Stage 7  — Payment Infrastructure, Secure Checkout & Transaction Experience �
 Stage 8  — Logistics Operations, Rural Intelligence & Consignment Tracking ✅ Complete (Branch: stage-8-logistics-operations)
 Stage 9  — Advanced Analytics, Farm Insights & Decision Intelligence ✅ Complete (Branch: stage-9-analytics-intelligence)
 ─────────────────────────────────────────────────────────────────────────────
-Stage 10 — Seller & Cooperative Marketplace Portal          ⬜ Planned
-Stage 11 — Admin & Platform Operations Governance Portal    ⬜ Planned
+Stage 10 — Seller & Cooperative Marketplace Portal          ✅ Complete (Branch: stage-10-marketplace-cooperative)
+Stage 11 — Admin Operations, Trust, Governance & Platform Control ✅ Complete (Branch: stage-11-admin-trust-operations)
+─────────────────────────────────────────────────────────────────────────────
 Stage 12 — Final Production Polish & Portfolio Deployment   ⬜ Planned
 ```
 
@@ -345,6 +346,7 @@ Stage 12 — Final Production Polish & Portfolio Deployment   ⬜ Planned
 
 Detailed architectural and design specifications are maintained in the [`docs/`](./docs) directory:
 
+- [**Role & Permission Model**](./docs/role-permission-model.md) — Multi-persona security architecture (Farmer, Seller, Coop Manager, Admin), 22 granular permissions, lifecycle state machines, append-only audit trail invariants, and risk rule engine.
 - [**Analytics Architecture & Decision Intelligence**](./docs/analytics-architecture.md) — Pure deterministic aggregation pipeline, explainable rules-based FarmInsightEngine, Bloomberg-lite workspace, and zero paid API guarantee.
 - [**Stage 9 Visual Quality Audit**](./docs/stage-9-visual-qa.md) — Comprehensive visual QA audit across Web `/insights` and Flutter mobile `FarmInsightsScreen`.
 - [**Logistics Architecture & Rural Delivery Operations**](./docs/logistics-architecture.md) — Consignment tracking lifecycle, DemoLogisticsProvider simulation, topological SVG route corridor, delivery attempt exception management, and courier API boundaries.
