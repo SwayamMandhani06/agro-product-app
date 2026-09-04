@@ -55,14 +55,17 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
 ];
 
+import { notificationRepository } from './data/notification-repository';
+
 interface NotificationsState {
   notifications: NotificationItem[];
   filter: 'all' | NotificationType;
   setFilter: (filter: 'all' | NotificationType) => void;
   markAsRead: (id: string) => void;
-  markAllAsRead: () => void;
+  markAllAsRead: (userId?: string) => void;
   unreadCount: () => number;
   filteredNotifications: () => NotificationItem[];
+  syncWithBackend: (userId?: string) => Promise<void>;
 }
 
 export const useNotificationsStore = create<NotificationsState>()(
@@ -79,12 +82,14 @@ export const useNotificationsStore = create<NotificationsState>()(
             n.id === id ? { ...n, isRead: true } : n
           ),
         });
+        notificationRepository.markAsRead(id);
       },
 
-      markAllAsRead: () => {
+      markAllAsRead: (userId = 'usr_default') => {
         set({
           notifications: get().notifications.map((n) => ({ ...n, isRead: true })),
         });
+        notificationRepository.markAllAsRead(userId);
       },
 
       unreadCount: () => {
@@ -95,6 +100,13 @@ export const useNotificationsStore = create<NotificationsState>()(
         const { notifications, filter } = get();
         if (filter === 'all') return notifications;
         return notifications.filter((n) => n.type === filter);
+      },
+
+      syncWithBackend: async (userId = 'usr_default') => {
+        const remote = await notificationRepository.getNotifications(userId);
+        if (remote.length > 0) {
+          set({ notifications: remote });
+        }
       },
     }),
     {

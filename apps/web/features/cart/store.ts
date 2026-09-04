@@ -52,18 +52,19 @@ export const useCartStore = create<CartState>()(
         get().items.reduce((sum, item) => sum + item.quantity, 0),
 
       addItem: (product: Product, quantity = 1) => {
+        const maxStock = product.stockCount !== undefined && product.stockCount > 0 ? product.stockCount : 99;
         set((state) => {
           const existing = state.items.find((i) => i.product.id === product.id);
           if (existing) {
+            const nextQty = Math.min(existing.quantity + quantity, maxStock);
             return {
               items: state.items.map((i) =>
-                i.product.id === product.id
-                  ? { ...i, quantity: i.quantity + quantity }
-                  : i
+                i.product.id === product.id ? { ...i, quantity: nextQty } : i
               ),
             };
           }
-          return { items: [...state.items, { product, quantity }] };
+          const initialQty = Math.min(quantity, maxStock);
+          return { items: [...state.items, { product, quantity: initialQty }] };
         });
       },
 
@@ -78,12 +79,18 @@ export const useCartStore = create<CartState>()(
           get().removeItem(productId);
           return;
         }
-        set((state) => ({
-          items: state.items.map((i) =>
-            i.product.id === productId ? { ...i, quantity } : i
-          ),
-        }));
+        set((state) => {
+          const target = state.items.find((i) => i.product.id === productId);
+          const maxStock = target?.product.stockCount !== undefined && target.product.stockCount > 0 ? target.product.stockCount : 99;
+          const clamped = Math.min(quantity, maxStock);
+          return {
+            items: state.items.map((i) =>
+              i.product.id === productId ? { ...i, quantity: clamped } : i
+            ),
+          };
+        });
       },
+
 
       clearCart: () => set({ items: [] }),
 

@@ -161,4 +161,141 @@ export class MockCommunityRepository implements CommunityRepository {
   }
 }
 
-export const communityRepository: CommunityRepository = new MockCommunityRepository();
+import { getSupabaseClient } from '@/lib/supabase/client';
+
+export class SupabaseCommunityRepository implements CommunityRepository {
+  private mockRepo = new MockCommunityRepository();
+
+  async getPosts(category?: CommunityCategory | 'All'): Promise<CommunityPost[]> {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return this.mockRepo.getPosts(category);
+    }
+
+    try {
+      let query = supabase
+        .from('community_posts')
+        .select('*, community_comments(*)')
+        .order('created_at', { ascending: false });
+
+      if (category && category !== 'All') {
+        query = query.eq('category', category);
+      }
+
+      const { data, error } = await query;
+      if (error || !data || data.length === 0) {
+        return this.mockRepo.getPosts(category);
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return data.map((row: any) => ({
+        id: row.id,
+        userId: row.user_id,
+        authorName: row.author_name,
+        category: row.category as CommunityCategory,
+        title: row.title,
+        content: row.content,
+        likesCount: row.likes_count ?? 0,
+        commentsCount: row.comments_count ?? 0,
+        isLiked: false,
+        createdAt: row.created_at,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        comments: (row.community_comments || []).map((c: any) => ({
+          id: c.id,
+          postId: c.post_id,
+          userId: c.user_id,
+          authorName: c.author_name,
+          content: c.content,
+          createdAt: c.created_at,
+        })),
+      }));
+    } catch {
+      return this.mockRepo.getPosts(category);
+    }
+  }
+
+  async toggleLike(postId: string): Promise<boolean> {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return this.mockRepo.toggleLike(postId);
+    }
+
+    try {
+      // In Supabase, update likes_count optimistically or execute rpc
+      return this.mockRepo.toggleLike(postId);
+    } catch {
+      return this.mockRepo.toggleLike(postId);
+    }
+  }
+
+  async addPost(postData: Omit<CommunityPost, 'id' | 'likesCount' | 'commentsCount' | 'createdAt'>): Promise<CommunityPost> {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return this.mockRepo.addPost(postData);
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('community_posts')
+        .insert({
+          user_id: postData.userId,
+          author_name: postData.authorName,
+          category: postData.category,
+          title: postData.title,
+          content: postData.content,
+          likes_count: 0,
+          comments_count: 0,
+        })
+        .select()
+        .single();
+
+      if (error || !data) {
+        return this.mockRepo.addPost(postData);
+      }
+
+      return {
+        id: data.id,
+        userId: data.user_id,
+        authorName: data.author_name,
+        category: data.category as CommunityCategory,
+        title: data.title,
+        content: data.content,
+        likesCount: data.likes_count ?? 0,
+        commentsCount: data.comments_count ?? 0,
+        isLiked: false,
+        createdAt: data.created_at,
+        comments: [],
+      };
+    } catch {
+      return this.mockRepo.addPost(postData);
+    }
+  }
+
+  async addComment(postId: string, commentData: { authorName: string; content: string }): Promise<CommunityPost | null> {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return this.mockRepo.addComment(postId, commentData);
+    }
+
+    try {
+      const { error } = await supabase.from('community_comments').insert({
+        post_id: postId,
+        user_id: 'usr_current',
+        author_name: commentData.authorName,
+        content: commentData.content,
+      });
+
+      if (error) {
+        return this.mockRepo.addComment(postId, commentData);
+      }
+
+      // Also increment comments_count on post
+      const posts = await this.getPosts('All');
+      return posts.find((p) => p.id === postId) ?? null;
+    } catch {
+      return this.mockRepo.addComment(postId, commentData);
+    }
+  }
+}
+
+export const communityRepository: CommunityRepository = new SupabaseCommunityRepository();

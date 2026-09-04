@@ -154,3 +154,13 @@ git merge --ff-only main
 git push origin develop
 ```
 From that point forward, all future feature branches must strictly branch from `develop`.
+
+---
+
+## 6. Stage 5 Delivery & Feature Branch
+
+- **Feature Branch**: `stage-5-backend-hardening` (branched cleanly from `develop`)
+- **Base Branch**: `develop`
+- **Compare URL**: [https://github.com/SwayamMandhani06/agro-product-app/compare/develop...stage-5-backend-hardening](https://github.com/SwayamMandhani06/agro-product-app/compare/develop...stage-5-backend-hardening)
+- **Direct PR Creation URL**: [https://github.com/SwayamMandhani06/agro-product-app/pull/new/stage-5-backend-hardening](https://github.com/SwayamMandhani06/agro-product-app/pull/new/stage-5-backend-hardening)
+- **Scope**: PostgreSQL RLS hardening, Web & Mobile resilient repositories (Wishlist, Notifications, Community, Reviews), data integrity safeguards, and Part 8 modern agrarian fintech homepage elevation.

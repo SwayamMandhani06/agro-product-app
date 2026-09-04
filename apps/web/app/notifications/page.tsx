@@ -91,7 +91,7 @@ export default function NotificationsPage() {
 
             {unreadCount > 0 && (
               <button
-                onClick={markAllAsRead}
+                onClick={() => markAllAsRead()}
                 className="btn-outline"
                 style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, padding: '7px 14px' }}
               >
@@ -99,6 +99,7 @@ export default function NotificationsPage() {
                 Mark all as read
               </button>
             )}
+
           </div>
         </div>
 

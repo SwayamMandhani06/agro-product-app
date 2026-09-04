@@ -56,12 +56,16 @@ export const useOrdersStore = create<OrdersState>()(
       },
 
       cancelOrder: (orderId: string) => {
+        const cancellable = ['placed', 'confirmed', 'processing'];
         set((state) => ({
           orders: state.orders.map((o) =>
-            o.id === orderId ? { ...o, status: 'cancelled' } : o
+            o.id === orderId && cancellable.includes(o.status)
+              ? { ...o, status: 'cancelled' }
+              : o
           ),
         }));
       },
+
 
       reorder: (orderId: string) => {
         const order = get().getOrderById(orderId);

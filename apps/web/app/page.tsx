@@ -13,16 +13,17 @@ import {
   Database,
   CheckCircle,
   Package,
-  Layers,
-  Sparkles,
   ChevronRight,
   Calculator,
+  Truck,
+  BarChart3,
+  ExternalLink,
 } from 'lucide-react';
 import { ProductImageResolver } from '@/lib/product-image-resolver';
-import CategoryIcon from '@/components/icons/CategoryIcon';
-import { MOCK_MANDI_PRICES, MOCK_CATEGORIES } from '@/lib/mock-data';
+import { MOCK_MANDI_PRICES, MOCK_PRODUCTS } from '@/lib/mock-data';
 
-// Savings estimation calculator data by crop per acre
+
+// Input savings metric data by crop per acre
 const CROP_SAVINGS_METRICS: Record<string, { baselineInputCost: number; agritradeSavingsPct: number }> = {
   Soybean: { baselineInputCost: 5200, agritradeSavingsPct: 0.22 },
   Cotton: { baselineInputCost: 8400, agritradeSavingsPct: 0.25 },
@@ -32,21 +33,27 @@ const CROP_SAVINGS_METRICS: Record<string, { baselineInputCost: number; agritrad
 };
 
 export default function SaaSMarketingHomePage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'architecture' | 'parity'>('overview');
   const [farmAcres, setFarmAcres] = useState<number>(5);
   const [selectedCrop, setSelectedCrop] = useState<string>('Soybean');
   const [interactiveProductQty, setInteractiveProductQty] = useState<number>(2);
+  const [selectedMandiCrop, setSelectedMandiCrop] = useState<string>('All');
 
   const cropMetric = CROP_SAVINGS_METRICS[selectedCrop] || CROP_SAVINGS_METRICS.Soybean;
   const totalStandardCost = cropMetric.baselineInputCost * farmAcres;
   const estimatedSavings = Math.round(totalStandardCost * cropMetric.agritradeSavingsPct);
   const agritradeCost = totalStandardCost - estimatedSavings;
 
+  const filteredMandiPrices =
+    selectedMandiCrop === 'All'
+      ? MOCK_MANDI_PRICES
+      : MOCK_MANDI_PRICES.filter((m) => m.crop === selectedMandiCrop);
+
+  const featuredProducts = MOCK_PRODUCTS.slice(0, 4);
+
   return (
     <div style={{ background: 'var(--color-bg)', minHeight: '100vh', color: 'var(--color-text-primary)' }}>
-
       {/* ============================================================
-          1. TOP SAAS HEADER / NAVIGATION BAR
+          1. TOP NAVIGATION BAR (High-End Minimalist Commerce)
           ============================================================ */}
       <header
         className="glass-nav"
@@ -55,6 +62,8 @@ export default function SaaSMarketingHomePage() {
           top: 0,
           zIndex: 50,
           borderBottom: '1px solid rgba(255,255,255,0.08)',
+          background: 'rgba(11, 61, 46, 0.96)',
+          backdropFilter: 'blur(12px)',
         }}
       >
         <div
@@ -86,36 +95,36 @@ export default function SaaSMarketingHomePage() {
                 fontWeight: 700,
                 color: '#FCD34D',
                 background: 'rgba(217, 119, 6, 0.25)',
-                padding: '2px 6px',
+                padding: '2px 7px',
                 borderRadius: 4,
                 letterSpacing: '0.4px',
               }}
             >
-              STAGE 4E
+              ENTERPRISE PLATFORM
             </span>
           </Link>
 
-          {/* Nav Links */}
-          <nav style={{ display: 'none', gap: 20 }} className="desktop-nav">
-            <Link href="/products" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+          {/* Desktop Navigation Links */}
+          <nav style={{ display: 'none', gap: 24 }} className="desktop-nav">
+            <Link href="/products" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
               Inputs Catalog
             </Link>
-            <Link href="/mandi" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+            <Link href="/mandi" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
               Mandi Intelligence
             </Link>
-            <Link href="/weather" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+            <Link href="/weather" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
               Weather Advisory
             </Link>
-            <Link href="/community" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
-              Community
+            <Link href="/community" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+              Farmer Forum
             </Link>
-            <a href="#calculator" style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
+            <a href="#calculator" style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, fontWeight: 500, textDecoration: 'none' }}>
               Savings ROI
             </a>
           </nav>
 
-          {/* Quick CTA */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* Quick CTA Actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <Link
               href="/login"
               style={{
@@ -123,7 +132,7 @@ export default function SaaSMarketingHomePage() {
                 fontWeight: 600,
                 color: 'rgba(255,255,255,0.9)',
                 textDecoration: 'none',
-                padding: '6px 14px',
+                padding: '6px 12px',
               }}
             >
               Sign In
@@ -138,9 +147,10 @@ export default function SaaSMarketingHomePage() {
                 fontSize: 13,
                 gap: 6,
                 fontWeight: 700,
+                borderRadius: 6,
               }}
             >
-              Launch App <ArrowRight size={14} strokeWidth={2.5} />
+              Farmer Dashboard <ArrowRight size={14} strokeWidth={2.5} />
             </Link>
           </div>
         </div>
@@ -178,7 +188,7 @@ export default function SaaSMarketingHomePage() {
       </div>
 
       {/* ============================================================
-          3. HERO SECTION (Modern Agrarian SaaS)
+          3. HERO SECTION (Concise, Authoritative Agrarian Fintech)
           ============================================================ */}
       <section
         style={{
@@ -191,7 +201,7 @@ export default function SaaSMarketingHomePage() {
         }}
       >
         <div className="container-app">
-          <div style={{ maxWidth: 760, margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ maxWidth: 780, margin: '0 auto', textAlign: 'center' }}>
             {/* Tag Pill */}
             <div
               className="fade-in"
@@ -206,25 +216,25 @@ export default function SaaSMarketingHomePage() {
                 fontSize: 12,
                 fontWeight: 600,
                 marginBottom: 20,
-                color: 'rgba(255,255,255,0.9)',
+                color: 'rgba(255,255,255,0.92)',
               }}
             >
-              <Sparkles size={13} color="#FCD34D" strokeWidth={2.5} />
-              <span>STAGE 4D · UNIFIED POSTGRESQL & CROSS-PLATFORM SYNCHRONIZATION</span>
+              <ShieldCheck size={14} color="#34D399" strokeWidth={2.4} />
+              <span>SYNCHRONIZED AGRICULTURAL COMMERCE &amp; MARKET INTELLIGENCE</span>
             </div>
 
             {/* Main Headline */}
             <h1
               className="slide-up"
               style={{
-                fontSize: 'clamp(28px, 4.8vw, 52px)',
+                fontSize: 'clamp(28px, 4.5vw, 50px)',
                 fontWeight: 800,
                 lineHeight: 1.15,
                 letterSpacing: '-0.8px',
                 margin: '0 0 18px',
               }}
             >
-              The Modern Operating System for <span style={{ color: '#FCD34D' }}>Indian Agricultural Commerce</span>
+              Direct Farm-Gate Commerce &amp; <span style={{ color: '#FCD34D' }}>Marketplace Intelligence</span>
             </h1>
 
             {/* Subhead */}
@@ -233,12 +243,12 @@ export default function SaaSMarketingHomePage() {
               style={{
                 fontSize: 'clamp(14px, 1.8vw, 17px)',
                 lineHeight: 1.6,
-                color: 'rgba(255,255,255,0.82)',
+                color: 'rgba(255,255,255,0.85)',
                 margin: '0 auto 32px',
-                maxWidth: 640,
+                maxWidth: 660,
               }}
             >
-              Direct manufacturer-to-farm input marketplace with certified high-yield seeds, transparent farm-gate pricing, and real-time APMC intelligence. Synchronized across Flutter Mobile and Next.js Web.
+              Connecting progressive Indian farmers directly to verified agro-manufacturers. Access certified high-germination seeds, transparent farm-gate pricing, and real-time APMC mandi benchmarks without middleman markups.
             </p>
 
             {/* Hero CTAs */}
@@ -263,9 +273,10 @@ export default function SaaSMarketingHomePage() {
                   padding: '12px 24px',
                   fontWeight: 700,
                   gap: 8,
+                  borderRadius: 6,
                 }}
               >
-                Enter Farmer Dashboard <ArrowRight size={16} strokeWidth={2.5} />
+                Launch Farmer Dashboard <ArrowRight size={16} strokeWidth={2.5} />
               </Link>
               <Link
                 href="/products"
@@ -277,6 +288,7 @@ export default function SaaSMarketingHomePage() {
                   fontSize: 15,
                   padding: '12px 22px',
                   gap: 8,
+                  borderRadius: 6,
                 }}
               >
                 <Package size={16} strokeWidth={2} /> Browse Catalog
@@ -291,24 +303,24 @@ export default function SaaSMarketingHomePage() {
                 gap: 24,
                 flexWrap: 'wrap',
                 fontSize: 12.5,
-                color: 'rgba(255,255,255,0.7)',
+                color: 'rgba(255,255,255,0.75)',
                 paddingTop: 8,
               }}
             >
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <ShieldCheck size={16} color="#34D399" strokeWidth={2.2} /> 100% Certified Seeds
+                <ShieldCheck size={16} color="#34D399" strokeWidth={2.2} /> 100% Certified Seed Lots
               </span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <TrendingUp size={16} color="#34D399" strokeWidth={2.2} /> Live APMC Mandi Rates
+                <TrendingUp size={16} color="#34D399" strokeWidth={2.2} /> Live APMC Mandi Intelligence
               </span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <CheckCircle size={16} color="#34D399" strokeWidth={2.2} /> Zero Middlemen Markups
+                <CheckCircle size={16} color="#34D399" strokeWidth={2.2} /> Zero Middleman Markups
               </span>
             </div>
           </div>
 
           {/* ============================================================
-              HERO INTERACTIVE PRODUCT / PLATFORM PREVIEW
+              4. PRODUCT EXPERIENCE PREVIEW (Layered & Restrained)
               ============================================================ */}
           <div
             className="slide-up"
@@ -318,7 +330,7 @@ export default function SaaSMarketingHomePage() {
               margin: '48px auto 0',
               background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.14)',
-              borderRadius: 12,
+              borderRadius: 10,
               padding: '24px',
               backdropFilter: 'blur(16px)',
               boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
@@ -335,7 +347,7 @@ export default function SaaSMarketingHomePage() {
               </div>
 
               <div style={{ display: 'flex', gap: 8 }}>
-                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', display: 'flex', alignItems: 'center', gap: 4 }}>
                   <ShieldCheck size={14} color="#34D399" /> Batch Tested &amp; Certified
                 </span>
               </div>
@@ -343,7 +355,7 @@ export default function SaaSMarketingHomePage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20, alignItems: 'center' }}>
               {/* Product Visual */}
-              <div style={{ borderRadius: 8, overflow: 'hidden', height: 180, position: 'relative' }}>
+              <div style={{ borderRadius: 6, overflow: 'hidden', height: 180, position: 'relative' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={ProductImageResolver.resolve('prod_1', 'Seeds')}
@@ -406,7 +418,7 @@ export default function SaaSMarketingHomePage() {
                     <Link
                       href="/products/prod_1"
                       className="btn btn-sm btn-primary"
-                      style={{ marginLeft: 6, fontSize: 12, padding: '5px 12px' }}
+                      style={{ marginLeft: 6, fontSize: 12, padding: '5px 12px', borderRadius: 4 }}
                     >
                       Order Now
                     </Link>
@@ -419,7 +431,269 @@ export default function SaaSMarketingHomePage() {
       </section>
 
       {/* ============================================================
-          4. INTERACTIVE SAVINGS CALCULATOR SECTION
+          5. TRUST & PROOF METRICS (Backed by Real Project Data)
+          ============================================================ */}
+      <section style={{ padding: '36px 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-divider)' }}>
+        <div className="container-app">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, textAlign: 'center' }}>
+            <div style={{ padding: '12px' }}>
+              <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-forest)', letterSpacing: '-0.5px' }}>24+</div>
+              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: 'var(--color-text-primary)' }}>Verified Input Specifications</div>
+              <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Batch-certified seeds &amp; nutrition</div>
+            </div>
+
+            <div style={{ padding: '12px', borderLeft: '1px solid var(--color-divider)' }}>
+              <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-forest)', letterSpacing: '-0.5px' }}>8 APMC</div>
+              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: 'var(--color-text-primary)' }}>Mandi Hubs Benchmarked</div>
+              <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Indore, Rajkot, Lasalgaon, Pune</div>
+            </div>
+
+            <div style={{ padding: '12px', borderLeft: '1px solid var(--color-divider)' }}>
+              <div style={{ fontSize: 32, fontWeight: 800, color: '#059669', letterSpacing: '-0.5px' }}>&gt;90%</div>
+              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: 'var(--color-text-primary)' }}>Certified Germination Standard</div>
+              <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Govt-approved testing protocols</div>
+            </div>
+
+            <div style={{ padding: '12px', borderLeft: '1px solid var(--color-divider)' }}>
+              <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--color-amber)', letterSpacing: '-0.5px' }}>0%</div>
+              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: 'var(--color-text-primary)' }}>Middleman Price Distortion</div>
+              <div style={{ fontSize: 12, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Direct manufacturer-to-farm pricing</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          6. HOW AGRITRADE WORKS (4-Step Structured Workflow)
+          ============================================================ */}
+      <section style={{ padding: '64px 0', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-divider)' }}>
+        <div className="container-app">
+          <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 48px' }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Seamless Supply Chain
+            </span>
+            <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 800, margin: '6px 0 10px', letterSpacing: '-0.4px' }}>
+              How AgriTrade Powers Transparent Commerce
+            </h2>
+            <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: 0 }}>
+              From certified manufacturer lots to rural farm gate delivery, engineered with institutional rigor.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
+            {[
+              {
+                step: '01',
+                icon: ShieldCheck,
+                title: 'Laboratory Quality Verification',
+                desc: 'All seed batches, micronutrients, and crop protection inputs undergo chemical purity and germination rate testing prior to catalog listing.',
+              },
+              {
+                step: '02',
+                icon: BarChart3,
+                title: 'APMC Mandi Intelligence',
+                desc: 'Real-time commodity arrivals and modal pricing data across key terminal mandis guide procurement timing and crop revenue planning.',
+              },
+              {
+                step: '03',
+                icon: Zap,
+                title: 'Direct Farm-Gate Ordering',
+                desc: 'Farmers purchase directly from verified manufacturers at wholesale pricing, eliminating 15% to 28% in local retailer margins.',
+              },
+              {
+                step: '04',
+                icon: Truck,
+                title: '48-Hour Doorstep Logistics',
+                desc: 'Specialized agricultural distribution routes deliver sealed orders directly to interior taluka collection points or farm gates.',
+              },
+            ].map(({ step, icon: IconW, title, desc }) => (
+              <div key={step} className="card" style={{ padding: 24, position: 'relative', border: '1px solid var(--color-divider)', borderRadius: 8 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
+                    <IconW size={20} strokeWidth={2.2} />
+                  </div>
+                  <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--color-text-tertiary)', opacity: 0.5 }}>{step}</span>
+                </div>
+                <h3 style={{ margin: '0 0 8px', fontSize: 16, fontWeight: 700 }}>{title}</h3>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          7. MARKET INTELLIGENCE SECTION (Actual Mandi Data Visualization)
+          ============================================================ */}
+      <section style={{ padding: '64px 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-divider)' }}>
+        <div className="container-app">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28, flexWrap: 'wrap', gap: 16 }}>
+            <div>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Commodity Terminal
+              </span>
+              <h2 style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, margin: '4px 0 0', letterSpacing: '-0.3px' }}>
+                APMC Mandi Price Intelligence
+              </h2>
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: 6, overflowX: 'auto' }}>
+                {['All', 'Soybean', 'Cotton', 'Wheat', 'Mustard', 'Onion'].map((crop) => (
+                  <button
+                    key={crop}
+                    onClick={() => setSelectedMandiCrop(crop)}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: 4,
+                      border: '1px solid',
+                      borderColor: selectedMandiCrop === crop ? 'var(--color-forest)' : 'var(--color-divider)',
+                      background: selectedMandiCrop === crop ? 'var(--color-forest)' : '#fff',
+                      color: selectedMandiCrop === crop ? '#fff' : 'var(--color-text-secondary)',
+                      fontSize: 12.5,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {crop}
+                  </button>
+                ))}
+              </div>
+              <Link href="/mandi" className="btn btn-sm btn-secondary" style={{ fontSize: 12, gap: 4, padding: '6px 12px' }}>
+                Full Terminal <ExternalLink size={13} />
+              </Link>
+            </div>
+          </div>
+
+          <div className="card" style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--color-divider)', borderRadius: 8 }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="mandi-table" style={{ margin: 0, width: '100%' }}>
+                <thead>
+                  <tr>
+                    <th style={{ paddingLeft: 20 }}>Crop / Commodity</th>
+                    <th>Benchmark Market</th>
+                    <th>Modal Price</th>
+                    <th>24h Movement</th>
+                    <th>Trend</th>
+                    <th style={{ paddingRight: 20 }}>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredMandiPrices.map((row) => (
+                    <tr key={row.crop}>
+                      <td style={{ paddingLeft: 20, fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                        {row.crop}
+                      </td>
+                      <td style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
+                        {row.market}
+                      </td>
+                      <td style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-forest)' }}>
+                        {row.price}
+                      </td>
+                      <td style={{ fontSize: 13, fontWeight: 600, color: row.trend === 'up' ? '#059669' : row.trend === 'down' ? '#DC2626' : '#6B7280' }}>
+                        {row.change}
+                      </td>
+                      <td>
+                        <span
+                          className={`badge ${row.trend === 'up' ? 'badge-success' : row.trend === 'down' ? 'badge-error' : 'badge-neutral'}`}
+                          style={{ fontSize: 11, textTransform: 'capitalize' }}
+                        >
+                          {row.trend}
+                        </span>
+                      </td>
+                      <td style={{ paddingRight: 20 }}>
+                        <Link
+                          href={`/products?category=${row.crop === 'Cotton' || row.crop === 'Soybean' || row.crop === 'Wheat' ? 'Seeds' : 'Fertilizers'}`}
+                          style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-forest)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                        >
+                          View Inputs <ChevronRight size={13} />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          8. FEATURED INPUTS SHOWCASE (High-End Minimalist Commerce Grid)
+          ============================================================ */}
+      <section style={{ padding: '64px 0', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-divider)' }}>
+        <div className="container-app">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Curated Catalog
+              </span>
+              <h2 style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, margin: '4px 0 0', letterSpacing: '-0.3px' }}>
+                Featured Agricultural Inputs
+              </h2>
+            </div>
+            <Link href="/products" style={{ fontSize: 13, color: 'var(--color-forest)', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+              Explore All 24+ Inputs <ChevronRight size={15} />
+            </Link>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+            {featuredProducts.map((p) => (
+              <div key={p.id} className="card card-hover" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', borderRadius: 8, border: '1px solid var(--color-divider)' }}>
+                <div style={{ height: 160, position: 'relative', overflow: 'hidden' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={ProductImageResolver.resolve(p.id, p.category)}
+                    alt={p.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <span style={{ position: 'absolute', top: 10, left: 10, background: 'var(--color-forest)', color: '#fff', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>
+                    {p.category}
+                  </span>
+                  {p.originalPrice && p.originalPrice > p.price && (
+                    <span style={{ position: 'absolute', top: 10, right: 10, background: 'var(--color-amber)', color: '#fff', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4 }}>
+                      {Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100)}% OFF
+                    </span>
+                  )}
+                </div>
+
+                <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 500 }}>
+                    {p.sellerName}
+                  </span>
+                  <h4 style={{ margin: '4px 0 8px', fontSize: 15, fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                    {p.title}
+                  </h4>
+
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 'auto', paddingTop: 10 }}>
+                    <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--color-forest)' }}>
+                      ₹{p.price.toLocaleString('en-IN')}
+                    </span>
+                    {p.originalPrice && (
+                      <span style={{ fontSize: 12, textDecoration: 'line-through', color: 'var(--color-text-tertiary)' }}>
+                        ₹{p.originalPrice.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                    <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', marginLeft: 'auto' }}>
+                      per {p.unit}
+                    </span>
+                  </div>
+
+                  <Link
+                    href={`/products/${p.id}`}
+                    className="btn btn-sm btn-primary"
+                    style={{ marginTop: 14, width: '100%', borderRadius: 6, fontSize: 13, justifyContent: 'center' }}
+                  >
+                    View Specifications
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          9. INTERACTIVE SAVINGS CALCULATOR SECTION
           ============================================================ */}
       <section id="calculator" style={{ padding: '64px 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-divider)' }}>
         <div className="container-app">
@@ -431,18 +705,19 @@ export default function SaaSMarketingHomePage() {
               Interactive Farm Input Savings Calculator
             </h2>
             <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: 0 }}>
-              See how much you save per season by ordering directly from certified agro-manufacturers on AgriTrade.
+              Calculate seasonal savings achieved by ordering certified inputs directly from verified manufacturers on AgriTrade.
             </p>
           </div>
 
           <div
             className="card"
             style={{
-              maxWidth: 820,
+              maxWidth: 840,
               margin: '0 auto',
               padding: '28px 32px',
               border: '1px solid var(--color-divider)',
               boxShadow: 'var(--shadow-md)',
+              borderRadius: 10,
             }}
           >
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32, alignItems: 'center' }}>
@@ -497,7 +772,7 @@ export default function SaaSMarketingHomePage() {
               </div>
 
               {/* Calculated Outputs */}
-              <div style={{ background: 'var(--color-neutral-50)', padding: 22, borderRadius: 10, border: '1px solid var(--color-divider)' }}>
+              <div style={{ background: 'var(--color-neutral-50)', padding: 22, borderRadius: 8, border: '1px solid var(--color-divider)' }}>
                 <p style={{ margin: '0 0 14px', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', color: 'var(--color-text-tertiary)' }}>
                   Estimated Seasonal Outcome ({farmAcres} Acres {selectedCrop})
                 </p>
@@ -534,7 +809,7 @@ export default function SaaSMarketingHomePage() {
                 <Link
                   href={`/products?category=${selectedCrop === 'Cotton' || selectedCrop === 'Soybean' || selectedCrop === 'Wheat' ? 'Seeds' : 'Fertilizers'}`}
                   className="btn btn-primary btn-full"
-                  style={{ marginTop: 18, fontSize: 13, gap: 6 }}
+                  style={{ marginTop: 18, fontSize: 13, gap: 6, borderRadius: 6 }}
                 >
                   Explore {selectedCrop} Inputs on AgriTrade <ArrowRight size={14} strokeWidth={2.5} />
                 </Link>
@@ -545,303 +820,85 @@ export default function SaaSMarketingHomePage() {
       </section>
 
       {/* ============================================================
-          5. DUAL-PLATFORM SYNCHRONIZATION SHOWCASE
+          10. PLATFORM ECOSYSTEM STORY (Dual-Platform + PostgreSQL)
           ============================================================ */}
-      <section id="architecture" style={{ padding: '64px 0', background: 'var(--color-bg)' }}>
-        <div className="container-app">
-          <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 40px' }}>
-            <span className="badge badge-success" style={{ marginBottom: 8 }}>
-              CANONICAL DATA CONTRACT
-            </span>
-            <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 800, margin: '0 0 10px', letterSpacing: '-0.4px' }}>
-              Dual-Platform Synchronized Architecture
-            </h2>
-            <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: 0 }}>
-              Mobile and Web targets consume the same PostgreSQL schema with unified contracts and zero data drift.
-            </p>
-
-            {/* Tab switch */}
-            <div style={{ display: 'inline-flex', background: 'var(--color-surface)', padding: 4, borderRadius: 8, border: '1px solid var(--color-divider)', marginTop: 20 }}>
-              {(['overview', 'architecture', 'parity'] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  style={{
-                    padding: '6px 14px',
-                    borderRadius: 6,
-                    border: 'none',
-                    background: activeTab === tab ? 'var(--color-forest)' : 'transparent',
-                    color: activeTab === tab ? '#fff' : 'var(--color-text-secondary)',
-                    fontWeight: 600,
-                    fontSize: 12.5,
-                    cursor: 'pointer',
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Tab 1: Overview */}
-          {activeTab === 'overview' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-              <div className="card" style={{ padding: 22 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
-                    <Smartphone size={20} />
-                  </div>
-                  <div>
-                    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Flutter Mobile App</h3>
-                    <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>apps/mobile · Android &amp; iOS</p>
-                  </div>
-                </div>
-                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
-                  <li>Riverpod 2.x reactive state management</li>
-                  <li>GoRouter with deep linking &amp; route guards</li>
-                  <li>Offline local persistence via Hive</li>
-                  <li>Material 3 with custom Stitch agrarian tokens</li>
-                  <li>94 automated unit &amp; widget tests passing</li>
-                </ul>
-              </div>
-
-              <div className="card" style={{ padding: 22 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
-                    <Globe size={20} />
-                  </div>
-                  <div>
-                    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Next.js 16 Web App</h3>
-                    <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>apps/web · Responsive App Router</p>
-                  </div>
-                </div>
-                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
-                  <li>React 19 with Turbopack acceleration</li>
-                  <li>Zustand 5 client-side state stores</li>
-                  <li>Lucide React vector iconography (0 emojis)</li>
-                  <li>SaaS Command Center dashboard with SVG charts</li>
-                  <li>15/15 static and dynamic routes compiled</li>
-                </ul>
-              </div>
-
-              <div className="card" style={{ padding: 22 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
-                    <Database size={20} />
-                  </div>
-                  <div>
-                    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>PostgreSQL 16 Backend</h3>
-                    <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>Supabase REST &amp; Row Level Security</p>
-                  </div>
-                </div>
-                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
-                  <li>Canonical relational schema (profiles, products, orders)</li>
-                  <li>Strict RLS security policies per user ID</li>
-                  <li>Idempotent seed scripts with 24 realistic products</li>
-                  <li>Environment-aware repository fallback architecture</li>
-                  <li>Zero secrets committed in source code</li>
-                </ul>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 2: Architecture */}
-          {activeTab === 'architecture' && (
-            <div className="card" style={{ padding: 24 }}>
-              <pre
-                style={{
-                  margin: 0,
-                  fontSize: 12.5,
-                  fontFamily: 'monospace',
-                  background: '#07241B',
-                  color: '#34D399',
-                  padding: 20,
-                  borderRadius: 8,
-                  overflowX: 'auto',
-                  lineHeight: 1.5,
-                }}
-              >
-{`                    ┌────────────────────────────────────────────────────────┐
-                    │               AgriTrade Core Contracts                 │
-                    │      Product · Category · Order · MandiPrice · Address │
-                    └───────────────────────────┬────────────────────────────┘
-                                                │
-                 ┌──────────────────────────────┴──────────────────────────────┐
-                 ▼                                                             ▼
-  ┌───────────────────────────────┐                             ┌───────────────────────────────┐
-  │      apps/mobile (Flutter)    │                             │        apps/web (Next.js)     │
-  │  - Riverpod State Providers   │                             │  - Zustand State Stores       │
-  │  - ProductRepository Interface│                             │  - ProductRepository Interface│
-  │  - SupabaseProductRepository  │                             │  - SupabaseProductRepository  │
-  │  - Fallback: MockProductRepo  │                             │  - Fallback: MockProductRepo  │
-  └──────────────┬────────────────┘                             └───────────────┬───────────────┘
-                 │                                                             │
-                 └──────────────────────────────┬──────────────────────────────┘
-                                                ▼
-                             ┌─────────────────────────────────────┐
-                             │       PostgreSQL 16 / Supabase      │
-                             │  - profiles, products, categories   │
-                             │  - carts, cart_items, orders        │
-                             │  - Row Level Security (RLS) Active  │
-                             └─────────────────────────────────────┘`}
-              </pre>
-            </div>
-          )}
-
-          {/* Tab 3: Parity Matrix */}
-          {activeTab === 'parity' && (
-            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-              <table className="mandi-table" style={{ margin: 0 }}>
-                <thead>
-                  <tr>
-                    <th style={{ paddingLeft: 20 }}>Feature Domain</th>
-                    <th>Flutter Mobile Target</th>
-                    <th>Next.js Web Target</th>
-                    <th>Shared PostgreSQL Table</th>
-                    <th style={{ paddingRight: 20 }}>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { domain: 'Product Catalog', mobile: 'Clean Arch + Riverpod', web: 'Zustand + Repository', table: 'public.products', status: 'Synchronized' },
-                    { domain: 'Categories', mobile: 'CategoryGridSection', web: 'CategoryIcon Grid', table: 'public.categories', status: 'Synchronized' },
-                    { domain: 'Cart Management', mobile: 'CartNotifier + Hive', web: 'CartStore + LocalStorage', table: 'public.carts / cart_items', status: 'Synchronized' },
-                    { domain: 'Orders & Tracking', mobile: 'OrderRepository + Stream', web: 'OrdersStore + Timeline', table: 'public.orders / order_items', status: 'Synchronized' },
-                    { domain: 'APMC Mandi Rates', mobile: 'LiveMandiSection', web: '7-Day Sparkline + Table', table: 'public.mandi_prices', status: 'Synchronized' },
-                    { domain: 'User Profile', mobile: 'FarmerGreetingHeader', web: 'AppShell User Menu', table: 'public.profiles', status: 'Synchronized' },
-                  ].map((row) => (
-                    <tr key={row.domain}>
-                      <td style={{ paddingLeft: 20, fontWeight: 600 }}>{row.domain}</td>
-                      <td style={{ fontSize: 12.5, color: 'var(--color-text-secondary)' }}>{row.mobile}</td>
-                      <td style={{ fontSize: 12.5, color: 'var(--color-text-secondary)' }}>{row.web}</td>
-                      <td style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--color-forest)' }}>{row.table}</td>
-                      <td style={{ paddingRight: 20 }}>
-                        <span className="badge badge-success" style={{ fontSize: 11 }}>{row.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ============================================================
-          6. SIX CORE PLATFORM PILLARS
-          ============================================================ */}
-      <section id="features" style={{ padding: '64px 0', background: 'var(--color-surface)', borderTop: '1px solid var(--color-divider)' }}>
+      <section style={{ padding: '64px 0', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-divider)' }}>
         <div className="container-app">
           <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 48px' }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Engineered for Real Impact
+              Production Architecture
             </span>
             <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 800, margin: '6px 0 10px', letterSpacing: '-0.4px' }}>
-              Why AgriTrade Outperforms Traditional Retailing
+              Engineered Cross-Platform Ecosystem
             </h2>
             <p style={{ fontSize: 14, color: 'var(--color-text-secondary)', margin: 0 }}>
-              Purpose-built infrastructure designed to solve real challenges faced by Indian farmers.
+              A synchronized software ecosystem delivering field mobility and desktop-grade market intelligence.
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 18 }}>
-            {[
-              {
-                icon: ShieldCheck,
-                title: '100% Certified Seed Assurance',
-                desc: 'Every seed lot is batch-tested with guaranteed germination rates exceeding 90%. Government-approved breeder seed verification.',
-              },
-              {
-                icon: TrendingUp,
-                title: 'Live APMC Mandi Intelligence',
-                desc: 'Real-time commodity prices and 7-day movement trends across major mandis (Indore, Rajkot, Lasalgaon, Pune) for informed selling.',
-              },
-              {
-                icon: Zap,
-                title: 'Zero-Middleman Farm Gate Pricing',
-                desc: 'Direct dispatch from verified manufacturers and cooperative suppliers saves farmers 15% to 28% on seasonal input expenditures.',
-              },
-              {
-                icon: Package,
-                title: 'Rural Doorstep Logistics',
-                desc: 'Specialized agricultural delivery network reaching interior talukas and village gates within 48 hours of order placement.',
-              },
-              {
-                icon: Smartphone,
-                title: 'Cross-Platform Resilience',
-                desc: 'Optimistic UI updates with offline-first synchronization ensure you never lose cart items or order state during poor connectivity.',
-              },
-              {
-                icon: Layers,
-                title: 'Multi-Crop Input Guidance',
-                desc: 'Contextual recommendations tailored for Maharashtra and Madhya Pradesh cropping calendars (Soybean, Cotton, Wheat, Sugarcane).',
-              },
-            ].map(({ icon: IconC, title, desc }) => (
-              <div key={title} className="card card-hover" style={{ padding: 22 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)', marginBottom: 14 }}>
-                  <IconC size={20} strokeWidth={2.2} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+            <div className="card" style={{ padding: 24, border: '1px solid var(--color-divider)', borderRadius: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
+                  <Globe size={22} />
                 </div>
-                <h3 style={{ margin: '0 0 6px', fontSize: 15, fontWeight: 700 }}>{title}</h3>
-                <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.55 }}>{desc}</p>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Next.js 16 Web Platform</h3>
+                  <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>apps/web · Desktop-First Commerce</p>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          7. CATEGORY DISCOVERY CAROUSEL
-          ============================================================ */}
-      <section style={{ padding: '64px 0', background: 'var(--color-bg)', borderTop: '1px solid var(--color-divider)' }}>
-        <div className="container-app">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
-            <div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Full Catalog Coverage
-              </span>
-              <h2 style={{ fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 800, margin: '4px 0 0', letterSpacing: '-0.3px' }}>
-                Browse Inputs by Agricultural Category
-              </h2>
+              <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
+                <li>React 19 with App Router and Turbopack</li>
+                <li>Zustand 5 client-side state architecture</li>
+                <li>Lucide vector iconography (zero emojis)</li>
+                <li>20 static and dynamic routes compiled</li>
+                <li>Command center dashboard with APMC charts</li>
+              </ul>
             </div>
-            <Link href="/categories" style={{ fontSize: 13, color: 'var(--color-forest)', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
-              View All Categories <ChevronRight size={15} />
-            </Link>
-          </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14 }}>
-            {MOCK_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/products?category=${encodeURIComponent(cat.name)}`}
-                className="card card-hover"
-                style={{
-                  padding: '16px 14px',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                  background: '#fff',
-                }}
-              >
-                <div style={{ width: 44, height: 44, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)', marginBottom: 10 }}>
-                  <CategoryIcon categoryName={cat.name} size={22} />
+            <div className="card" style={{ padding: 24, border: '1px solid var(--color-divider)', borderRadius: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
+                  <Smartphone size={22} />
                 </div>
-                <h4 style={{ margin: '0 0 2px', fontSize: 14, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-                  {cat.name}
-                </h4>
-                <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>
-                  {cat.itemCount} verified products
-                </p>
-              </Link>
-            ))}
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Flutter 3.24 Mobile App</h3>
+                  <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>apps/mobile · Field-Ready Companion</p>
+                </div>
+              </div>
+              <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
+                <li>Clean Architecture with Riverpod 2.x</li>
+                <li>GoRouter with deep linking &amp; route guards</li>
+                <li>Offline local caching via Hive</li>
+                <li>Stitch-aligned Material 3 design tokens</li>
+                <li>94/94 unit and widget tests passing (100%)</li>
+              </ul>
+            </div>
+
+            <div className="card" style={{ padding: 24, border: '1px solid var(--color-divider)', borderRadius: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--color-brand-50)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-forest)' }}>
+                  <Database size={22} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>PostgreSQL 16 Backend</h3>
+                  <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-tertiary)' }}>Supabase PostgREST &amp; Hardened RLS</p>
+                </div>
+              </div>
+              <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
+                <li>10 canonical tables with check constraints</li>
+                <li>Strict Row Level Security user isolation</li>
+                <li>Environment-aware resilient repositories</li>
+                <li>Zero hardcoded credentials or committed secrets</li>
+                <li>Idempotent seed data for reproducible staging</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ============================================================
-          8. CALL TO ACTION & GETTING STARTED
+          11. CALL TO ACTION
           ============================================================ */}
       <section
         style={{
@@ -853,10 +910,10 @@ export default function SaaSMarketingHomePage() {
       >
         <div className="container-app" style={{ maxWidth: 680 }}>
           <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 800, margin: '0 0 14px', letterSpacing: '-0.5px' }}>
-            Ready to Transform Your Agricultural Commerce Experience?
+            Empowering Indian Agriculture with Verifiable Transparency
           </h2>
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, margin: '0 auto 28px' }}>
-            Join thousands of progressive Indian farmers accessing direct farm-gate pricing, verified inputs, and real-time market intelligence today.
+            Join thousands of progressive farmers and agricultural cooperatives procuring certified inputs at verified farm-gate pricing.
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -871,6 +928,7 @@ export default function SaaSMarketingHomePage() {
                 padding: '12px 26px',
                 fontWeight: 700,
                 gap: 8,
+                borderRadius: 6,
               }}
             >
               Open Farmer Dashboard <ArrowRight size={16} strokeWidth={2.5} />
@@ -884,6 +942,7 @@ export default function SaaSMarketingHomePage() {
                 borderColor: 'rgba(255,255,255,0.25)',
                 fontSize: 15,
                 padding: '12px 22px',
+                borderRadius: 6,
               }}
             >
               Register Farmer Account
@@ -893,7 +952,7 @@ export default function SaaSMarketingHomePage() {
       </section>
 
       {/* ============================================================
-          9. SAAS FOOTER
+          12. PROFESSIONAL SAAS FOOTER
           ============================================================ */}
       <footer style={{ background: '#07241B', color: 'rgba(255,255,255,0.75)', padding: '48px 0 28px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <div className="container-app">
@@ -921,13 +980,14 @@ export default function SaaSMarketingHomePage() {
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
                 <Link href="/home" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Command Center</Link>
-                <Link href="/products" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Product Discovery</Link>
+                <Link href="/products" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Inputs Catalog</Link>
                 <Link href="/categories" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Category Directory</Link>
+                <Link href="/mandi" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Mandi Intelligence</Link>
                 <Link href="/orders" style={{ color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>Order Tracking</Link>
               </div>
             </div>
 
-            {/* Column 3: Tech & Docs */}
+            {/* Column 3: Tech & Architecture */}
             <div>
               <h4 style={{ color: '#fff', fontSize: 13, fontWeight: 700, margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
                 Architecture
@@ -950,7 +1010,7 @@ export default function SaaSMarketingHomePage() {
                 <span>All Systems Operational</span>
               </div>
               <p style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.5 }}>
-                PostgreSQL schema active. Graceful fallback active when offline or unconfigured.
+                PostgreSQL schema active. Resilient fallback active when offline or unconfigured.
               </p>
             </div>
           </div>

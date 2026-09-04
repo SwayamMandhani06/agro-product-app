@@ -137,13 +137,26 @@ export class SupabaseReviewRepository implements ReviewRepository {
   }
 
   async addReview(reviewData: Omit<ProductReview, 'id' | 'createdAt'>): Promise<{ success: boolean; review?: ProductReview; error?: string }> {
+    if (reviewData.rating < 1.0 || reviewData.rating > 5.0) {
+      return { success: false, error: 'Rating must be between 1.0 and 5.0 stars.' };
+    }
+    if (!reviewData.title || reviewData.title.trim().length === 0) {
+      return { success: false, error: 'Review title cannot be empty.' };
+    }
+    if (!reviewData.comment || reviewData.comment.trim().length === 0) {
+      return { success: false, error: 'Review comment cannot be empty.' };
+    }
+
     const newReview: ProductReview = {
       ...reviewData,
+      title: reviewData.title.trim(),
+      comment: reviewData.comment.trim(),
       id: `rev_${Date.now()}`,
       createdAt: new Date().toISOString(),
     };
 
     const supabase = getSupabaseClient();
+
     if (supabase) {
       try {
         const { error } = await supabase.from('reviews').insert({
