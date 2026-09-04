@@ -109,3 +109,19 @@ Clients maintain an explicit, observable connection lifecycle state machine:
    - Web & Mobile only hold the public Anonymous API Key (`SUPABASE_ANON_KEY`), with zero access to the service role key.
 3. **Optimistic Rollback**:
    - All state mutations (wishlist toggle, notification read, community upvotes) update the UI optimistically within 16ms, verify the server response, and revert state with a subtle error message if rejected.
+
+---
+
+## 6. Stage 11 Admin Governance Realtime Channels
+
+To enable responsive operational control without page polling, administrators subscribe to 4 dedicated governance topics:
+
+| Channel Topic | Filter | Event | Payload | Client Action |
+|---|---|---|---|---|
+| `admin:verifications` | `table=seller_verifications` | `INSERT`, `UPDATE` | `SellerVerification` | Increment pending queue counter; update seller badge |
+| `admin:moderation` | `table=product_moderation` | `INSERT`, `UPDATE` | `ProductModeration` | Refresh catalog moderation queue badge |
+| `admin:disputes` | `table=disputes` | `INSERT`, `UPDATE` | `Dispute` | Surface new buyer claims; update SLA countdown timer |
+| `admin:risks` | `table=marketplace_risk_signals` | `INSERT`, `UPDATE` | `MarketplaceRiskSignal` | Trigger critical banner toast if severity is `critical` |
+
+All admin channels verify that the connecting session has role `admin` before granting subscription access.
+

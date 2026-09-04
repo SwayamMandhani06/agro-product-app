@@ -154,3 +154,38 @@ CREATE TABLE public.mandi_prices (
    - **Offline Fallback**: Both platforms automatically and gracefully fall back to mock data if credentials are not configured or network requests fail.
    - **SaaS Marketing Portal**: Live interactive marketing landing page deployed on Next.js root route (`/`).
 
+---
+
+## 5. Stage 11: Governance, Trust & Platform Operations Architecture
+
+Stage 11 introduces comprehensive marketplace control, dispute mediation, compliance moderation, and immutable auditability:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│               AgriTrade Platform Governance Subsystem                  │
+├────────────────────────────────────────────────────────────────────────┤
+│ 1. Seller Verification Engine                                          │
+│    - APMC/GSTIN validation & credential checking                       │
+│    - State machine: draft -> submitted -> under_review -> verified     │
+│    - Risk flags (missing license, mismatched state, counterfeit)      │
+│                                                                        │
+│ 2. Product Catalog Moderation                                          │
+│    - Quality check & chemical safety validation (CIB&RC)               │
+│    - State machine: draft -> pending_review -> approved | rejected     │
+│                                                                        │
+│ 3. SafeHarvest Buyer Protection & Dispute Desk                         │
+│    - Order-linked claims (damaged product, SLA delay, wrong batch)     │
+│    - State machine: open -> under_review -> awaiting_user -> resolved  │
+│    - Integrated message timeline between Farmer, Seller, Admin         │
+│                                                                        │
+│ 4. Immutable Audit Trail                                               │
+│    - Append-only event store in public.audit_logs                      │
+│    - Actor, entityType, action, timestamp, and metadata payload        │
+│                                                                        │
+│ 5. Automated Marketplace Risk Signals                                  │
+│    - Real-time rule engine for dispute spikes & unauthorized inputs    │
+│    - Severity classification (Critical / High / Medium / Low)          │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+

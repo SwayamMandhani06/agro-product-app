@@ -144,4 +144,34 @@ This document maps all design system primitives between the **Next.js Web Applic
 | **Recently Inspected Inputs** | `recently-viewed-store.ts` (Zustand + local storage), horizontal carousel in `/products/[id]` | `recently_viewed_provider.dart` (Riverpod), horizontal carousel in `ProductDetailsScreen` | Verified 100% |
 | **PostgreSQL 16 Schema (Stage 4E)** | `wishlists`, `reviews`, `notifications`, `community_posts`, `community_comments` with RLS policies | Same PostgreSQL tables & migration scripts (`supabase/migrations/20260904000000_stage_4e_schema.sql`) | Verified 100% |
 
+---
+
+## 10. Stage 10 Seller & Cooperative Marketplace Portal Parity Matrix
+
+| Feature Domain | Web Implementation (`apps/web`) | Mobile Implementation (`apps/mobile`) | Parity Status |
+|---|---|---|---|
+| **Seller Portal & Dashboard** | `/seller/dashboard`, `SellerPortalNav`, `RevenueTrendChart`, KPI cards | `SellerScreen` (Overview tab), revenue charts, fulfillment counters | Verified 100% |
+| **Inventory & Movements** | `/seller/inventory`, stock health badges, movement log | `SellerScreen` (Inventory tab), filter chips, stock adjustment sheet | Verified 100% |
+| **Seller Order Fulfillment** | `/seller/orders`, status progression (pack, dispatch, deliver) | `SellerScreen` (Orders tab), barcode/dispatch actions | Verified 100% |
+| **Payouts & Settlement Ledger** | `/seller/payouts`, net disbursement, 4.5% commission breakdown | `SellerScreen` (Payouts tab), bank reference reconciliation | Verified 100% |
+| **Cooperative Campaigns** | `/cooperative/campaigns`, collective volume tracking, savings calculators | `SellerScreen` (Campaigns tab), threshold progress bars | Verified 100% |
+| **PostgreSQL Schema (Stage 10)** | `seller_profiles`, `seller_inventory`, `seller_orders`, `seller_payouts`, `cooperatives`, `cooperative_campaigns` | Migration `20260905000000_stage_10_marketplace_cooperative.sql` | Verified 100% |
+
+---
+
+## 11. Stage 11 Admin Operations, Trust & Governance Parity Matrix
+
+| Governance Domain | Web Implementation (`apps/web`) | Mobile Implementation (`apps/mobile`) | Parity Status |
+|---|---|---|---|
+| **Platform Control Dashboard** | `/admin/dashboard`, `AdminPortalNav`, operational alerts, KPI pulse | `AdminScreen` (Overview tab), KPI grid, alert stream | Verified 100% |
+| **Seller Verification Queue** | `/admin/sellers`, `/admin/sellers/[id]`, dossier inspection, verify/reject/suspend | `AdminScreen` (Sellers tab), status filter chips, rejection dialog | Verified 100% |
+| **Product Moderation Desk** | `/admin/moderation`, quality check, regulatory compliance, approve/reject | `AdminScreen` (Moderation tab), compliance checks, reject modal | Verified 100% |
+| **Buyer Protection & Disputes** | `/admin/disputes`, `/admin/disputes/[id]`, dispute mediation, timeline messages | `AdminScreen` (Disputes tab), dispute cards, resolution rulings | Verified 100% |
+| **User Support Desk** | `/support`, `/support/[id]`, claim filing, policy banner, claimant reply thread | Integrated via Buyer Protection claims & order-linked support | Verified 100% |
+| **Audit Trail & Event Logging** | `/admin/audit`, append-only audit stream, expandable metadata payloads | `AdminRepository.getAuditLogs()`, auto-logging on all state transitions | Verified 100% |
+| **Marketplace Risk Engine** | `RiskSignalBanner`, automated severity ranking, mark resolved actions | Quick resolve banners, severity pills, auto-audit resolution | Verified 100% |
+| **Role-Permission System** | `features/admin/domain/permissions.ts`, `hasPermission()` matrix | `features/admin/domain/permissions.dart`, `MobilePermissionMatrix` | Verified 100% |
+| **PostgreSQL Schema (Stage 11)** | `seller_verifications`, `product_moderation`, `disputes`, `dispute_messages`, `audit_logs`, `marketplace_risk_signals` | Migration `20260905060000_stage_11_admin_trust_governance.sql` | Verified 100% |
+
+
 
