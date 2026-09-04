@@ -21,6 +21,7 @@ import {
   Heart,
   X,
   Plus,
+  ShieldCheck,
 } from 'lucide-react';
 
 function formatPrice(n: number) {
@@ -241,9 +242,21 @@ export default function ProductDetailPage() {
                   </span>
                 </div>
                 <span style={{ color: 'var(--color-border)' }}>|</span>
-                <span style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
-                  Sold by <strong>{product.sellerName ?? 'AgriGrow Official'}</strong>
-                </span>
+                <Link
+                  href="/sellers/sel_krishi_kendra_01"
+                  style={{
+                    fontSize: 13,
+                    color: 'var(--color-text-secondary)',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                  title="View Verified Seller Profile"
+                >
+                  Sold by <strong style={{ color: 'var(--color-forest)' }}>{product.sellerName ?? 'Maharashtra Krishi Kendra'}</strong>
+                  <ShieldCheck size={14} color="#027A38" />
+                </Link>
               </div>
             </div>
 

@@ -174,11 +174,14 @@ export function orderTotalItemCount(order: Order): number {
 // AUTH
 // ============================================================
 
+export type UserPlatformRole = 'farmer' | 'seller' | 'cooperative_manager' | 'admin';
+
 export interface AppUser {
   id: string;
   name: string;
   email: string;
   phone?: string;
+  role?: UserPlatformRole;
   createdAt: string;
 }
 
