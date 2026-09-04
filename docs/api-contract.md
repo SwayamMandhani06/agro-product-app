@@ -222,3 +222,52 @@ This document establishes the canonical JSON data contracts shared by the **Flut
 | `realtime_notifications_{userId}` | `notifications` | `INSERT`, `UPDATE` | `{ id, user_id, title, body, type, is_read, action_route }` |
 | `realtime_community_feed` | `community_posts` | `INSERT` | `{ id, author_name, category, title, content, likes_count }` |
 | `realtime_community_feed` | `community_comments` | `INSERT` | `{ id, post_id, author_name, content, created_at }` |
+
+---
+
+## 8. Payment Infrastructure & Transaction Contracts
+
+### 8.1 `PaymentTransaction`
+```json
+{
+  "id": "pay_demo_1725450000000",
+  "orderId": "ord_1001",
+  "userId": "usr_farmer_demo",
+  "provider": "demo",
+  "providerPaymentId": "demo_tx_ord_1001",
+  "providerOrderId": null,
+  "amount": 2993.00,
+  "currency": "INR",
+  "method": "demo",
+  "status": "paid",
+  "metadata": {
+    "environment": "sandbox_simulation",
+    "is_demo": true,
+    "customer_name": "Ramesh Patel"
+  },
+  "failureCode": null,
+  "failureDescription": null,
+  "createdAt": "2026-09-04T14:30:00.000Z",
+  "updatedAt": "2026-09-04T14:30:02.000Z"
+}
+```
+
+### 8.2 `PaymentEvent`
+```json
+{
+  "id": "7b09b5a2-871d-44a6-98ec-2bc7089fa012",
+  "paymentId": "pay_demo_1725450000000",
+  "eventType": "payment.authorized",
+  "payload": {
+    "status": "paid",
+    "amount": 2993.00,
+    "currency": "INR"
+  },
+  "createdAt": "2026-09-04T14:30:01.000Z"
+}
+```
+
+### 8.3 Payment Enums
+- **`PaymentMethod`**: `upi`, `card`, `cod`, `demo`
+- **`PaymentStatus`**: `created`, `pending`, `processing`, `authorized`, `paid`, `failed`, `cancelled`, `refunded`
+- **`PaymentProvider`**: `razorpay_test`, `cod`, `demo`

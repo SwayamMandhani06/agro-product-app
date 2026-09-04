@@ -43,7 +43,7 @@ agro-product-app/
 | **Primary Color** | Forest Green `#0B3D2E` | Forest Green `--color-forest: #0B3D2E` |
 | **Accent Color** | Amber `#D97706` | Amber `--color-amber: #D97706` |
 | **Canvas Color** | Warm Canvas `#F9F7F2` | Warm Canvas `--color-canvas: #F9F7F2` |
-| **Testing** | `flutter test` (94/94 passed) | `npm run lint` (0 errors), `npm run build` (20 routes) |
+| **Testing** | `flutter test` (107/107 passed, 100%) | `npm test` (12/12 passed), `npm run lint` (0 errors), `npm run build` (20 routes) |
 
 
 ---
@@ -256,7 +256,7 @@ Analyzing mobile...
 No issues found! (0 errors, 0 warnings)
 
 $ flutter test
-00:09 +94: All tests passed!
+00:08 +107: All tests passed!
 
 $ flutter build apk --debug
 Built build/app/outputs/flutter-apk/app-debug.apk
@@ -266,14 +266,18 @@ Built build/app/outputs/flutter-apk/app-debug.apk
 ```bash
 cd apps/web
 
+$ npm test
+> node --test test/*.test.mjs
+# 12 tests passed (payment.test.mjs, realtime.test.mjs)
+
 $ npm run lint
 > eslint
 # 0 errors, 0 warnings
 
 $ npm run build
 ▲ Next.js 16.3.4 (Turbopack)
-✓ Compiled successfully in 26.1s
-✓ Generating static pages (20/20) in 2.7s
+✓ Compiled successfully
+✓ Generating static pages (20/20)
 Route (app)
 ┌ ○ /
 ├ ○ /_not-found
@@ -288,6 +292,7 @@ Route (app)
 ├ ○ /notifications
 ├ ○ /orders
 ├ ƒ /orders/[id]
+├ ƒ /orders/[id]/receipt
 ├ ○ /products
 ├ ƒ /products/[id]
 ├ ○ /profile
@@ -317,11 +322,12 @@ Stage 4C — Premium Product Experience & Dashboard Evolution ✅ Complete (Bran
 Stage 4D — Shared Backend Integration, Sync & SaaS Homepage ✅ Complete (Branch: stage-4d-shared-backend-sync)
 Stage 4E — Farmer Intelligence, Engagement & Community    ✅ Complete (Branch: stage-4e-farmer-intelligence-engagement)
 Stage 5  — Real Data Integration, Backend Hardening & Web Elevation ✅ Complete (Branch: stage-5-backend-hardening)
+Stage 6  — Real-Time Intelligence & Live Operations       ✅ Complete (Commit: 459f670)
+Stage 7  — Payment Infrastructure, Secure Checkout & Transaction Experience ✅ Complete (Branch: stage-7-payment-infrastructure)
 ─────────────────────────────────────────────────────────────────────────────
-Stage 6  — Real-time Subscriptions & Order Status WebSockets  ⬜ Planned / Next
-Stage 7  — Payment Gateway Integration (Razorpay/UPI)         ⬜ Planned
-Stage 8  — Logistics Partner API Integration                 ⬜ Planned
+Stage 8  — Logistics Partner API Integration & Rural Telemetry ⬜ Planned / Next
 Stage 9  — Seller & Manufacturer Marketplace Portal          ⬜ Planned
+Stage 10 — Admin & Operations Governance Portal              ⬜ Planned
 ```
 
 ---
@@ -330,6 +336,7 @@ Stage 9  — Seller & Manufacturer Marketplace Portal          ⬜ Planned
 
 Detailed architectural and design specifications are maintained in the [`docs/`](./docs) directory:
 
+- [**Payment Architecture**](./docs/payment-architecture.md) — Platform-neutral payment abstractions, Razorpay Test Mode, offline Demo sandbox, COD reconciliation, and printable tax invoices.
 - [**Repository Integration Audit**](./docs/repository-integration.md) — Git recovery audit, canonical integration strategy, commit lineage, verification logs, and manual PR procedures.
 - [**Roadmap Reconciliation**](./docs/roadmap-reconciliation.md) — Reconciliation of 17-stage roadmap vs. actual dual-platform implementation state.
 - [**Backend Setup Guide**](./docs/backend-setup.md) — Comprehensive guide for Supabase project setup, PostgreSQL 16 migrations, seed scripts, RLS policies, and dual-platform environment variables.
