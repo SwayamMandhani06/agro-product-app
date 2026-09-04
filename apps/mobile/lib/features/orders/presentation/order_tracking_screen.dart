@@ -11,6 +11,9 @@ import '../../../../core/routing/routes.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_loading.dart';
 import '../../cart_checkout/domain/order.dart';
+import '../../logistics/domain/shipment.dart';
+import '../../logistics/presentation/providers/logistics_providers.dart';
+import '../../logistics/presentation/widgets/delivery_attempt_sheet.dart';
 import 'providers/order_providers.dart';
 import 'widgets/order_status_badge.dart';
 import 'widgets/order_tracking_timeline.dart';
@@ -107,11 +110,13 @@ class OrderTrackingScreen extends ConsumerWidget {
   Widget _buildTrackingContent(BuildContext context, WidgetRef ref, Order order) {
     final firstItem = order.items.isNotEmpty ? order.items.first : null;
     final product = firstItem?.product;
+    final shipmentAsync = ref.watch(shipmentForOrderProvider(order));
+    final shipment = shipmentAsync.valueOrNull;
 
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
-        // 1. Header Order & Status Card
+        // 1. Header Order & Shipment Card
         Container(
           padding: const EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
@@ -135,13 +140,38 @@ class OrderTrackingScreen extends ConsumerWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Order',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.textTertiary,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      Row(
+                        children: [
+                          const Text(
+                            'Order',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textTertiary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          if (shipment != null) ...[
+                            const SizedBox(width: AppSpacing.xs),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.brand100,
+                                borderRadius: BorderRadius.circular(AppRadius.xs),
+                              ),
+                              child: Text(
+                                shipment.id,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.stitchForestGreen,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       Text(
                         order.id,
@@ -182,12 +212,83 @@ class OrderTrackingScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+              if (shipment != null) ...[
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.near_me_rounded,
+                      size: 14,
+                      color: AppColors.stitchForestGreen,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${shipment.serviceZone} • ${shipment.distanceBand}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
         const SizedBox(height: AppSpacing.md),
 
-        // 2. Product Summary Card
+        // 2. Delivery Attempt Exception Banner (if applicable)
+        if (shipment != null &&
+            shipment.status == ShipmentStatus.deliveryAttempted &&
+            shipment.attempts.isNotEmpty) ...[
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.warning.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              border: Border.all(color: AppColors.warning.withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  color: AppColors.warning,
+                  size: 22,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Delivery Attempt Rescheduled',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.warning,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        shipment.attempts.last.notes ??
+                            'Recipient unavailable. Carrier re-attempt scheduled.',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+
+        // 3. Product Summary Card
         if (firstItem != null && product != null) ...[
           Container(
             padding: const EdgeInsets.all(AppSpacing.md),
@@ -263,7 +364,92 @@ class OrderTrackingScreen extends ConsumerWidget {
           const SizedBox(height: AppSpacing.md),
         ],
 
-        // 3. Vertical Tracking Timeline
+        // 4. Delivery Agent Card (When assigned)
+        if (shipment?.deliveryAgent != null) ...[
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              border: Border.all(color: AppColors.neutral200),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: AppColors.stitchForestGreen.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.delivery_dining_rounded,
+                      color: AppColors.stitchForestGreen,
+                      size: 24,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            shipment!.deliveryAgent!.name,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '★ ${shipment.deliveryAgent!.rating}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.warning,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${shipment.deliveryAgent!.carrier} • ${shipment.deliveryAgent!.vehicleNumber}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.phone_in_talk_rounded,
+                    color: AppColors.stitchForestGreen,
+                  ),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Calling delivery partner: ${shipment.deliveryAgent!.phone}',
+                        ),
+                        backgroundColor: AppColors.stitchForestGreen,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+
+        // 5. Vertical Tracking Timeline
         OrderTrackingTimeline(
           order: order,
           onAdvanceStatus: (newStatus) {
@@ -274,7 +460,101 @@ class OrderTrackingScreen extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.md),
 
-        // 4. Delivery Address Card
+        // 6. Demo Logistics Controls (Development / Reviewer Free-Tier Tooling)
+        if (shipment != null && !order.status.isDelivered) ...[
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              color: AppColors.brand100.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              border: Border.all(color: AppColors.brand200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.developer_mode_rounded,
+                      size: 16,
+                      color: AppColors.stitchForestGreen,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'DEMO LOGISTICS SIMULATION',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                        color: AppColors.stitchForestGreen,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                const Text(
+                  'Deterministic simulation of rural feeder line-haul milestones.',
+                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.arrow_forward_rounded, size: 14),
+                      label: const Text('Advance Milestone', style: TextStyle(fontSize: 12)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        foregroundColor: AppColors.stitchForestGreen,
+                      ),
+                      onPressed: () {
+                        ref
+                            .read(shipmentsNotifierProvider.notifier)
+                            .advanceMilestone(shipment.id);
+                      },
+                    ),
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.thunderstorm_outlined, size: 14),
+                      label: const Text('Simulate Weather Delay', style: TextStyle(fontSize: 12)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        foregroundColor: AppColors.warning,
+                      ),
+                      onPressed: () {
+                        ref
+                            .read(shipmentsNotifierProvider.notifier)
+                            .simulateException(shipment.id, 'weather_delay');
+                      },
+                    ),
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.cancel_schedule_send_rounded, size: 14),
+                      label: const Text('Simulate Failed Attempt', style: TextStyle(fontSize: 12)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        foregroundColor: AppColors.error,
+                      ),
+                      onPressed: () {
+                        DeliveryAttemptSheet.show(
+                          context,
+                          shipmentId: shipment.id,
+                          onSubmit: (reason, notes) {
+                            ref
+                                .read(shipmentsNotifierProvider.notifier)
+                                .recordDeliveryAttempt(shipment.id, reason, notes);
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
+
+        // 7. Delivery Address Card
         Container(
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
@@ -334,7 +614,7 @@ class OrderTrackingScreen extends ConsumerWidget {
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // 5. Action Buttons
+        // 8. Action Buttons
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
@@ -348,13 +628,10 @@ class OrderTrackingScreen extends ConsumerWidget {
               ),
             ),
             onPressed: () => _showSupportSnackbar(context),
-            icon: const Icon(Icons.support_agent_rounded, size: 20),
+            icon: const Icon(Icons.headset_mic_rounded, size: 18),
             label: const Text(
               'Contact Support',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
             ),
           ),
         ),
@@ -363,23 +640,21 @@ class OrderTrackingScreen extends ConsumerWidget {
           width: double.infinity,
           child: OutlinedButton(
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: const EdgeInsets.symmetric(vertical: 13),
+              foregroundColor: AppColors.textPrimary,
               side: const BorderSide(color: AppColors.neutral300),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
             ),
-            onPressed: () => context.pop(),
+            onPressed: () => context.go(AppRoutes.orders),
             child: const Text(
               'Back to Order Details',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
           ),
         ),
+        const SizedBox(height: AppSpacing.xl),
       ],
     );
   }
@@ -387,9 +662,9 @@ class OrderTrackingScreen extends ConsumerWidget {
   void _showSupportSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('AgriTrade Logistics Helpdesk: 1800-AGRI-TRACK (toll-free)'),
+        content: Text('AgriTrade Support: Call 1800-AGRI-TRADE (Toll-Free)'),
         backgroundColor: AppColors.stitchForestGreen,
-        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
       ),
     );
   }
