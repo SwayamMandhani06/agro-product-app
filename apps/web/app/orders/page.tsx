@@ -21,10 +21,16 @@ const STATUS_COLORS: Record<OrderStatus, { bg: string; color: string }> = {
   placed: { bg: 'var(--color-info-light)', color: 'var(--color-info)' },
   confirmed: { bg: 'var(--color-info-light)', color: 'var(--color-info)' },
   processing: { bg: 'var(--color-warning-light)', color: 'var(--color-warning)' },
+  packed: { bg: 'var(--color-info-light)', color: 'var(--color-info)' },
   shipped: { bg: 'var(--color-amber-50)', color: 'var(--color-amber-600)' },
   outForDelivery: { bg: 'var(--color-amber-50)', color: 'var(--color-amber-600)' },
+  out_for_delivery: { bg: 'var(--color-amber-50)', color: 'var(--color-amber-600)' },
   delivered: { bg: 'var(--color-success-light)', color: 'var(--color-success)' },
   cancelled: { bg: 'var(--color-error-light)', color: 'var(--color-error)' },
+  refund_requested: { bg: 'var(--color-warning-light)', color: 'var(--color-warning)' },
+  refund_processing: { bg: 'var(--color-warning-light)', color: 'var(--color-warning)' },
+  refunded: { bg: 'var(--color-success-light)', color: 'var(--color-success)' },
+  disputed: { bg: 'var(--color-error-light)', color: 'var(--color-error)' },
 };
 
 function OrderCard({ order }: { order: Order }) {

@@ -38,9 +38,9 @@ export default function LoginPage() {
     await signIn(identifier.trim(), password);
   };
 
-  const fillDemo = () => {
-    setIdentifier('farmer@agritrade.in');
-    setPassword('farmer123');
+  const fillDemo = (email = 'farmer@agritrade.in', pass = 'farmer123') => {
+    setIdentifier(email);
+    setPassword(pass);
     setFieldErrors({});
     clearError();
   };
@@ -139,31 +139,81 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Demo credentials button */}
-            <button
-              type="button"
-              onClick={fillDemo}
-              id="login-demo-btn"
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                background: 'var(--color-brand-50)',
-                border: '1px solid var(--color-brand-100)',
-                borderRadius: 8,
-                cursor: 'pointer',
-                marginBottom: 20,
-                fontSize: 13,
-                fontWeight: 600,
-                color: 'var(--color-forest)',
-                transition: 'background 150ms ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
-              <Sprout size={14} strokeWidth={2} />
-              Use demo farmer account — farmer@agritrade.in
-            </button>
+            {/* Demo Personas Grid */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                  Quick Demo Accounts
+                </span>
+                <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>No signup required</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+                <button
+                  type="button"
+                  id="login-demo-farmer-btn"
+                  onClick={() => fillDemo('farmer@agritrade.in', 'farmer123')}
+                  style={{
+                    padding: '8px 10px',
+                    background: 'var(--color-brand-50)',
+                    border: '1px solid var(--color-brand-100)',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-forest)' }}>Farmer</div>
+                  <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>farmer@agritrade.in</div>
+                </button>
+                <button
+                  type="button"
+                  id="login-demo-seller-btn"
+                  onClick={() => fillDemo('seller@agritrade.in', 'seller123')}
+                  style={{
+                    padding: '8px 10px',
+                    background: '#eff6ff',
+                    border: '1px solid #bfdbfe',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#1e40af' }}>Seller</div>
+                  <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>seller@agritrade.in</div>
+                </button>
+                <button
+                  type="button"
+                  id="login-demo-coop-btn"
+                  onClick={() => fillDemo('coop@agritrade.in', 'coop123')}
+                  style={{
+                    padding: '8px 10px',
+                    background: '#faf5ff',
+                    border: '1px solid #e9d5ff',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#6b21a8' }}>Cooperative</div>
+                  <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>coop@agritrade.in</div>
+                </button>
+                <button
+                  type="button"
+                  id="login-demo-admin-btn"
+                  onClick={() => fillDemo('admin@agritrade.in', 'admin123')}
+                  style={{
+                    padding: '8px 10px',
+                    background: '#fffbeb',
+                    border: '1px solid #fde68a',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#92400e' }}>Admin</div>
+                  <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>admin@agritrade.in</div>
+                </button>
+              </div>
+            </div>
 
             {/* Error banner */}
             {error && (

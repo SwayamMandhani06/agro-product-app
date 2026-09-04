@@ -110,6 +110,42 @@ class MockAuthRepository implements AuthRepository {
 
     _accounts['farmer@agritrade.in'] = (user: defaultFarmer, password: 'farmer123');
     _accounts['9876543210'] = (user: defaultFarmer, password: 'farmer123');
+
+    final defaultSeller = AppUser(
+      id: 'usr_seller_01',
+      name: 'Maharashtra Krishi Kendra',
+      email: 'seller@agritrade.in',
+      phoneNumber: '+91 98220 12345',
+      role: 'seller',
+      createdAt: DateTime(2026, 2, 1),
+    );
+
+    _accounts['seller@agritrade.in'] = (user: defaultSeller, password: 'seller123');
+    _accounts['9822012345'] = (user: defaultSeller, password: 'seller123');
+
+    final defaultCoopManager = AppUser(
+      id: 'usr_coop_01',
+      name: 'Suresh Patil',
+      email: 'coop@agritrade.in',
+      phoneNumber: '+91 98220 99887',
+      role: 'cooperative_manager',
+      createdAt: DateTime(2026, 2, 15),
+    );
+
+    _accounts['coop@agritrade.in'] = (user: defaultCoopManager, password: 'coop123');
+    _accounts['9822099887'] = (user: defaultCoopManager, password: 'coop123');
+
+    final defaultAdmin = AppUser(
+      id: 'usr_admin_01',
+      name: 'Platform Admin',
+      email: 'admin@agritrade.in',
+      phoneNumber: '+91 98000 11223',
+      role: 'admin',
+      createdAt: DateTime(2026, 1, 1),
+    );
+
+    _accounts['admin@agritrade.in'] = (user: defaultAdmin, password: 'admin123');
+    _accounts['9800011223'] = (user: defaultAdmin, password: 'admin123');
   }
 
   @override

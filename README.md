@@ -21,15 +21,15 @@ agro-product-app/
 │   │   ├── lib/
 │   │   │   ├── core/       # Design system, routing, network, realtime, errors
 │   │   │   └── features/   # auth, home, products, cart_checkout, orders, payments, logistics
-│   │   └── test/           # 115 automated unit & widget tests (100% pass)
+│   │   └── test/           # 151 automated unit & widget tests (100% pass)
 │   └── web/                # Next.js 16 App Router platform (Primary deployment demo)
-│       ├── app/            # 21 routes (/home, /products, /orders, /shipments, etc.)
-│       ├── components/     # AppShell, responsive navigation, cards, RouteCorridor
-│       ├── features/       # Zustand stores: auth, cart, orders, payments, logistics
-│       ├── lib/            # Realtime subscriptions, Supabase client, mock data
+│       ├── app/            # 40 routes (/home, /products, /seller/*, /admin/*, etc.)
+│       ├── components/     # AppShell, DemoPersonaSwitcher, RouteCorridor, StateViews
+│       ├── features/       # Zustand stores: auth, cart, orders, payments, logistics, admin
+│       ├── lib/            # Realtime subscriptions, Supabase client, order transitions
 │       └── types/          # TypeScript domain models mirroring mobile
 ├── supabase/               # PostgreSQL 16 migrations & RLS security rules
-└── docs/                   # Full architectural, payment, and logistics specs
+└── docs/                   # Full architectural, payment, logistics, and audit specs
 ```
 
 ---
@@ -49,7 +49,7 @@ agro-product-app/
 | **Primary Color** | Forest Green `#0B3D2E` | Forest Green `--color-forest: #0B3D2E` |
 | **Accent Color** | Amber `#D97706` | Amber `--color-amber: #D97706` |
 | **Canvas Color** | Warm Canvas `#F9F7F2` | Warm Canvas `--color-canvas: #F9F7F2` |
-| **Testing & Quality**| `flutter test` (136/136 passed), `flutter analyze` (0 issues), `flutter build apk` (success) | `npm test` (38/38 passed), `npm run lint` (0 errors), `npm run build` (40 routes) |
+| **Testing & Quality**| `flutter test` (151/151 passed), `flutter analyze` (0 issues), APK build clean | `npm test` (56/56 passed), TypeScript clean, Next.js build clean (40 routes) |
 
 ---
 
@@ -337,7 +337,7 @@ Stage 9  — Advanced Analytics, Farm Insights & Decision Intelligence ✅ Compl
 Stage 10 — Seller & Cooperative Marketplace Portal          ✅ Complete (Branch: stage-10-marketplace-cooperative)
 Stage 11 — Admin Operations, Trust, Governance & Platform Control ✅ Complete (Branch: stage-11-admin-trust-operations)
 ─────────────────────────────────────────────────────────────────────────────
-Stage 12 — Final Production Polish & Portfolio Deployment   ⬜ Planned
+Stage 12 — Production Readiness, System Hardening & Cross-Platform Parity ✅ Complete (Branch: stage-12-production-readiness)
 ```
 
 ---
@@ -346,6 +346,10 @@ Stage 12 — Final Production Polish & Portfolio Deployment   ⬜ Planned
 
 Detailed architectural and design specifications are maintained in the [`docs/`](./docs) directory:
 
+- [**Multi-Persona Demo & Evaluation Guide**](./docs/demo-guide.md) — Step-by-step evaluator instructions for all 4 canonical personas (Farmer, Seller, Coop Manager, Admin), demo credentials, and interactive persona switcher.
+- [**Production Hardening & Architectural Governance**](./docs/production-hardening.md) — WCAG 2.1 AA accessibility standards, performance optimizations, security guardrails, and universal state views.
+- [**Stage 12 Cross-Platform Integration Audit**](./docs/stage-12-integration-audit.md) — Complete audit of authentication, marketplace domains, canonical 13-state order lifecycle, and transition validation matrices.
+- [**Stage 12 Visual Quality Assurance & Parity Report**](./docs/stage-12-visual-qa.md) — Dual-platform visual audit covering design tokens, responsive layouts, content skeletons, and state views.
 - [**Role & Permission Model**](./docs/role-permission-model.md) — Multi-persona security architecture (Farmer, Seller, Coop Manager, Admin), 22 granular permissions, lifecycle state machines, append-only audit trail invariants, and risk rule engine.
 - [**Analytics Architecture & Decision Intelligence**](./docs/analytics-architecture.md) — Pure deterministic aggregation pipeline, explainable rules-based FarmInsightEngine, Bloomberg-lite workspace, and zero paid API guarantee.
 - [**Stage 9 Visual Quality Audit**](./docs/stage-9-visual-qa.md) — Comprehensive visual QA audit across Web `/insights` and Flutter mobile `FarmInsightsScreen`.
@@ -369,7 +373,7 @@ Detailed architectural and design specifications are maintained in the [`docs/`]
 ```text
 main                                    — Production releases (stable canonical release)
 develop                                 — Active integration base (all feature branches base off develop)
-stage-9-analytics-intelligence          — Active feature branch for Stage 9 Farm Analytics & Decision Intelligence
+stage-12-production-readiness           — Active feature branch for Stage 12 Production Hardening
 ```
 
 ### Standardized Contribution Workflow:
