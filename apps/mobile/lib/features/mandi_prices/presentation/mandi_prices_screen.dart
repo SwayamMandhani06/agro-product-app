@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/app_colors.dart';
 import '../../../core/design_system/app_radius.dart';
 import '../../../core/design_system/app_spacing.dart';
+import '../../../core/realtime/realtime_connection_state.dart';
+import '../../../core/realtime/realtime_service.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
@@ -33,6 +35,7 @@ class _MandiPricesScreenState extends ConsumerState<MandiPricesScreen> {
   @override
   Widget build(BuildContext context) {
     final pricesAsync = ref.watch(mandiPricesProvider);
+    final connState = ref.watch(realtimeConnectionStateProvider).valueOrNull ?? RealtimeConnectionState.connected;
 
     return Scaffold(
       backgroundColor: AppColors.stitchCanvas,
@@ -40,9 +43,67 @@ class _MandiPricesScreenState extends ConsumerState<MandiPricesScreen> {
         title: const Text('Mandi Intelligence (APMC)'),
         backgroundColor: AppColors.stitchCanvas,
         elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: connState.isConnected
+                      ? AppColors.stitchForestGreen.withValues(alpha: 0.1)
+                      : AppColors.error.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: connState.isConnected ? AppColors.stitchForestGreen : AppColors.error,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      connState.isConnected ? 'LIVE' : connState.label.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: connState.isConnected ? AppColors.stitchForestGreen : AppColors.error,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
+          // Offline banner
+          if (connState.isOffline)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: AppColors.error.withValues(alpha: 0.08),
+              child: const Row(
+                children: [
+                  Icon(Icons.wifi_off_rounded, size: 14, color: AppColors.error),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      "You're offline. Showing the latest available information.",
+                      style: TextStyle(fontSize: 12, color: AppColors.error, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           // Crop Filter Chips
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -93,7 +154,7 @@ class _MandiPricesScreenState extends ConsumerState<MandiPricesScreen> {
                 }
 
                 return RefreshIndicator(
-                  onRefresh: () => ref.refresh(mandiPricesProvider.future),
+                  onRefresh: () async => ref.refresh(mandiPricesProvider),
                   color: AppColors.stitchForestGreen,
                   child: ListView.separated(
                     padding: const EdgeInsets.all(AppSpacing.md),
