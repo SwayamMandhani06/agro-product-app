@@ -35,20 +35,40 @@ const useMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => 
 
 import { DemoPersonaSwitcher } from '@/components/common/DemoPersonaSwitcher';
 
-const NAV_LINKS = [
-  { href: '/home',                  label: 'Dashboard' },
-  { href: '/insights',              label: 'Analytics' },
-  { href: '/products',              label: 'Products' },
-  { href: '/cooperative/campaigns', label: 'Cooperative' },
-  { href: '/seller/dashboard',      label: 'Seller Portal' },
-  { href: '/admin/dashboard',       label: 'Admin' },
-  { href: '/mandi',                 label: 'Mandi Rates' },
-  { href: '/weather',               label: 'Weather' },
-  { href: '/community',             label: 'Community' },
-  { href: '/saved',                 label: 'Saved' },
-  { href: '/orders',                label: 'Orders' },
-  { href: '/shipments',             label: 'Logistics' },
-];
+import type { UserPlatformRole } from '@/types';
+
+const ROLE_NAV_LINKS: Record<UserPlatformRole, { href: string; label: string }[]> = {
+  farmer: [
+    { href: '/home', label: 'Dashboard' },
+    { href: '/products', label: 'Catalog' },
+    { href: '/mandi', label: 'Mandi Rates' },
+    { href: '/weather', label: 'Weather' },
+    { href: '/orders', label: 'Orders' },
+    { href: '/insights', label: 'Farm Insights' },
+    { href: '/community', label: 'Community' },
+  ],
+  seller: [
+    { href: '/seller/dashboard', label: 'Seller Dashboard' },
+    { href: '/seller/products', label: 'Products' },
+    { href: '/seller/inventory', label: 'Inventory' },
+    { href: '/seller/orders', label: 'Orders' },
+    { href: '/seller/payouts', label: 'Payouts' },
+    { href: '/seller/profile', label: 'Store Profile' },
+  ],
+  cooperative_manager: [
+    { href: '/cooperative/campaigns', label: 'Bulk Campaigns' },
+    { href: '/community', label: 'Farmer Network' },
+    { href: '/insights', label: 'Procurement Insights' },
+  ],
+  admin: [
+    { href: '/admin/dashboard', label: 'Admin Console' },
+    { href: '/admin/sellers', label: 'Verifications' },
+    { href: '/admin/moderation', label: 'Moderation' },
+    { href: '/admin/disputes', label: 'Disputes' },
+    { href: '/admin/analytics', label: 'Platform Analytics' },
+    { href: '/admin/audit', label: 'Audit Log' },
+  ],
+};
 
 const BOTTOM_NAV = [
   { href: '/home',        label: 'Home',       Icon: Home,         badge: false },
@@ -72,6 +92,9 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
   const [connectionState, setConnectionState] = useState<ConnectionState>(connectionManager.getState());
   const [showRestoredBanner, setShowRestoredBanner] = useState(false);
   const mounted   = useMounted();
+
+  const currentRole = (user?.role as UserPlatformRole) || 'farmer';
+  const currentNavLinks = ROLE_NAV_LINKS[currentRole] || ROLE_NAV_LINKS.farmer;
 
   // Initialize Realtime Client & Subscriptions
   useEffect(() => {
@@ -185,8 +208,8 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav style={{ display: 'none', gap: 2 }} className="desktop-nav">
-            {NAV_LINKS.map((link) => {
+          <nav style={{ display: 'none', gap: 4 }} className="desktop-nav">
+            {currentNavLinks.map((link) => {
               const active = pathname === link.href || (pathname.startsWith(link.href + '/') && link.href !== '/home');
               return (
                 <Link
@@ -196,12 +219,13 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                     color: active ? '#fff' : 'rgba(255,255,255,0.72)',
                     textDecoration: 'none',
                     fontWeight: active ? 600 : 500,
-                    fontSize: 13.5,
-                    padding: '6px 13px',
+                    fontSize: 13,
+                    padding: '6px 12px',
                     borderRadius: 6,
                     background: active ? 'rgba(255,255,255,0.16)' : 'transparent',
                     transition: 'all var(--motion-fast) var(--ease-standard)',
                     letterSpacing: '0.1px',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {link.label}
