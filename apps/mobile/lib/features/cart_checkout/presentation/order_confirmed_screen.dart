@@ -7,6 +7,8 @@ import '../../../../core/design_system/app_radius.dart';
 import '../../../../core/design_system/app_spacing.dart';
 import '../../../../core/routing/routes.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../payments/domain/payment_transaction.dart';
+import '../../payments/presentation/widgets/receipt_sheet.dart';
 import '../domain/order.dart';
 
 /// Full Order Confirmed Screen matching Google Stitch screen `d91cd48648154a0488ff56e0d0654cf2`.
@@ -14,9 +16,11 @@ class OrderConfirmedScreen extends StatelessWidget {
   const OrderConfirmedScreen({
     super.key,
     required this.order,
+    this.transaction,
   });
 
   final Order order;
+  final PaymentTransaction? transaction;
 
   static final _currencyFormat = NumberFormat.currency(
     locale: 'en_IN',
@@ -161,12 +165,49 @@ class OrderConfirmedScreen extends StatelessWidget {
                           subtitle:
                               '${order.paymentMethod} • ${_currencyFormat.format(order.totalAmount)} (${order.totalItemCount} items)',
                         ),
+                        if (transaction?.providerPaymentId != null) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          _buildDetailRow(
+                            icon: Icons.tag_rounded,
+                            title: 'Transaction Reference',
+                            subtitle: transaction!.providerPaymentId!,
+                          ),
+                        ],
                       ],
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
 
                   // 4. Action Buttons
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.description_outlined, size: 18, color: AppColors.stitchForestGreen),
+                      label: const Text(
+                        'View Tax Invoice / Receipt',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.stitchForestGreen,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.stitchForestGreen),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppRadius.md),
+                        ),
+                      ),
+                      onPressed: () {
+                        ReceiptSheet.show(
+                          context,
+                          order: order,
+                          transaction: transaction,
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
                   SizedBox(
                     width: double.infinity,
                     child: AppButton(

@@ -15,6 +15,7 @@ import 'providers/cart_providers.dart';
 import '../../orders/presentation/providers/order_providers.dart';
 import 'widgets/address_selection_sheet.dart';
 import 'widgets/payment_selection_sheet.dart';
+import '../../payments/presentation/providers/payment_providers.dart';
 
 /// Full Checkout Screen matching Stitch AgriTrade screen `1f9a38333e014c208bd97a5fdf66b791`.
 class CheckoutScreen extends ConsumerWidget {
@@ -38,10 +39,12 @@ class CheckoutScreen extends ConsumerWidget {
     final selectedAddress = ref.watch(selectedAddressProvider);
     final selectedPaymentMethod = ref.watch(selectedPaymentMethodProvider);
     final isLoading = ref.watch(checkoutLoadingProvider);
+    final paymentState = ref.watch(paymentStateProvider);
+    final isProcessing = isLoading || paymentState.isProcessing;
 
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
-    if (items.isEmpty && !isLoading) {
+    if (items.isEmpty && !isProcessing) {
       return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -130,7 +133,12 @@ class CheckoutScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.md),
 
               // Section 4: Payment Method Card
-              _buildPaymentMethodCard(context, selectedPaymentMethod),
+              _buildPaymentMethodCard(
+                context,
+                ref,
+                selectedPaymentMethod,
+                paymentState,
+              ),
               const SizedBox(height: AppSpacing.md),
 
               // Section 5: Bill Details
@@ -152,7 +160,7 @@ class CheckoutScreen extends ConsumerWidget {
               context,
               ref,
               totalAmount: totalAmount,
-              isLoading: isLoading,
+              isLoading: isProcessing,
               bottomPadding: bottomPadding,
               onPlaceOrder: () => _handlePlaceOrder(
                 context,
@@ -451,14 +459,32 @@ class CheckoutScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPaymentMethodCard(BuildContext context, String method) {
+  Widget _buildPaymentMethodCard(
+    BuildContext context,
+    WidgetRef ref,
+    String method,
+    PaymentState paymentState,
+  ) {
     IconData icon;
-    if (method == 'UPI') {
+    String badge = 'COD';
+    Color badgeBg = const Color(0xFFDCFCE7);
+    Color badgeText = const Color(0xFF166534);
+
+    if (method == 'UPI' || method.startsWith('UPI')) {
       icon = Icons.qr_code_2_rounded;
-    } else if (method == 'Credit / Debit Card') {
+      badge = 'TEST';
+      badgeBg = const Color(0xFFF3E8FF);
+      badgeText = const Color(0xFF6B21A8);
+    } else if (method.contains('Card')) {
       icon = Icons.credit_card_rounded;
-    } else if (method == 'Net Banking') {
-      icon = Icons.account_balance_rounded;
+      badge = 'TEST';
+      badgeBg = const Color(0xFFF3E8FF);
+      badgeText = const Color(0xFF6B21A8);
+    } else if (method.contains('Demo')) {
+      icon = Icons.science_outlined;
+      badge = 'DEMO';
+      badgeBg = const Color(0xFFEFF6FF);
+      badgeText = const Color(0xFF1E40AF);
     } else {
       icon = Icons.payments_outlined;
     }
@@ -533,13 +559,33 @@ class CheckoutScreen extends ConsumerWidget {
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
-                child: Text(
-                  method,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
+                child: Row(
+                  children: [
+                    Text(
+                      method,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: badgeBg,
+                        borderRadius: BorderRadius.circular(AppRadius.xs),
+                      ),
+                      child: Text(
+                        badge,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: badgeText,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const Icon(
@@ -549,6 +595,71 @@ class CheckoutScreen extends ConsumerWidget {
               ),
             ],
           ),
+          if (method.contains('Demo')) ...[
+            const SizedBox(height: AppSpacing.sm),
+            const Divider(height: 1, color: AppColors.neutral200),
+            const SizedBox(height: AppSpacing.xs),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Simulate Payment Decline',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        'Test failure and cart preservation flow',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textTertiary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: paymentState.simulateFailure,
+                  onChanged: (val) {
+                    ref.read(paymentStateProvider.notifier).setSimulateFailure(val);
+                  },
+                  activeThumbColor: AppColors.error,
+                ),
+              ],
+            ),
+          ],
+          if (paymentState.errorMessage != null && !paymentState.isProcessing) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.xs),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF2F2),
+                borderRadius: BorderRadius.circular(AppRadius.xs),
+                border: Border.all(color: const Color(0xFFFCA5A5)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_outline_rounded, size: 16, color: AppColors.error),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      paymentState.errorMessage!,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -721,10 +832,24 @@ class CheckoutScreen extends ConsumerWidget {
                 ),
               ),
               child: isLoading
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: AppSpinner(size: 20, color: Colors.white),
+                  ? const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: AppSpinner(size: 16, color: Colors.white),
+                        ),
+                        SizedBox(width: AppSpacing.xs),
+                        Text(
+                          'Processing Payment...',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     )
                   : const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -762,6 +887,44 @@ class CheckoutScreen extends ConsumerWidget {
     ref.read(checkoutLoadingProvider.notifier).state = true;
 
     try {
+      // 1. Process payment through payment provider with idempotency protection
+      final dummyOrderId = 'ord_${DateTime.now().millisecondsSinceEpoch}';
+      final paymentResult = await ref
+          .read(paymentStateProvider.notifier)
+          .processPayment(
+            orderId: dummyOrderId,
+            amount: totalAmount,
+            customerName: address.recipientName,
+            customerPhone: address.phone,
+          );
+
+      if (!context.mounted) return;
+
+      if (!paymentResult.success) {
+        ref.read(checkoutLoadingProvider.notifier).state = false;
+        if (paymentResult.isCancelled) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Payment cancelled by user. Cart preserved.'),
+              backgroundColor: AppColors.neutral700,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                paymentResult.errorMessage ??
+                    'Payment failed. Cart and checkout state are preserved.',
+              ),
+              backgroundColor: AppColors.error,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
+        return;
+      }
+
+      // 2. Payment authorized / COD initialized -> persist order
       final orderRepo = ref.read(orderRepositoryProvider);
       final result = await orderRepo.placeOrder(
         items: List.from(items),
@@ -780,7 +943,7 @@ class CheckoutScreen extends ConsumerWidget {
           ref.read(checkoutLoadingProvider.notifier).state = false;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Order failed: ${failure.message}'),
+              content: Text('Order recording failed: ${failure.message}'),
               backgroundColor: AppColors.error,
             ),
           );
@@ -791,7 +954,10 @@ class CheckoutScreen extends ConsumerWidget {
           ref.read(checkoutLoadingProvider.notifier).state = false;
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (ctx) => OrderConfirmedScreen(order: order),
+              builder: (ctx) => OrderConfirmedScreen(
+                order: order,
+                transaction: paymentResult.transaction,
+              ),
             ),
           );
         },

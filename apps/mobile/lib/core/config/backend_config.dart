@@ -61,4 +61,17 @@ class BackendConfig {
         'Content-Type': 'application/json',
         'Prefer': 'return=representation',
       };
+
+  /// Razorpay Test Key ID (e.g. `rzp_test_...`) for safe non-production transactions.
+  static String get razorpayKeyId {
+    try {
+      if (!dotenv.isInitialized) return '';
+      return dotenv.maybeGet('RAZORPAY_KEY_ID') ?? '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  /// Returns `true` if Razorpay Test Key ID is configured in the environment.
+  static bool get isRazorpayConfigured => razorpayKeyId.isNotEmpty;
 }

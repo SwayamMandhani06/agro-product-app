@@ -31,12 +31,12 @@
 | **Stage 4C**: Motion System & Media | Easing curves, photo resolvers, layout | **COMPLETE** | Motion keyframes, Unsplash | `AppMotion` presets | Deterministic URLs | ✅ 100% Complete |
 | **Stage 4D**: Backend Sync & SaaS Landing | Supabase schema, concrete repos, landing | **COMPLETE** | `/` SaaS showcase landing page | Dio PostgREST repositories | PostgreSQL 16 schema | ✅ 100% Complete |
 | **Stage 4E**: Farmer Intelligence & Community | Wishlist, Reviews, Forum, Alerts, Weather | **COMPLETE** | `/saved`, `/community`, `/mandi`, `/weather`, `/notifications` | `WishlistScreen`, `ReviewsScreen`, `ForumScreen`, `NotificationsScreen` | `20260904000000` migration | ✅ 100% Complete |
-| **Stage 5**: Backend Hardening & Data Integrity | Real PostgREST wiring, RLS audit, seam completion | **IN PROGRESS** | Wire Web stores to PostgREST; harden error/loading states | Wire Riverpod providers to Supabase repositories conditionally | Verify RLS & foreign key cascading | 🔄 Active Next Stage |
-| **Stage 6**: Payment Gateway (Razorpay/UPI) | Razorpay test mode, UPI intent flow | **PLANNED** | Razorpay Web SDK integration | `razorpay_flutter` integration | Transaction webhook table | ⬜ Planned |
-| **Stage 7**: Logistics & Rural Delivery | Pincode serviceability, tracking partner API | **PLANNED** | Delivery estimate calculator | Pincode availability chip | Address validation table | ⬜ Planned |
-| **Stage 8**: Seller Marketplace Portal | Inventory CRUD, order fulfillment, sales chart | **PLANNED** | `/seller/dashboard`, inventory table | Seller navigation shell | Seller role RLS | ⬜ Planned |
-| **Stage 9**: Admin Governance & Price Moderation | User verification, product moderation | **PLANNED** | `/admin/dashboard`, verification queue | Admin monitoring views | Admin role RLS | ⬜ Planned |
-| **Stage 10**: Voice Search & Multilingual i18n | Speech-to-text, en/hi/mr localization | **PLANNED** | `next-intl` (en/hi/mr) | `easy_localization` (en/hi/mr) | Localized strings | ⬜ Planned |
+| **Stage 5**: Backend Hardening & Data Integrity | Real PostgREST wiring, RLS audit, seam completion | **COMPLETE** | PostgREST repositories, hardened stores | Supabase conditional repositories | Strict RLS & foreign keys | ✅ 100% Complete |
+| **Stage 6**: Real-Time Intelligence & Live Operations | Supabase Realtime WSS, APMC mandi terminal, order tracking | **COMPLETE** | Realtime client, live Mandi terminal, operational order timeline, popover alerts | `RealtimeService`, `LiveMandiPricesNotifier`, stream providers | `REPLICA IDENTITY FULL`, `supabase_realtime` pub | ✅ 100% Complete |
+| **Stage 7**: Payment Infrastructure & Secure Checkout | Razorpay Test Mode, Demo fallback, COD, secure transactions | **COMPLETE** | Payment abstraction, Razorpay Test SDK, Demo provider, 2-column checkout, receipt | Native payment sheet, Demo provider, Riverpod checkout state, receipt sheet | `payments`, `payment_events`, strict RLS | ✅ 100% Complete |
+| **Stage 8**: Logistics & Rural Delivery Integration | Pincode serviceability, tracking partner API, hub milestones | **PLANNED** | Delivery estimate calculator | Pincode availability chip | Address validation table | ⬜ Planned |
+| **Stage 9**: Seller & Cooperative Marketplace | Multi-vendor inventory CRUD, fulfillment, payout tracking | **PLANNED** | `/seller/dashboard`, inventory table | Seller navigation shell | Seller role RLS | ⬜ Planned |
+| **Stage 10**: Admin / Operations Governance | Platform moderation, dispute resolution, price controls | **PLANNED** | `/admin/dashboard`, verification queue | Admin monitoring views | Admin role RLS | ⬜ Planned |
 
 ---
 
@@ -108,14 +108,23 @@
 
 ---
 
-## 5. Recommended Next Implementation: STAGE 6
+## 5. Active & Reconciled Roadmap
 
-### Primary Focus: Real-Time Subscriptions, WebSockets & Live Logistics Tracking
+### Current Roadmap Status
 
-1. **Supabase Realtime Subscriptions**:
-   - Listen for order status updates (`orders` table changes) via Supabase Realtime WebSocket channel on both Web and Mobile.
-   - Live APMC Mandi price ticker streaming.
-2. **Payment Gateway Integration**:
-   - Razorpay / UPI test sandbox integration with payment intent creation, webhook handling, and transactional receipt generation.
-3. **Seller & Manufacturer Marketplace Portal**:
-   - Dedicated portal for verified agro-chemical and seed suppliers to manage inventory, batch germination certificates, and wholesale dispatch orders.
+- **Completed Stages:**
+  - Stage 1–4E: Core infrastructure, design system, catalog, cart, auth, motion, and farmer intelligence.
+  - Stage 5: Backend hardening, PostgREST direct integration, and RLS data integrity.
+  - Stage 6: Real-time intelligence, live Mandi terminal, operational order tracking, and notification synchronization.
+- **Current Stage (Active):**
+  - **Stage 7: Payment Infrastructure, Secure Checkout & Transaction Experience**
+- **Next Stages:**
+  - Stage 8: Logistics & Rural Delivery Integration (Hub telemetry, pincode serviceability).
+  - Stage 9: Seller & Cooperative Marketplace Portal (Inventory CRUD, batch certificates, payouts).
+  - Stage 10: Admin / Operations Governance (Disputes, price moderation, platform audit).
+
+### Architecture Alignment Rules
+- The canonical backend is **Supabase / PostgreSQL 16**. Firebase/Firestore are deprecated and not used.
+- Web (`apps/web`) and Mobile (`apps/mobile`) share identical domain entities, payment states, and API contracts, but maintain platform-native UI layouts.
+- Payment systems strictly utilize **Razorpay Test Mode** or deterministic **Demo Payment** fallbacks. Real financial transactions or paid cloud services are prohibited.
+- Cash on Delivery (COD) remains a first-class supported payment option.
