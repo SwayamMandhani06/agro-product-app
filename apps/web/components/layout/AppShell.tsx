@@ -25,7 +25,9 @@ import { connectionManager, type ConnectionState } from '@/lib/realtime/connecti
 import { realtimeClient } from '@/lib/realtime/realtime-client';
 import { subscribeToNotifications } from '@/lib/realtime/subscriptions/notifications';
 import { subscribeToOrderUpdates } from '@/lib/realtime/subscriptions/orders';
+import { subscribeToShipmentUpdates } from '@/lib/realtime/subscriptions/shipments';
 import { useOrdersStore } from '@/features/orders/store';
+import { useLogisticsStore } from '@/features/logistics/logistics-store';
 import { CheckCheck, CheckCircle2, WifiOff } from 'lucide-react';
 
 const emptySubscribe = () => () => {};
@@ -39,6 +41,7 @@ const NAV_LINKS = [
   { href: '/community',   label: 'Community' },
   { href: '/saved',       label: 'Saved' },
   { href: '/orders',      label: 'Orders' },
+  { href: '/shipments',   label: 'Logistics' },
 ];
 
 const BOTTOM_NAV = [
@@ -89,10 +92,15 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
       });
     });
 
+    const unsubShipments = subscribeToShipmentUpdates('usr_default', (update) => {
+      useLogisticsStore.getState().updateShipmentFromRealtime(update);
+    });
+
     return () => {
       unsubConn();
       unsubNotif();
       unsubOrders();
+      unsubShipments();
     };
   }, [mounted]);
 
