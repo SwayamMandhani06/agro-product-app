@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/config/backend_config.dart';
 import '../../data/mock_notification_repository.dart';
 import '../../data/supabase_notification_repository.dart';
+import '../../../../core/realtime/subscriptions/notification_subscription.dart';
 import '../../domain/notification_item.dart';
 import '../../domain/notification_repository.dart';
+import 'dart:async';
 
 /// Notification repository provider.
 final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
@@ -18,9 +20,20 @@ final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
 class NotificationsNotifier extends StateNotifier<AsyncValue<List<NotificationItem>>> {
   NotificationsNotifier(this._repository) : super(const AsyncValue.loading()) {
     loadNotifications();
+    _sub = NotificationSubscription.instance.stream.listen((item) {
+      final current = state.value ?? [];
+      state = AsyncValue.data([item, ...current.where((n) => n.id != item.id)]);
+    });
   }
 
   final NotificationRepository _repository;
+  StreamSubscription<NotificationItem>? _sub;
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
 
   Future<void> loadNotifications() async {
     state = const AsyncValue.loading();

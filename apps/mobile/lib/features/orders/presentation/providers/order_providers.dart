@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/realtime/subscriptions/order_subscription.dart';
 import '../../../cart_checkout/domain/cart_item.dart';
 import '../../../cart_checkout/domain/delivery_address.dart';
 import '../../../cart_checkout/domain/order.dart';
@@ -10,9 +12,31 @@ import '../../../cart_checkout/presentation/providers/cart_providers.dart';
 class OrdersNotifier extends StateNotifier<AsyncValue<List<Order>>> {
   OrdersNotifier(this._repository) : super(const AsyncValue.loading()) {
     loadOrders();
+    _sub = OrderSubscription.instance.stream.listen((update) {
+      final current = state.value ?? [];
+      final updated = current.map((order) {
+        if (order.id == update.orderId) {
+          return order.copyWith(
+            status: update.status,
+            estimatedDelivery: update.estimatedDelivery ?? order.estimatedDelivery,
+            deliveryAgentName: update.agentName ?? order.deliveryAgentName,
+            deliveryAgentPhone: update.agentPhone ?? order.deliveryAgentPhone,
+          );
+        }
+        return order;
+      }).toList();
+      state = AsyncValue.data(updated);
+    });
   }
 
   final OrderRepository _repository;
+  StreamSubscription<OrderStatusUpdate>? _sub;
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
 
   /// Loads all orders from the repository into memory.
   Future<void> loadOrders() async {

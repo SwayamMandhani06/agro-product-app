@@ -66,6 +66,10 @@ interface NotificationsState {
   unreadCount: () => number;
   filteredNotifications: () => NotificationItem[];
   syncWithBackend: (userId?: string) => Promise<void>;
+  incomingRealtimeNotification: (item: NotificationItem) => void;
+  addNotification: (
+    item: Omit<NotificationItem, 'id' | 'createdAt' | 'isRead'>
+  ) => NotificationItem;
 }
 
 export const useNotificationsStore = create<NotificationsState>()(
@@ -108,7 +112,27 @@ export const useNotificationsStore = create<NotificationsState>()(
           set({ notifications: remote });
         }
       },
+
+      incomingRealtimeNotification: (item: NotificationItem) => {
+        set({
+          notifications: [item, ...get().notifications.filter((n) => n.id !== item.id)],
+        });
+      },
+
+      addNotification: (data) => {
+        const newItem: NotificationItem = {
+          ...data,
+          id: `notif_${Date.now()}`,
+          isRead: false,
+          createdAt: new Date().toISOString(),
+        };
+        set({
+          notifications: [newItem, ...get().notifications],
+        });
+        return newItem;
+      },
     }),
+
     {
       name: 'agritrade-notifications',
     }
