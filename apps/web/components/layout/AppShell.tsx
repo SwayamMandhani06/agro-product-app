@@ -7,7 +7,6 @@ import { useAuthStore } from '@/features/auth/store';
 import { useCartStore } from '@/features/cart/store';
 import {
   Home,
-  LayoutGrid,
   Sprout,
   ShoppingCart,
   User,
@@ -15,24 +14,33 @@ import {
   Package,
   LogOut,
   Bell,
+  Bookmark,
+  Activity,
+  CloudRain,
 } from 'lucide-react';
+import { useNotificationsStore } from '@/features/notifications/notifications-store';
+import { useWishlistStore } from '@/features/wishlist/wishlist-store';
 
 const emptySubscribe = () => () => {};
 const useMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => false);
 
 const NAV_LINKS = [
-  { href: '/home',       label: 'Dashboard' },
-  { href: '/categories', label: 'Categories' },
-  { href: '/products',   label: 'Products' },
-  { href: '/orders',     label: 'My Orders' },
+  { href: '/home',        label: 'Dashboard' },
+  { href: '/products',    label: 'Products' },
+  { href: '/mandi',       label: 'Mandi Rates' },
+  { href: '/weather',     label: 'Weather' },
+  { href: '/community',   label: 'Community' },
+  { href: '/saved',       label: 'Saved' },
+  { href: '/orders',      label: 'Orders' },
 ];
 
 const BOTTOM_NAV = [
-  { href: '/home',       label: 'Home',       Icon: Home,         badge: false },
-  { href: '/categories', label: 'Categories', Icon: LayoutGrid,   badge: false },
-  { href: '/products',   label: 'Products',   Icon: Sprout,       badge: false },
-  { href: '/cart',       label: 'Cart',       Icon: ShoppingCart, badge: true  },
-  { href: '/profile',    label: 'Profile',    Icon: User,         badge: false },
+  { href: '/home',        label: 'Home',       Icon: Home,         badge: false },
+  { href: '/products',    label: 'Catalog',    Icon: Sprout,       badge: false },
+  { href: '/mandi',       label: 'Mandi',      Icon: Activity,     badge: false },
+  { href: '/weather',     label: 'Weather',    Icon: CloudRain,    badge: false },
+  { href: '/cart',        label: 'Cart',       Icon: ShoppingCart, badge: true  },
+  { href: '/profile',     label: 'Profile',    Icon: User,         badge: false },
 ];
 
 export default function AppShellLayout({ children }: { children: React.ReactNode }) {
@@ -40,6 +48,8 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
   const router    = useRouter();
   const { status, user, signOut } = useAuthStore();
   const cartCount = useCartStore((s) => s.totalItemCount());
+  const unreadCount = useNotificationsStore((s) => s.unreadCount());
+  const savedCount = useWishlistStore((s) => s.savedProductIds.length);
   const [menuOpen, setMenuOpen] = useState(false);
   const mounted   = useMounted();
 
@@ -147,9 +157,10 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
 
           {/* Right actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            {/* Notification Bell (Parity with Mobile 2 Unread) */}
-            <button
-              title="Notifications"
+            {/* Saved / Wishlist Link */}
+            <Link
+              href="/saved"
+              title="Saved Products"
               style={{
                 position: 'relative',
                 display: 'flex',
@@ -160,25 +171,77 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
                 borderRadius: 8,
                 background: 'rgba(255,255,255,0.10)',
                 color: '#fff',
-                border: 'none',
-                cursor: 'pointer',
+                textDecoration: 'none',
+                transition: 'background var(--motion-fast) var(--ease-standard)',
+              }}
+            >
+              <Bookmark size={17} strokeWidth={2} />
+              {savedCount > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: -3,
+                    right: -3,
+                    background: 'var(--color-amber)',
+                    color: '#fff',
+                    borderRadius: '50%',
+                    width: 17,
+                    height: 17,
+                    fontSize: 9,
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 0 0 2px var(--color-forest)',
+                  }}
+                >
+                  {savedCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Notification Bell */}
+            <Link
+              href="/notifications"
+              title="Platform Alerts"
+              style={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                background: 'rgba(255,255,255,0.10)',
+                color: '#fff',
+                textDecoration: 'none',
                 transition: 'background var(--motion-fast) var(--ease-standard)',
               }}
             >
               <Bell size={17} strokeWidth={2} />
-              <span
-                style={{
-                  position: 'absolute',
-                  top: 7,
-                  right: 7,
-                  width: 7,
-                  height: 7,
-                  borderRadius: '50%',
-                  background: 'var(--color-amber)',
-                  boxShadow: '0 0 0 2px var(--color-forest)',
-                }}
-              />
-            </button>
+              {unreadCount > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: -3,
+                    right: -3,
+                    background: 'var(--color-amber)',
+                    color: '#fff',
+                    borderRadius: '50%',
+                    width: 17,
+                    height: 17,
+                    fontSize: 9,
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 0 0 2px var(--color-forest)',
+                  }}
+                >
+                  {unreadCount}
+                </span>
+              )}
+            </Link>
 
             {/* Cart Button */}
             <Link

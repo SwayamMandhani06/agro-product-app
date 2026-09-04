@@ -11,3 +11,6 @@ final dashboardMandiPricesProvider = FutureProvider<List<MandiPrice>>((ref) asyn
     (prices) => prices,
   );
 });
+
+/// Alias for the full Mandi Intelligence screen.
+final mandiPricesProvider = dashboardMandiPricesProvider;

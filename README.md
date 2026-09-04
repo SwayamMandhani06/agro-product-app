@@ -271,22 +271,28 @@ $ npm run lint
 
 $ npm run build
 ▲ Next.js 16.3.4 (Turbopack)
-✓ Compiled successfully in 15.3s
-✓ Generating static pages (15/15) in 306ms
+✓ Compiled successfully in 26.1s
+✓ Generating static pages (20/20) in 2.7s
 Route (app)
 ┌ ○ /
+├ ○ /_not-found
 ├ ○ /cart
 ├ ○ /categories
 ├ ○ /checkout
 ├ ○ /checkout/confirmed
+├ ○ /community
 ├ ○ /home
 ├ ○ /login
+├ ○ /mandi
+├ ○ /notifications
 ├ ○ /orders
 ├ ƒ /orders/[id]
 ├ ○ /products
 ├ ƒ /products/[id]
 ├ ○ /profile
+├ ○ /saved
 ├ ○ /signup
+├ ○ /weather
 └ ○ /welcome
 ```
 
@@ -307,11 +313,13 @@ Stage 4A — Auth, Session Management & App Entry Flow      ✅ Complete (Commit
 Stage 3QA— Mobile Visual QA & Web Parity Implementation    ✅ Complete (Branch: stage-3-visual-qa-web-parity)
 Stage 4B — Premium Visual Redesign & Backend Foundation    ✅ Complete (Branch: stage-4b-premium-ui-backend-foundation)
 Stage 4C — Premium Product Experience & Dashboard Evolution ✅ Complete (Branch: stage-4c-premium-product-experience)
+Stage 4D — Shared Backend Integration, Sync & SaaS Homepage ✅ Complete (Branch: stage-4d-shared-backend-sync)
+Stage 4E — Farmer Intelligence, Engagement & Community    ✅ Complete (Branch: stage-4e-farmer-intelligence-engagement)
 ─────────────────────────────────────────────────────────────────────────────
-Stage 5  — Live Supabase Backend Integration & Real-time  ⬜ Planned / Next
-Stage 6  — Payment Gateway Integration (Razorpay/UPI)      ⬜ Planned
-Stage 7  — Logistics Partner API Integration              ⬜ Planned
-Stage 8  — Seller & Manufacturer Marketplace Portal       ⬜ Planned
+Stage 5  — Real-time Subscriptions & Order Status WebSockets  ⬜ Planned / Next
+Stage 6  — Payment Gateway Integration (Razorpay/UPI)         ⬜ Planned
+Stage 7  — Logistics Partner API Integration                 ⬜ Planned
+Stage 8  — Seller & Manufacturer Marketplace Portal          ⬜ Planned
 ```
 
 ---
@@ -320,12 +328,13 @@ Stage 8  — Seller & Manufacturer Marketplace Portal       ⬜ Planned
 
 Detailed architectural and design specifications are maintained in the [`docs/`](./docs) directory:
 
+- [**Backend Setup Guide**](./docs/backend-setup.md) — Comprehensive guide for Supabase project setup, PostgreSQL 16 migrations, seed scripts, RLS policies, and dual-platform environment variables.
 - [**Motion System Specification**](./docs/motion-system.md) — 6-tier duration tokens, cubic-bezier easing curves, reduced-motion accessibility, Web CSS keyframes, and Flutter `AppMotion` presets.
-- [**Platform Design Parity Specification**](./docs/platform-design-parity.md) — 1-to-1 token translation table across Web CSS and Flutter Material 3 (Colors, Typography, Radius, Spacing, Glassmorphism, Icons).
+- [**Platform Design Parity Specification**](./docs/platform-design-parity.md) — 1-to-1 token translation table across Web CSS and Flutter Material 3 (Colors, Typography, Radius, Spacing, Glassmorphism, Icons, Stage 4D Shared Backend, and Stage 4E Intelligence & Engagement).
 - [**UI Quality Checklist**](./docs/ui-quality-checklist.md) — Strict forbidden anti-patterns and mandatory enterprise SaaS standards.
 - [**Design System Specification**](./docs/design-system.md) — Typography, restrained radius (≤12px), semantic color tokens, Lucide icon system, and design principles.
 - [**System Architecture & ADR-004**](./docs/architecture.md) — Dual-target synchronization, Supabase PostgreSQL schema, RLS policies, and migration roadmap.
-- [**Platform-Neutral API Contracts**](./docs/api-contract.md) — Canonical entity schemas (Products, Categories, Orders, Mandi Rates, Addresses) shared by Mobile and Web.
+- [**Platform-Neutral API Contracts**](./docs/api-contract.md) — Canonical entity schemas (Products, Categories, Orders, Mandi Rates, Addresses, Reviews, Community, Notifications) shared by Mobile and Web.
 
 ---
 
@@ -338,6 +347,8 @@ stage-4a-authentication                 — Stage 4A Authentication feature bran
 stage-3-visual-qa-web-parity            — Stage 3 Visual QA & Next.js Web Parity branch
 stage-4b-premium-ui-backend-foundation  — Premium Visual Redesign & Stage 4B Backend Foundation
 stage-4c-premium-product-experience     — Premium Product Experience, Motion System & SaaS Evolution
+stage-4d-shared-backend-sync            — Shared Backend Integration, Synchronization & SaaS Landing Page
+stage-4e-farmer-intelligence-engagement — Farmer Intelligence, Agronomic Reviews, Forum & Community Engagement
 ```
 
 ---

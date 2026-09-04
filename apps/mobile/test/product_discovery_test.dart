@@ -286,19 +286,25 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       await tester.pumpAndSettle();
 
-      expect(find.text('1'), findsOneWidget);
+      final quantity1 = find.byWidgetPredicate(
+        (w) => w is Text && w.data == '1' && w.style?.fontSize == 15,
+      );
+      expect(quantity1, findsOneWidget);
 
       // Increment
       await tester.tap(find.byIcon(Icons.add_rounded));
       await tester.pumpAndSettle();
 
-      expect(find.text('2'), findsOneWidget);
+      final quantity2 = find.byWidgetPredicate(
+        (w) => w is Text && w.data == '2' && w.style?.fontSize == 15,
+      );
+      expect(quantity2, findsOneWidget);
 
       // Decrement
       await tester.tap(find.byIcon(Icons.remove_rounded));
       await tester.pumpAndSettle();
 
-      expect(find.text('1'), findsOneWidget);
+      expect(quantity1, findsOneWidget);
     });
   });
 }

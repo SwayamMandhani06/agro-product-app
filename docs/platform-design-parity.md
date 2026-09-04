@@ -111,3 +111,37 @@ This document maps all design system primitives between the **Next.js Web Applic
 | Search | `<Search />` | `Icons.search` |
 | Mandi Trend Up | `<TrendingUp />` | `Icons.trending_up` |
 | Mandi Trend Down | `<TrendingDown />` | `Icons.trending_down` |
+
+---
+
+## 8. Stage 4D Shared Backend & Data Synchronization Parity
+
+| Layer / Feature | Web (`apps/web`) | Mobile (`apps/mobile`) | Parity Status |
+|---|---|---|---|
+| **Backend Client** | `@supabase/supabase-js` (`lib/supabase/client.ts`) | `Dio` PostgREST (`core/config/backend_config.dart`) | Verified 100% |
+| **Config Guard** | `isBackendConfigured()` | `BackendConfig.isConfigured` | Verified 100% |
+| **Environment Keys** | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `SUPABASE_URL`, `SUPABASE_ANON_KEY` | Verified 100% |
+| **Products Repository** | `SupabaseProductRepository` (`features/products/data/product-repository.ts`) | `SupabaseProductRepository` (`features/products/data/supabase_product_repository.dart`) | Verified 100% |
+| **Orders Repository** | `SupabaseOrderRepository` (`features/orders/data/order-repository.ts`) | `SupabaseOrderRepository` (`features/cart_checkout/data/supabase_order_repository.dart`) | Verified 100% |
+| **Mandi Price Feed** | `SupabaseMandiRepository` (`features/mandi/data/mandi-repository.ts`) | APMC REST endpoint + seed data | Verified 100% |
+| **Offline/Mock Fallback** | Instant fallback to `MOCK_PRODUCTS`, `MOCK_CATEGORIES` | Instant fallback to `MockProductRepository`, `MockOrderRepository` | Verified 100% |
+| **Delivery Threshold** | `subtotal >= 1000 ? 0 : 99` | `subtotal >= 1000 ? 0 : 99` | Verified 100% |
+| **Image Resolution** | Deterministic Unsplash (`lib/product-image-resolver.ts`) | Deterministic Unsplash (`core/utils/product_image_resolver.dart`) | Verified 100% |
+| **Database Schema** | Canonical PostgreSQL 16 schema (`supabase/migrations/20260903000000_stage_4d_canonical_schema.sql`) | Same canonical schema | Verified 100% |
+
+---
+
+## 9. Stage 4E Farmer Intelligence & Engagement Parity Matrix
+
+| Feature Domain | Web Implementation (`apps/web`) | Mobile Implementation (`apps/mobile`) | Parity Status |
+|---|---|---|---|
+| **Farmer Wishlist / Saved Items** | `/saved` (`app/saved/page.tsx`), `useWishlistStore` (`features/wishlist/wishlist-store.ts`), `SupabaseWishlistRepository` | `WishlistScreen` (`features/wishlist/presentation/wishlist_screen.dart`), `wishlistProvider`, `SupabaseWishlistRepository` | Verified 100% |
+| **Agronomic Product Reviews** | Review breakdown card + verified farmer review list in `/products/[id]`, `SupabaseReviewRepository` | Review summary card, breakdown bars + `WriteReviewSheet` modal in `ProductDetailsScreen`, `SupabaseReviewRepository` | Verified 100% |
+| **Notification Center & Alerts** | `/notifications` route (`app/notifications/page.tsx`), category tabs, mark-all-as-read, unread badge | `NotificationsScreen` (`features/notifications/presentation/notifications_screen.dart`), filter chips, unread counter | Verified 100% |
+| **Community Farmer Forum** | `/community` route (`app/community/page.tsx`), topic filters, upvoting, collapsible comments, create post modal | `ForumScreen` (`features/forum/presentation/forum_screen.dart`), upvoting, verified tags, add reply sheet | Verified 100% |
+| **Weather & Spray Intelligence** | `/weather` route (`app/weather/page.tsx`), 5-day forecast, agro-advisory cards, spray window indicator | `WeatherScreen` (`features/weather/presentation/weather_screen.dart`), `WeatherHeroCard`, spray condition alerts | Verified 100% |
+| **Mandi Price APMC Terminal** | `/mandi` route (`app/mandi/page.tsx`), commodity search, price range filters, modal/min/max comparison | `MandiPricesScreen` (`features/mandi_prices/presentation/mandi_prices_screen.dart`), 7-day sparkline charts, market comparisons | Verified 100% |
+| **Recently Inspected Inputs** | `recently-viewed-store.ts` (Zustand + local storage), horizontal carousel in `/products/[id]` | `recently_viewed_provider.dart` (Riverpod), horizontal carousel in `ProductDetailsScreen` | Verified 100% |
+| **PostgreSQL 16 Schema (Stage 4E)** | `wishlists`, `reviews`, `notifications`, `community_posts`, `community_comments` with RLS policies | Same PostgreSQL tables & migration scripts (`supabase/migrations/20260904000000_stage_4e_schema.sql`) | Verified 100% |
+
+

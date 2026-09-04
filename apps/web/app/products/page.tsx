@@ -1,19 +1,13 @@
 'use client';
 
 import React, { useState, useMemo, Suspense } from 'react';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import { MOCK_PRODUCTS, MOCK_CATEGORIES } from '@/lib/mock-data';
-import { ProductImageResolver } from '@/lib/product-image-resolver';
 import { ProductCardSkeleton } from '@/components/common/Skeleton';
-import { useCartStore } from '@/features/cart/store';
-import type { Product, ProductSortKey } from '@/types';
-import { Search, SlidersHorizontal, ShoppingCart, CheckCircle, Star, Package } from 'lucide-react';
-
-function formatPrice(n: number) {
-  return `₹${n.toLocaleString('en-IN')}`;
-}
+import ProductCard from '@/components/common/ProductCard';
+import type { ProductSortKey } from '@/types';
+import { Search, SlidersHorizontal, Package, Star } from 'lucide-react';
 
 const SORTS: { value: ProductSortKey; label: string }[] = [
   { value: 'featured',   label: 'Featured' },
@@ -29,68 +23,6 @@ const PRICE_FILTERS = [
   { label: '₹1,000 – ₹3,000', min: 1000, max: 3000 },
   { label: '₹3,000 & Above', min: 3000, max: Infinity },
 ];
-
-function ProductCard({ product }: { product: Product }) {
-  const addItem = useCartStore((s) => s.addItem);
-  const hasItem = useCartStore((s) => s.hasItem);
-  const inCart  = hasItem(product.id);
-  const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0;
-
-  const imgSrc = ProductImageResolver.resolve(product.id, product.category);
-
-  return (
-    <div className="card card-hover">
-      <Link href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-        <div className="product-img-wrap" style={{ height: 150, position: 'relative' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imgSrc} alt={product.title} loading="lazy" />
-          {discount > 0 && (
-            <span className="discount-badge" style={{ position: 'absolute', top: 8, left: 8 }}>
-              {discount}% OFF
-            </span>
-          )}
-        </div>
-        <div style={{ padding: '12px 14px 8px' }}>
-          <p style={{ margin: '0 0 2px', fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-            {product.sellerName}
-          </p>
-          <p style={{ margin: '0 0 6px', fontSize: 14, fontWeight: 600, color: 'var(--color-text-primary)', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {product.title}
-          </p>
-          {product.rating && (
-            <p style={{ margin: '0 0 6px', fontSize: 12, color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: 3 }}>
-              <Star size={11} fill="var(--color-amber)" color="var(--color-amber)" strokeWidth={1} />
-              {product.rating} ({product.reviewCount})
-            </p>
-          )}
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-            <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-text-primary)' }}>
-              {formatPrice(product.price)}
-            </span>
-            {product.originalPrice && (
-              <span className="price-original">{formatPrice(product.originalPrice)}</span>
-            )}
-          </div>
-        </div>
-      </Link>
-      <div style={{ padding: '0 14px 14px' }}>
-        <button
-          id={`products-add-cart-${product.id}`}
-          onClick={() => addItem(product)}
-          className={`btn btn-full btn-sm ${inCart ? 'btn-secondary' : 'btn-primary'}`}
-          style={{ gap: 5 }}
-        >
-          {inCart
-            ? <><CheckCircle size={13} strokeWidth={2.5} />In Cart</>
-            : <><ShoppingCart size={13} strokeWidth={2} />Add to Cart</>
-          }
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function ProductsContent() {
   const searchParams      = useSearchParams();

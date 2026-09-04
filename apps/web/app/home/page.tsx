@@ -3,12 +3,9 @@
 import React from 'react';
 import AppShell from '@/components/layout/AppShell';
 import { useAuthStore } from '@/features/auth/store';
-import { useCartStore } from '@/features/cart/store';
 import { useOrdersStore } from '@/features/orders/store';
 import { MOCK_PRODUCTS, MOCK_CATEGORIES, MOCK_MANDI_PRICES } from '@/lib/mock-data';
-import { ProductImageResolver } from '@/lib/product-image-resolver';
 import Link from 'next/link';
-import type { Product } from '@/types';
 import CategoryIcon from '@/components/icons/CategoryIcon';
 import { FadeIn, SlideUp } from '@/components/common/Motion';
 import {
@@ -17,10 +14,7 @@ import {
   TrendingDown,
   Minus,
   ArrowUpRight,
-  ShoppingCart,
-  CheckCircle,
   Package,
-  Star,
   Activity,
   MapPin,
   Calendar,
@@ -29,10 +23,6 @@ import {
   ShieldCheck,
   Zap,
 } from 'lucide-react';
-
-function formatPrice(price: number) {
-  return `₹${price.toLocaleString('en-IN')}`;
-}
 
 // 7-day trend data for market visualization
 const SEVEN_DAY_TREND = [
@@ -102,74 +92,13 @@ function MarketTrendSparkline() {
   );
 }
 
-function ProductCard({ product }: { product: Product }) {
-  const addItem  = useCartStore((s) => s.addItem);
-  const hasItem  = useCartStore((s) => s.hasItem);
-  const inCart   = hasItem(product.id);
-  const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0;
-
-  const imgSrc = ProductImageResolver.resolve(product.id, product.category);
-
-  return (
-    <div className="card card-hover" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      <Link href={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', flex: 1 }}>
-        <div className="product-img-wrap" style={{ height: 140, position: 'relative' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imgSrc} alt={product.title} loading="lazy" />
-          {discount > 0 && (
-            <span className="discount-badge" style={{ position: 'absolute', top: 8, left: 8 }}>
-              {discount}% OFF
-            </span>
-          )}
-        </div>
-
-        <div style={{ padding: '12px 14px 10px' }}>
-          <p style={{ margin: '0 0 2px', fontSize: 11, color: 'var(--color-text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-            {product.sellerName}
-          </p>
-          <p style={{ margin: '0 0 6px', fontSize: 14, fontWeight: 600, color: 'var(--color-text-primary)', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {product.title}
-          </p>
-
-          {product.rating && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginBottom: 8 }}>
-              <Star size={11} fill="var(--color-amber)" color="var(--color-amber)" strokeWidth={1} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-primary)' }}>{product.rating}</span>
-              <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>({product.reviewCount})</span>
-            </div>
-          )}
-
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-            <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-text-primary)' }}>{formatPrice(product.price)}</span>
-            {product.originalPrice && (
-              <span className="price-original">{formatPrice(product.originalPrice)}</span>
-            )}
-          </div>
-        </div>
-      </Link>
-
-      <div style={{ padding: '0 14px 14px' }}>
-        <button
-          id={`home-add-cart-${product.id}`}
-          onClick={(e) => { e.preventDefault(); addItem(product); }}
-          className={`btn btn-full btn-sm ${inCart ? 'btn-secondary' : 'btn-primary'}`}
-          style={{ gap: 6, fontSize: 12 }}
-        >
-          {inCart
-            ? <><CheckCircle size={13} strokeWidth={2.5} />In Cart</>
-            : <><ShoppingCart size={13} strokeWidth={2} />Add to Cart</>
-          }
-        </button>
-      </div>
-    </div>
-  );
-}
+import ProductCard from '@/components/common/ProductCard';
+import { useRecentlyViewedStore } from '@/features/products/recently-viewed-store';
 
 export default function HomePage() {
   const { user } = useAuthStore();
   const { orders } = useOrdersStore();
+  const recentItems = useRecentlyViewedStore((s) => s.items);
 
   const hour      = new Date().getHours();
   const greeting  = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -514,6 +443,31 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
+
+          {/* Recently Viewed Products */}
+          {recentItems.length > 0 && (
+            <div style={{ marginTop: 36, borderTop: '1px solid var(--color-border)', paddingTop: 28 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <div>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: 'var(--color-text-primary)' }}>
+                    Recently Inspected
+                  </h3>
+                  <p style={{ fontSize: 13, color: 'var(--color-text-tertiary)', margin: '2px 0 0' }}>
+                    Quickly revisit inputs you checked recently
+                  </p>
+                </div>
+                <Link href="/products" style={{ fontSize: 13, color: 'var(--color-forest)', fontWeight: 600, textDecoration: 'none' }}>
+                  Browse Catalog →
+                </Link>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
+                {recentItems.slice(0, 4).map((product) => (
+                  <ProductCard key={product.id} product={product} compact />
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
       </div>

@@ -1,10 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/config/backend_config.dart';
 import '../../data/mock_product_repository.dart';
+import '../../data/supabase_product_repository.dart';
 import '../../domain/product.dart';
 import '../../domain/product_repository.dart';
 
 final productRepositoryProvider = Provider<ProductRepository>((ref) {
+  if (BackendConfig.isConfigured) {
+    return SupabaseProductRepository();
+  }
   return const MockProductRepository();
 });
 

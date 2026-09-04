@@ -20,6 +20,7 @@ class WeatherHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
+      onTap: () => context.push(AppRoutes.weather),
       padding: const EdgeInsets.all(AppSpacing.cardPadding),
       borderRadius: BorderRadius.circular(AppRadius.xl),
       variant: AppCardVariant.elevated,
