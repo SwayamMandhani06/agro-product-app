@@ -21,6 +21,13 @@ import {
 import { useNotificationsStore } from '@/features/notifications/notifications-store';
 import { useWishlistStore } from '@/features/wishlist/wishlist-store';
 
+import { connectionManager, type ConnectionState } from '@/lib/realtime/connection-manager';
+import { realtimeClient } from '@/lib/realtime/realtime-client';
+import { subscribeToNotifications } from '@/lib/realtime/subscriptions/notifications';
+import { subscribeToOrderUpdates } from '@/lib/realtime/subscriptions/orders';
+import { useOrdersStore } from '@/features/orders/store';
+import { CheckCheck, CheckCircle2, WifiOff } from 'lucide-react';
+
 const emptySubscribe = () => () => {};
 const useMounted = () => useSyncExternalStore(emptySubscribe, () => true, () => false);
 
@@ -48,10 +55,46 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
   const router    = useRouter();
   const { status, user, signOut } = useAuthStore();
   const cartCount = useCartStore((s) => s.totalItemCount());
+  const { notifications, markAllAsRead } = useNotificationsStore();
   const unreadCount = useNotificationsStore((s) => s.unreadCount());
   const savedCount = useWishlistStore((s) => s.savedProductIds.length);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
+  const [connectionState, setConnectionState] = useState<ConnectionState>(connectionManager.getState());
+  const [showRestoredBanner, setShowRestoredBanner] = useState(false);
   const mounted   = useMounted();
+
+  // Initialize Realtime Client & Subscriptions
+  useEffect(() => {
+    if (!mounted) return;
+    realtimeClient.init();
+
+    const unsubConn = connectionManager.subscribe((state, prevState) => {
+      setConnectionState(state);
+      if (prevState === 'offline' && state === 'connected') {
+        setShowRestoredBanner(true);
+        setTimeout(() => setShowRestoredBanner(false), 3000);
+      }
+    });
+
+    const unsubNotif = subscribeToNotifications('usr_default', (notif) => {
+      useNotificationsStore.getState().incomingRealtimeNotification(notif);
+    });
+
+    const unsubOrders = subscribeToOrderUpdates('usr_default', (update) => {
+      useOrdersStore.getState().updateOrderStatus(update.orderId, update.status, {
+        estimatedDelivery: update.estimatedDelivery,
+        agentName: update.deliveryAgentName,
+        agentPhone: update.deliveryAgentPhone,
+      });
+    });
+
+    return () => {
+      unsubConn();
+      unsubNotif();
+      unsubOrders();
+    };
+  }, [mounted]);
 
   // Route guard
   useEffect(() => {
@@ -59,6 +102,7 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
       router.replace('/welcome');
     }
   }, [mounted, status, router]);
+
 
   if (!mounted || status === 'unauthenticated' || status === 'initializing') {
     return (
@@ -157,6 +201,41 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
 
           {/* Right actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {/* Connection State Indicator */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '4px 10px',
+                borderRadius: 20,
+                background: 'rgba(255,255,255,0.08)',
+                fontSize: 11,
+                fontWeight: 600,
+                color: connectionState === 'connected' ? 'var(--color-brand-100, #bbf7d0)' :
+                       connectionState === 'reconnecting' ? '#fde047' :
+                       connectionState === 'offline' ? '#fca5a5' : '#e2e8f0',
+                letterSpacing: '0.2px',
+                marginRight: 4,
+              }}
+              title={`Realtime Status: ${connectionState}`}
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: connectionState === 'connected' ? '#22c55e' :
+                              connectionState === 'reconnecting' ? '#eab308' :
+                              connectionState === 'offline' ? '#ef4444' : '#94a3b8',
+                  boxShadow: connectionState === 'connected' ? '0 0 6px rgba(34,197,94,0.6)' : 'none',
+                }}
+              />
+              <span style={{ textTransform: 'capitalize' }}>
+                {connectionState === 'connected' ? 'Live' : connectionState}
+              </span>
+            </div>
+
             {/* Saved / Wishlist Link */}
             <Link
               href="/saved"
@@ -200,48 +279,185 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
               )}
             </Link>
 
-            {/* Notification Bell */}
-            <Link
-              href="/notifications"
-              title="Platform Alerts"
-              style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 36,
-                height: 36,
-                borderRadius: 8,
-                background: 'rgba(255,255,255,0.10)',
-                color: '#fff',
-                textDecoration: 'none',
-                transition: 'background var(--motion-fast) var(--ease-standard)',
-              }}
-            >
-              <Bell size={17} strokeWidth={2} />
-              {unreadCount > 0 && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: -3,
-                    right: -3,
-                    background: 'var(--color-amber)',
-                    color: '#fff',
-                    borderRadius: '50%',
-                    width: 17,
-                    height: 17,
-                    fontSize: 9,
-                    fontWeight: 700,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 0 0 2px var(--color-forest)',
-                  }}
-                >
-                  {unreadCount}
-                </span>
+            {/* Notification Bell with Dropdown */}
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setNotifDropdownOpen((prev) => !prev)}
+                title="Platform Alerts"
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  background: notifDropdownOpen ? 'rgba(255,255,255,0.20)' : 'rgba(255,255,255,0.10)',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background var(--motion-fast) var(--ease-standard)',
+                }}
+              >
+                <Bell size={17} strokeWidth={2} />
+                {unreadCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: -3,
+                      right: -3,
+                      background: 'var(--color-amber)',
+                      color: '#fff',
+                      borderRadius: '50%',
+                      width: 17,
+                      height: 17,
+                      fontSize: 9,
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 0 0 2px var(--color-forest)',
+                    }}
+                  >
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Popover Dropdown */}
+              {notifDropdownOpen && (
+                <>
+                  <div
+                    style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                    onClick={() => setNotifDropdownOpen(false)}
+                  />
+                  <div
+                    className="slide-up"
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      right: 0,
+                      background: 'var(--color-surface)',
+                      borderRadius: 10,
+                      boxShadow: 'var(--shadow-xl)',
+                      border: '1px solid var(--color-divider)',
+                      width: 340,
+                      maxWidth: '90vw',
+                      zIndex: 50,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '12px 16px',
+                        borderBottom: '1px solid var(--color-divider)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        background: 'var(--color-brand-50)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--color-forest)' }}>
+                          Alerts & Intelligence
+                        </span>
+                        {unreadCount > 0 && (
+                          <span
+                            style={{
+                              background: 'var(--color-forest)',
+                              color: '#fff',
+                              fontSize: 10,
+                              fontWeight: 700,
+                              padding: '1px 6px',
+                              borderRadius: 10,
+                            }}
+                          >
+                            {unreadCount} new
+                          </span>
+                        )}
+                      </div>
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={() => markAllAsRead()}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--color-forest)',
+                            fontSize: 11,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 3,
+                            padding: 0,
+                          }}
+                        >
+                          <CheckCheck size={13} />
+                          Mark all read
+                        </button>
+                      )}
+                    </div>
+
+                    <div style={{ maxHeight: 280, overflowY: 'auto' }}>
+                      {notifications.slice(0, 4).map((n) => (
+                        <div
+                          key={n.id}
+                          style={{
+                            padding: '10px 14px',
+                            borderBottom: '1px solid var(--color-divider)',
+                            background: n.isRead ? 'transparent' : 'rgba(238, 248, 241, 0.4)',
+                            display: 'flex',
+                            gap: 10,
+                            alignItems: 'flex-start',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 6,
+                              height: 6,
+                              borderRadius: '50%',
+                              background: n.isRead ? 'transparent' : 'var(--color-forest)',
+                              marginTop: 6,
+                              flexShrink: 0,
+                            }}
+                          />
+                          <div style={{ flex: 1 }}>
+                            <p style={{ margin: 0, fontSize: 12.5, fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                              {n.title}
+                            </p>
+                            <p style={{ margin: '2px 0 4px', fontSize: 11.5, color: 'var(--color-text-secondary)', lineHeight: 1.4 }}>
+                              {n.body}
+                            </p>
+                            <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)' }}>
+                              {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Link
+                      href="/notifications"
+                      onClick={() => setNotifDropdownOpen(false)}
+                      style={{
+                        display: 'block',
+                        padding: '10px 16px',
+                        textAlign: 'center',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: 'var(--color-forest)',
+                        background: 'var(--color-canvas)',
+                        textDecoration: 'none',
+                        borderTop: '1px solid var(--color-divider)',
+                      }}
+                    >
+                      View all notifications →
+                    </Link>
+                  </div>
+                </>
               )}
-            </Link>
+            </div>
 
             {/* Cart Button */}
             <Link
@@ -412,6 +628,47 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
           </div>
         </div>
       </header>
+
+      {/* Connection Notification Banners */}
+      {connectionState === 'offline' && (
+        <div
+          style={{
+            background: '#FEF2F2',
+            borderBottom: '1px solid #FCA5A5',
+            padding: '8px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            color: '#991B1B',
+            fontSize: 12.5,
+            fontWeight: 500,
+          }}
+        >
+          <WifiOff size={14} strokeWidth={2} />
+          <span>You&apos;re offline. Showing the latest available information.</span>
+        </div>
+      )}
+
+      {showRestoredBanner && (
+        <div
+          style={{
+            background: '#F0FDF4',
+            borderBottom: '1px solid #86EFAC',
+            padding: '8px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            color: '#166534',
+            fontSize: 12.5,
+            fontWeight: 500,
+          }}
+        >
+          <CheckCircle2 size={14} strokeWidth={2} />
+          <span>Connection restored</span>
+        </div>
+      )}
 
       {/* ============================================================
           PAGE CONTENT

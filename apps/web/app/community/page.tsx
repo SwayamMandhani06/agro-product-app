@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import AppShellLayout from '@/components/layout/AppShell';
 import { communityRepository } from '@/features/community/data/community-repository';
+import { subscribeToCommunity } from '@/lib/realtime/subscriptions/community';
 import type { CommunityPost, CommunityCategory } from '@/types';
 
 const CATEGORIES: (CommunityCategory | 'All')[] = [
@@ -36,11 +37,33 @@ export default function CommunityPage() {
   const [newContent, setNewContent] = useState('');
   const [newCategory, setNewCategory] = useState<CommunityCategory>('Crop Management');
   const [commentText, setCommentText] = useState('');
+  const [pendingPosts, setPendingPosts] = useState<CommunityPost[]>([]);
+  const [newRepliesCount, setNewRepliesCount] = useState(0);
   const mounted = useMounted();
 
   useEffect(() => {
     communityRepository.getPosts().then(setPosts);
-  }, []);
+
+    // Subscribe to realtime community events
+    const unsub = subscribeToCommunity(
+      (newPost) => {
+        // Non-disruptive: queue new post so reader isn't interrupted
+        setPendingPosts((prev) => [newPost, ...prev.filter((p) => p.id !== newPost.id)]);
+      },
+      (newComment) => {
+        if (activePost && newComment.postId === activePost.id) {
+          setNewRepliesCount((prev) => prev + 1);
+        }
+      }
+    );
+
+    return () => unsub();
+  }, [activePost]);
+
+  const handleRevealPendingPosts = () => {
+    setPosts((prev) => [...pendingPosts, ...prev]);
+    setPendingPosts([]);
+  };
 
   const handleCategoryChange = async (cat: CommunityCategory | 'All') => {
     setSelectedCategory(cat);
@@ -49,12 +72,28 @@ export default function CommunityPage() {
   };
 
   const handleToggleLike = async (postId: string) => {
-    await communityRepository.toggleLike(postId);
-    const updated = await communityRepository.getPosts(selectedCategory);
-    setPosts(updated);
+    // Optimistic update
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === postId ? { ...p, likesCount: (p.likesCount || 0) + 1 } : p
+      )
+    );
     if (activePost && activePost.id === postId) {
-      const refreshedActive = updated.find((p) => p.id === postId);
-      if (refreshedActive) setActivePost(refreshedActive);
+      setActivePost((prev) => prev ? { ...prev, likesCount: (prev.likesCount || 0) + 1 } : null);
+    }
+
+    try {
+      await communityRepository.toggleLike(postId);
+      const updated = await communityRepository.getPosts(selectedCategory);
+      setPosts(updated);
+      if (activePost && activePost.id === postId) {
+        const refreshedActive = updated.find((p) => p.id === postId);
+        if (refreshedActive) setActivePost(refreshedActive);
+      }
+    } catch {
+      // Revert if error
+      const reverted = await communityRepository.getPosts(selectedCategory);
+      setPosts(reverted);
     }
   };
 
@@ -91,6 +130,7 @@ export default function CommunityPage() {
       const updated = await communityRepository.getPosts(selectedCategory);
       setPosts(updated);
       setCommentText('');
+      setNewRepliesCount(0);
     }
   };
 
@@ -152,6 +192,33 @@ export default function CommunityPage() {
             </button>
           ))}
         </div>
+
+        {/* New posts subtle notification pill */}
+        {pendingPosts.length > 0 && (
+          <button
+            onClick={handleRevealPendingPosts}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              padding: '10px 16px',
+              borderRadius: 8,
+              background: 'var(--color-brand-50, #f0fdf4)',
+              border: '1px solid var(--color-brand-200, #bbf7d0)',
+              color: 'var(--color-forest)',
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: 'pointer',
+              marginBottom: 16,
+              width: '100%',
+              transition: 'background var(--motion-fast)',
+            }}
+          >
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--color-forest)' }} />
+            {pendingPosts.length} new discussion{pendingPosts.length > 1 ? 's' : ''} available · Click to show
+          </button>
+        )}
 
         {/* Posts Feed */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -329,6 +396,45 @@ export default function CommunityPage() {
                 <h4 style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--color-text-primary)', margin: '0 0 12px' }}>
                   Farmer Responses ({activePost.comments?.length ?? 0})
                 </h4>
+
+                {newRepliesCount > 0 && (
+                  <div
+                    style={{
+                      background: 'var(--color-brand-50, #f0fdf4)',
+                      border: '1px solid var(--color-brand-200, #bbf7d0)',
+                      padding: '8px 12px',
+                      borderRadius: 6,
+                      marginBottom: 10,
+                      fontSize: 12.5,
+                      color: 'var(--color-forest)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span>{newRepliesCount} new reply received</span>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const updated = await communityRepository.getPosts(selectedCategory);
+                        setPosts(updated);
+                        const refreshedActive = updated.find((p) => p.id === activePost.id);
+                        if (refreshedActive) setActivePost(refreshedActive);
+                        setNewRepliesCount(0);
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--color-forest)',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        padding: 0,
+                      }}
+                    >
+                      Load reply →
+                    </button>
+                  </div>
+                )}
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {(activePost.comments || []).map((c) => (

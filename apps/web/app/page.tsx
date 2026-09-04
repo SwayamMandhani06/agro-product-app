@@ -12,7 +12,6 @@ import {
   Globe,
   Database,
   CheckCircle,
-  Package,
   ChevronRight,
   Calculator,
   Truck,
@@ -188,134 +187,250 @@ export default function SaaSMarketingHomePage() {
       </div>
 
       {/* ============================================================
-          3. HERO SECTION (Concise, Authoritative Agrarian Fintech)
+          3. HERO SECTION (Asymmetric Editorial Agrarian Fintech)
           ============================================================ */}
       <section
         style={{
           background: 'linear-gradient(180deg, var(--color-forest) 0%, #062118 100%)',
           color: '#fff',
-          paddingTop: 56,
-          paddingBottom: 72,
+          paddingTop: 48,
+          paddingBottom: 64,
           position: 'relative',
           overflow: 'hidden',
         }}
       >
         <div className="container-app">
-          <div style={{ maxWidth: 780, margin: '0 auto', textAlign: 'center' }}>
-            {/* Tag Pill */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: 40,
+              alignItems: 'center',
+            }}
+          >
+            {/* Left Column: Asymmetric Editorial Value Proposition */}
+            <div>
+              {/* Tag Pill */}
+              <div
+                className="fade-in"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '5px 12px',
+                  borderRadius: 20,
+                  background: 'rgba(255,255,255,0.10)',
+                  border: '1px solid rgba(255,255,255,0.18)',
+                  fontSize: 11.5,
+                  fontWeight: 600,
+                  marginBottom: 18,
+                  color: 'rgba(255,255,255,0.92)',
+                  letterSpacing: '0.4px',
+                }}
+              >
+                <ShieldCheck size={14} color="#34D399" strokeWidth={2.4} />
+                <span>SYNCHRONIZED AGRICULTURAL COMMERCE &amp; MARKET INTELLIGENCE</span>
+              </div>
+
+              {/* Main Headline */}
+              <h1
+                className="slide-up"
+                style={{
+                  fontSize: 'clamp(28px, 3.8vw, 46px)',
+                  fontWeight: 800,
+                  lineHeight: 1.15,
+                  letterSpacing: '-0.8px',
+                  margin: '0 0 16px',
+                }}
+              >
+                Institutional Farm-Gate Commerce &amp; <span style={{ color: '#FCD34D' }}>Real-Time APMC Intelligence</span>
+              </h1>
+
+              {/* Subhead */}
+              <p
+                className="slide-up"
+                style={{
+                  fontSize: 'clamp(14px, 1.2vw, 16px)',
+                  lineHeight: 1.6,
+                  color: 'rgba(255,255,255,0.85)',
+                  margin: '0 0 28px',
+                  maxWidth: 540,
+                }}
+              >
+                Empowering progressive Indian agricultural enterprises and farmers with factory-direct agro-inputs, live multi-state mandi price benchmarking, and transparent consignment logistics without intermediary markups.
+              </p>
+
+              {/* Hero CTAs */}
+              <div
+                className="slide-up"
+                style={{
+                  display: 'flex',
+                  gap: 12,
+                  flexWrap: 'wrap',
+                  marginBottom: 32,
+                }}
+              >
+                <Link
+                  href="/home"
+                  className="btn btn-primary"
+                  style={{
+                    background: 'var(--color-amber)',
+                    color: '#fff',
+                    border: 'none',
+                    fontSize: 14.5,
+                    padding: '11px 22px',
+                    fontWeight: 700,
+                    gap: 8,
+                    borderRadius: 6,
+                  }}
+                >
+                  Launch Farmer Dashboard <ArrowRight size={15} strokeWidth={2.5} />
+                </Link>
+                <Link
+                  href="/mandi"
+                  className="btn btn-secondary"
+                  style={{
+                    background: 'rgba(255,255,255,0.12)',
+                    color: '#fff',
+                    borderColor: 'rgba(255,255,255,0.25)',
+                    fontSize: 14.5,
+                    padding: '11px 20px',
+                    gap: 8,
+                    borderRadius: 6,
+                  }}
+                >
+                  <BarChart3 size={15} strokeWidth={2} /> Inspect Mandi Terminal
+                </Link>
+              </div>
+
+              {/* Trust Information */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 20,
+                  flexWrap: 'wrap',
+                  fontSize: 12,
+                  color: 'rgba(255,255,255,0.75)',
+                  paddingTop: 8,
+                  borderTop: '1px solid rgba(255,255,255,0.10)',
+                }}
+              >
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <ShieldCheck size={15} color="#34D399" strokeWidth={2.2} /> 100% Certified Seed Lots
+                </span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <TrendingUp size={15} color="#34D399" strokeWidth={2.2} /> 8 Direct APMC Benchmarks
+                </span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <CheckCircle size={15} color="#34D399" strokeWidth={2.2} /> Zero Middleman Markups
+                </span>
+              </div>
+            </div>
+
+            {/* Right Column: Live Operational Terminal Preview */}
             <div
               className="fade-in"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '5px 14px',
-                borderRadius: 20,
-                background: 'rgba(255,255,255,0.10)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                fontSize: 12,
-                fontWeight: 600,
-                marginBottom: 20,
-                color: 'rgba(255,255,255,0.92)',
+                background: 'rgba(11, 41, 32, 0.85)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: 10,
+                boxShadow: '0 24px 48px -12px rgba(0,0,0,0.5)',
+                backdropFilter: 'blur(16px)',
+                overflow: 'hidden',
               }}
             >
-              <ShieldCheck size={14} color="#34D399" strokeWidth={2.4} />
-              <span>SYNCHRONIZED AGRICULTURAL COMMERCE &amp; MARKET INTELLIGENCE</span>
-            </div>
-
-            {/* Main Headline */}
-            <h1
-              className="slide-up"
-              style={{
-                fontSize: 'clamp(28px, 4.5vw, 50px)',
-                fontWeight: 800,
-                lineHeight: 1.15,
-                letterSpacing: '-0.8px',
-                margin: '0 0 18px',
-              }}
-            >
-              Direct Farm-Gate Commerce &amp; <span style={{ color: '#FCD34D' }}>Marketplace Intelligence</span>
-            </h1>
-
-            {/* Subhead */}
-            <p
-              className="slide-up"
-              style={{
-                fontSize: 'clamp(14px, 1.8vw, 17px)',
-                lineHeight: 1.6,
-                color: 'rgba(255,255,255,0.85)',
-                margin: '0 auto 32px',
-                maxWidth: 660,
-              }}
-            >
-              Connecting progressive Indian farmers directly to verified agro-manufacturers. Access certified high-germination seeds, transparent farm-gate pricing, and real-time APMC mandi benchmarks without middleman markups.
-            </p>
-
-            {/* Hero CTAs */}
-            <div
-              className="slide-up"
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                gap: 12,
-                flexWrap: 'wrap',
-                marginBottom: 44,
-              }}
-            >
-              <Link
-                href="/home"
-                className="btn btn-primary"
+              {/* Terminal Title Bar */}
+              <div
                 style={{
-                  background: 'var(--color-amber)',
-                  color: '#fff',
-                  border: 'none',
-                  fontSize: 15,
-                  padding: '12px 24px',
-                  fontWeight: 700,
-                  gap: 8,
-                  borderRadius: 6,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px 16px',
+                  background: 'rgba(0,0,0,0.25)',
+                  borderBottom: '1px solid rgba(255,255,255,0.08)',
                 }}
               >
-                Launch Farmer Dashboard <ArrowRight size={16} strokeWidth={2.5} />
-              </Link>
-              <Link
-                href="/products"
-                className="btn btn-secondary"
-                style={{
-                  background: 'rgba(255,255,255,0.12)',
-                  color: '#fff',
-                  borderColor: 'rgba(255,255,255,0.25)',
-                  fontSize: 15,
-                  padding: '12px 22px',
-                  gap: 8,
-                  borderRadius: 6,
-                }}
-              >
-                <Package size={16} strokeWidth={2} /> Browse Catalog
-              </Link>
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#EF4444' }} />
+                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#F59E0B' }} />
+                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#10B981' }} />
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.6)', marginLeft: 8 }}>
+                    agritrade-terminal: live-cluster-in-west-1
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', boxShadow: '0 0 6px #22c55e' }} />
+                  <span style={{ fontSize: 10.5, fontWeight: 700, color: '#34D399', letterSpacing: '0.4px' }}>
+                    WSS CONNECTED
+                  </span>
+                </div>
+              </div>
 
-            {/* Trust Badges */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                gap: 24,
-                flexWrap: 'wrap',
-                fontSize: 12.5,
-                color: 'rgba(255,255,255,0.75)',
-                paddingTop: 8,
-              }}
-            >
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <ShieldCheck size={16} color="#34D399" strokeWidth={2.2} /> 100% Certified Seed Lots
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <TrendingUp size={16} color="#34D399" strokeWidth={2.2} /> Live APMC Mandi Intelligence
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <CheckCircle size={16} color="#34D399" strokeWidth={2.2} /> Zero Middleman Markups
-              </span>
+              {/* Terminal Content */}
+              <div style={{ padding: '16px 18px' }}>
+                {/* Realtime APMC Snippet */}
+                <div style={{ marginBottom: 14 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Real-Time APMC Price Feeds
+                    </span>
+                    <span style={{ fontSize: 10.5, color: '#FCD34D' }}>● Tick updated 8s ago</span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: 6, fontSize: 12.5 }}>
+                      <div>
+                        <span style={{ fontWeight: 600, color: '#fff' }}>Soybean (Yellow JS-335)</span>
+                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginLeft: 6 }}>Indore APMC</span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontWeight: 700, color: '#fff' }}>₹4,320 / qtl</span>
+                        <span style={{ color: '#34D399', fontSize: 11, fontWeight: 600, marginLeft: 8 }}>▲ +₹45</span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: 6, fontSize: 12.5 }}>
+                      <div>
+                        <span style={{ fontWeight: 600, color: '#fff' }}>Cotton (Medium Staple)</span>
+                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginLeft: 6 }}>Rajkot APMC</span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontWeight: 700, color: '#fff' }}>₹7,100 / qtl</span>
+                        <span style={{ color: '#34D399', fontSize: 11, fontWeight: 600, marginLeft: 8 }}>▲ +₹80</span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', background: 'rgba(255,255,255,0.04)', borderRadius: 6, fontSize: 12.5 }}>
+                      <div>
+                        <span style={{ fontWeight: 600, color: '#fff' }}>Mustard (Bold Seed)</span>
+                        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginLeft: 6 }}>Alwar APMC</span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontWeight: 700, color: '#fff' }}>₹5,450 / qtl</span>
+                        <span style={{ color: '#F87171', fontSize: 11, fontWeight: 600, marginLeft: 8 }}>▼ -₹25</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Active Consignment Stream */}
+                <div style={{ padding: '12px', background: 'rgba(217, 119, 6, 0.12)', border: '1px solid rgba(217, 119, 6, 0.3)', borderRadius: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Truck size={14} color="#FCD34D" />
+                      <span style={{ fontSize: 12, fontWeight: 700, color: '#FCD34D' }}>
+                        Live Consignment: #ORD-2024-001
+                      </span>
+                    </div>
+                    <span style={{ fontSize: 10.5, fontWeight: 700, background: '#FCD34D', color: '#78350F', padding: '2px 6px', borderRadius: 4 }}>
+                      OUT FOR DELIVERY
+                    </span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 11.5, color: 'rgba(255,255,255,0.8)' }}>
+                    Courier: Delhivery Cargo Express · Pune Central Distribution Hub · ETA Today 2:30 PM
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
