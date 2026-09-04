@@ -29,7 +29,7 @@ class OrderStatusBadge extends StatelessWidget {
           AppColors.stitchAmber,
           Icons.local_shipping_rounded,
         ),
-      OrderStatus.processing => (
+      OrderStatus.processing || OrderStatus.packed => (
           AppColors.neutral100,
           AppColors.textSecondary,
           Icons.inventory_2_outlined,
@@ -48,6 +48,21 @@ class OrderStatusBadge extends StatelessWidget {
           AppColors.errorLight,
           AppColors.error,
           Icons.cancel_rounded,
+        ),
+      OrderStatus.refundRequested || OrderStatus.refundProcessing => (
+          AppColors.warningLight,
+          AppColors.warning,
+          Icons.currency_rupee_rounded,
+        ),
+      OrderStatus.refunded => (
+          AppColors.successLight,
+          AppColors.stitchForestGreen,
+          Icons.assignment_turned_in_rounded,
+        ),
+      OrderStatus.disputed => (
+          AppColors.errorLight,
+          AppColors.error,
+          Icons.gavel_rounded,
         ),
     };
 

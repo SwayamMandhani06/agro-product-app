@@ -204,10 +204,15 @@ class OrderTrackingTimeline extends StatelessWidget {
       OrderStatus.placed => OrderStatus.confirmed,
       OrderStatus.confirmed => OrderStatus.processing,
       OrderStatus.processing => OrderStatus.shipped,
+      OrderStatus.packed => OrderStatus.shipped,
       OrderStatus.shipped => OrderStatus.outForDelivery,
       OrderStatus.outForDelivery => OrderStatus.delivered,
       OrderStatus.delivered => null,
       OrderStatus.cancelled => null,
+      OrderStatus.refundRequested => OrderStatus.refundProcessing,
+      OrderStatus.refundProcessing => OrderStatus.refunded,
+      OrderStatus.refunded => null,
+      OrderStatus.disputed => null,
     };
   }
 

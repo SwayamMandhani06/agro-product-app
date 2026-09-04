@@ -8,30 +8,70 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { AppUser } from '@/types';
+import type { AppUser, UserPlatformRole } from '@/types';
+
+// Mock credential store
+export const DEMO_PERSONAS: Record<UserPlatformRole, { email: string; password: string; user: AppUser }> = {
+  farmer: {
+    email: 'farmer@agritrade.in',
+    password: 'farmer123',
+    user: {
+      id: 'usr_001',
+      name: 'Rahul Sharma',
+      email: 'farmer@agritrade.in',
+      phone: '9876543210',
+      role: 'farmer',
+      createdAt: '2024-01-01T00:00:00.000Z',
+    },
+  },
+  seller: {
+    email: 'seller@agritrade.in',
+    password: 'seller123',
+    user: {
+      id: 'usr_seller_001',
+      name: 'Maharashtra Krishi Kendra',
+      email: 'seller@agritrade.in',
+      phone: '9822012345',
+      role: 'seller',
+      createdAt: '2024-02-01T00:00:00.000Z',
+    },
+  },
+  cooperative_manager: {
+    email: 'coop@agritrade.in',
+    password: 'coop123',
+    user: {
+      id: 'usr_coop_001',
+      name: 'Suresh Patil',
+      email: 'coop@agritrade.in',
+      phone: '9822099887',
+      role: 'cooperative_manager',
+      createdAt: '2024-02-15T00:00:00.000Z',
+    },
+  },
+  admin: {
+    email: 'admin@agritrade.in',
+    password: 'admin123',
+    user: {
+      id: 'usr_admin_001',
+      name: 'Platform Admin',
+      email: 'admin@agritrade.in',
+      phone: '9800011223',
+      role: 'admin',
+      createdAt: '2024-01-01T00:00:00.000Z',
+    },
+  },
+};
 
 // Mock credential store
 const MOCK_CREDENTIALS: Record<string, { password: string; user: AppUser }> = {
-  'farmer@agritrade.in': {
-    password: 'farmer123',
-    user: {
-      id: 'usr_001',
-      name: 'Rahul Sharma',
-      email: 'farmer@agritrade.in',
-      phone: '9876543210',
-      createdAt: new Date('2024-01-01').toISOString(),
-    },
-  },
-  '9876543210': {
-    password: 'farmer123',
-    user: {
-      id: 'usr_001',
-      name: 'Rahul Sharma',
-      email: 'farmer@agritrade.in',
-      phone: '9876543210',
-      createdAt: new Date('2024-01-01').toISOString(),
-    },
-  },
+  'farmer@agritrade.in': DEMO_PERSONAS.farmer,
+  '9876543210': DEMO_PERSONAS.farmer,
+  'seller@agritrade.in': DEMO_PERSONAS.seller,
+  '9822012345': DEMO_PERSONAS.seller,
+  'coop@agritrade.in': DEMO_PERSONAS.cooperative_manager,
+  '9822099887': DEMO_PERSONAS.cooperative_manager,
+  'admin@agritrade.in': DEMO_PERSONAS.admin,
+  '9800011223': DEMO_PERSONAS.admin,
 };
 
 // Dynamic registry for new sign-ups
@@ -49,6 +89,7 @@ interface AuthState {
   signUp: (name: string, identifier: string, password: string) => Promise<boolean>;
   signOut: () => void;
   clearError: () => void;
+  switchDemoPersona: (role: UserPlatformRole) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -57,6 +98,13 @@ export const useAuthStore = create<AuthState>()(
       status: 'unauthenticated',
       user: null,
       error: null,
+
+      switchDemoPersona: (role: UserPlatformRole) => {
+        const persona = DEMO_PERSONAS[role];
+        if (persona) {
+          set({ status: 'authenticated', user: persona.user, error: null });
+        }
+      },
 
       signIn: async (identifier: string, password: string) => {
         set({ status: 'loading', error: null });

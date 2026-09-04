@@ -246,7 +246,8 @@ export default function SaaSMarketingHomePage() {
                   margin: '0 0 16px',
                 }}
               >
-                Institutional Farm-Gate Commerce &amp; <span style={{ color: '#FCD34D' }}>Real-Time APMC Intelligence</span>
+                Modern Agricultural Commerce &amp;{' '}
+                <span style={{ color: '#FCD34D' }}>Intelligence Infrastructure</span>
               </h1>
 
               {/* Subhead */}

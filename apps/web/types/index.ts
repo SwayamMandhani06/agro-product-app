@@ -118,36 +118,58 @@ export type OrderStatus =
   | 'placed'
   | 'confirmed'
   | 'processing'
+  | 'packed'
   | 'shipped'
   | 'outForDelivery'
+  | 'out_for_delivery'
   | 'delivered'
-  | 'cancelled';
+  | 'cancelled'
+  | 'refund_requested'
+  | 'refund_processing'
+  | 'refunded'
+  | 'disputed';
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   placed: 'Order Placed',
   confirmed: 'Confirmed',
-  processing: 'Packed',
+  processing: 'Processing',
+  packed: 'Packed',
   shipped: 'Shipped',
   outForDelivery: 'Out for Delivery',
+  out_for_delivery: 'Out for Delivery',
   delivered: 'Delivered',
   cancelled: 'Cancelled',
+  refund_requested: 'Refund Requested',
+  refund_processing: 'Refund Processing',
+  refunded: 'Refunded',
+  disputed: 'Disputed',
 };
 
 export const ORDER_TIMELINE_STEPS: OrderStatus[] = [
   'placed',
   'confirmed',
   'processing',
+  'packed',
   'shipped',
   'outForDelivery',
   'delivered',
 ];
 
 export function orderStatusStep(status: OrderStatus): number {
+  if (status === 'out_for_delivery') return ORDER_TIMELINE_STEPS.indexOf('outForDelivery');
   return ORDER_TIMELINE_STEPS.indexOf(status);
 }
 
 export function isOrderActive(status: OrderStatus): boolean {
-  return ['placed', 'confirmed', 'processing', 'shipped', 'outForDelivery'].includes(status);
+  return [
+    'placed',
+    'confirmed',
+    'processing',
+    'packed',
+    'shipped',
+    'outForDelivery',
+    'out_for_delivery',
+  ].includes(status);
 }
 
 export interface Order {
